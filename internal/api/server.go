@@ -2,6 +2,7 @@
 package api
 
 import (
+	"context"
 	"crypto/subtle"
 	"encoding/json"
 	"errors"
@@ -17,9 +18,21 @@ import (
 	"github.com/yuntyu01/nyangpuli-lab/internal/readings"
 )
 
+type Authenticator interface {
+	Authenticate(context.Context, string) (string, error)
+}
+
+type MemoryStore interface {
+	Set(string, memory.Fact) (memory.Record, error)
+	Current(string) ([]memory.Record, error)
+	History(string, string) ([]memory.Record, error)
+	DeleteUser(string) error
+}
+
 type Server struct {
+	Auth            Authenticator
 	Lab             *lab.Lab
-	Memory          *memory.Store
+	Memory          MemoryStore
 	Mem0            *memory.Mem0
 	Tokens          map[string]string
 	Readings        *readings.Service
@@ -42,9 +55,14 @@ func (s *Server) Handler() http.Handler {
 			fail(w, 401, "bearer token required")
 			return
 		}
-		for candidate, u := range s.Tokens {
-			if len(candidate) > 0 && subtle.ConstantTimeCompare([]byte(candidate), []byte(token)) == 1 {
-				user = u
+		if s.Auth != nil {
+			user, _ = s.Auth.Authenticate(r.Context(), token)
+		} else {
+			// Static token mapping is retained only for the existing local lab.
+			for candidate, u := range s.Tokens {
+				if len(candidate) > 0 && subtle.ConstantTimeCompare([]byte(candidate), []byte(token)) == 1 {
+					user = u
+				}
 			}
 		}
 		if user == "" {

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"crypto/rand"
+	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -23,6 +24,9 @@ import (
 	"github.com/yuntyu01/nyangpuli-lab/internal/generation"
 	"github.com/yuntyu01/nyangpuli-lab/internal/lab"
 	"github.com/yuntyu01/nyangpuli-lab/internal/memory"
+	"github.com/yuntyu01/nyangpuli-lab/internal/persistence"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 func main() {
@@ -162,6 +166,7 @@ func compare(args []string) error {
 func serve(args []string) error {
 	fs := flag.NewFlagSet("serve", flag.ContinueOnError)
 	addr := fs.String("addr", "127.0.0.1:8080", "loopback address only; production deployment needs a reviewed gateway")
+	allowContainerBind := fs.Bool("allow-container-bind", false, "allow non-loopback bind only with NYANG_ENV=development")
 	root := fs.String("root", ".", "repository root")
 	path := fs.String("memory", os.Getenv("NYANG_MEMORY_PATH"), "local JSON store (default data/private/memory.json)")
 	readingPath := fs.String("readings", "", "private reading snapshots (default data/private/readings.json)")
@@ -170,30 +175,65 @@ func serve(args []string) error {
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
-	host, _, err := net.SplitHostPort(*addr)
-	if err != nil {
+	if err := validateBindAddress(*addr, *allowContainerBind, os.Getenv("NYANG_ENV")); err != nil {
 		return err
 	}
-	ip := net.ParseIP(host)
-	if host != "localhost" && (ip == nil || !ip.IsLoopback()) {
-		return errors.New("lab server only binds loopback")
+	// PostgreSQL session authentication is opt-in while the existing lab
+	// storage is being migrated. Do not accept static lab tokens in production.
+	production := os.Getenv("NYANG_ENV") == "production"
+	dsn := os.Getenv("DATABASE_URL")
+	if production {
+		return errors.New("production mode is unavailable until private data storage and account recovery are migrated")
 	}
-	tokens, err := tokenUsers()
-	if err != nil {
-		return err
+	var err error
+	var db *sql.DB
+	var tokens map[string]string
+	if dsn != "" {
+		db, err = sql.Open("pgx", dsn)
+		if err != nil {
+			return err
+		}
+		defer db.Close()
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if err = db.PingContext(ctx); err != nil {
+			return fmt.Errorf("database connection failed: %w", err)
+		}
+		if err = persistence.Migrate(ctx, db); err != nil {
+			return fmt.Errorf("database migration failed: %w", err)
+		}
+	} else {
+		tokens, err = tokenUsers()
+		if err != nil {
+			return err
+		}
 	}
 	if *path == "" {
 		*path = filepath.Join(*root, "data", "private", "memory.json")
 	}
-	store, err := memory.Open(*path)
-	if err != nil {
-		return err
+	var store api.MemoryStore
+	if db != nil {
+		// Existing JSON data must be explicitly migrated; never silently ignore it.
+		if _, statErr := os.Stat(*path); statErr == nil {
+			return errors.New("existing JSON memory requires explicit migration before database mode")
+		} else if !os.IsNotExist(statErr) {
+			return statErr
+		}
+		store = &memory.PostgresStore{DB: db}
+	} else {
+		store, err = memory.Open(*path)
+		if err != nil {
+			return err
+		}
 	}
 	l, err := lab.New(*root)
 	if err != nil {
 		return err
 	}
 	app := &api.Server{Lab: l, Memory: store, Tokens: tokens}
+	if db != nil {
+		app.Auth = persistence.Store{DB: db}
+	}
 	var client *generation.Client
 	if *enableGeneration {
 		config, e := generation.ConfigFromEnv()
@@ -233,6 +273,23 @@ func serve(args []string) error {
 		return err
 	}
 	return nil
+}
+
+// Development containers need a non-loopback listener for port forwarding.
+// This explicit opt-in is never enabled solely by the environment variable.
+func validateBindAddress(addr string, allowContainerBind bool, environment string) error {
+	host, _, err := net.SplitHostPort(addr)
+	if err != nil {
+		return err
+	}
+	ip := net.ParseIP(host)
+	if host == "localhost" || (ip != nil && ip.IsLoopback()) {
+		return nil
+	}
+	if allowContainerBind && environment == "development" && (host == "" || (ip != nil && ip.IsUnspecified())) {
+		return nil
+	}
+	return errors.New("non-loopback bind requires --allow-container-bind and NYANG_ENV=development")
 }
 func tokenUsers() (map[string]string, error) {
 	users := map[string]string{}
