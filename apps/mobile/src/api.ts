@@ -6,7 +6,6 @@ const tokenKey = 'nyangpuli_token';
 const tarotKey = 'nyangpuli_tarot_session';
 const base = (process.env.EXPO_PUBLIC_API_URL || '').replace(/\/$/, '');
 export type Reading = { id: string; domain: string; status: string; summary?: string; detail?: string; detail_locked: boolean; created_at: string };
-export type Memory = { id: string; key: string; value: string; observed_at: string };
 export async function saveToken(token: string) { await SecureStore.setItemAsync(tokenKey, token); }
 export async function clearToken() { await SecureStore.deleteItemAsync(tokenKey); }
 export async function saveTarotSessionId(id: string) { await SecureStore.setItemAsync(tarotKey, id); }

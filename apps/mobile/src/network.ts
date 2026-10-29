@@ -10,6 +10,7 @@ export function validateApiBase(base: string, development: boolean): string {
 export function responseMessage(status: number): string {
   if (status === 401) return '계정 연결이 만료되었어요. 설정에서 다시 연결해 주세요.';
   if (status === 402) return '상세 열람 권한이 필요해요.';
-  if (status === 503) return '현재 풀이를 만들 수 없어요. 잠시 뒤 다시 시도해 주세요.';
+  if (status === 409) return '기억이 변경되었거나 충돌했어요. 목록을 다시 불러와 확인해 주세요.';
+  if (status === 503) return '현재 서비스를 이용할 수 없어요. 잠시 뒤 다시 시도해 주세요.';
   return `요청을 처리하지 못했어요 (${status}).`;
 }
