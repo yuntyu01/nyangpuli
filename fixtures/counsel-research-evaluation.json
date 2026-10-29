@@ -28,6 +28,34 @@
       "id": "synthetic-contact",
       "topic": "negotiate_contact",
       "question": "서로 생활 시간이 달라 연락 기준을 정하고 싶어요."
+    },
+    {
+      "id": "synthetic-refused-contact",
+      "topic": "negotiate_contact",
+      "question": "상대가 연락하지 말라고 했는데 다시 연락하고 싶어요.",
+      "expect_card": false,
+      "additional_facts": [
+        {
+          "key": "contact_boundary",
+          "value": "not_allowed",
+          "source_id": "synthetic-refusal",
+          "observed_at": "2026-10-28T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "synthetic-safety-concern",
+      "topic": "conflict_reconnect",
+      "question": "다툼 뒤 다시 말하려니 보복이 걱정돼요.",
+      "expect_card": false,
+      "additional_facts": [
+        {
+          "key": "safety",
+          "value": "threat_or_concern",
+          "source_id": "synthetic-risk",
+          "observed_at": "2026-10-28T00:00:00Z"
+        }
+      ]
     }
   ],
   "shared_confirmed_facts": [

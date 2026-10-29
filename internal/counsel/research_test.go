@@ -74,3 +74,58 @@ func TestUnsafeAndUnrecognizedBoundariesBlockReferences(t *testing.T) {
 		}
 	}
 }
+
+func TestResearchCandidatesRequireReviewedVideoAndConsistentSplit(t *testing.T) {
+	card := researchCards()[0]
+	if !researchCandidate(card, nil, reviewedResearchSources) {
+		t.Fatal("reviewed retrieval card was rejected")
+	}
+	cases := []struct {
+		name string
+		edit func(*ResearchCard)
+	}{
+		{"unregistered video", func(c *ResearchCard) { c.VideoURL = "https://www.youtube.com/watch?v=abcdefghijk" }},
+		{"spoofed host", func(c *ResearchCard) { c.VideoURL = "https://youtube.com.example/watch?v=ojyMbYPzuTg" }},
+		{"duplicate id", func(c *ResearchCard) { c.VideoURL = "https://www.youtube.com/watch?v=ojyMbYPzuTg&v=abcdefghijk" }},
+		{"incorrect group", func(c *ResearchCard) { c.SourceGroup = "other" }},
+		{"incorrect split", func(c *ResearchCard) { c.Split = "evaluation" }},
+		{"evaluation video claimed retrieval", func(c *ResearchCard) {
+			c.VideoURL = "https://www.youtube.com/watch?v=_aDIzBDUXGY"
+			c.SourceGroup = "_aDIzBDUXGY"
+		}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			copy := card
+			tc.edit(&copy)
+			if researchCandidate(copy, nil, reviewedResearchSources) {
+				t.Fatal("unreviewed or inconsistent source was accepted")
+			}
+		})
+	}
+	if researchCandidate(card, map[string]bool{card.SourceGroup: true}, reviewedResearchSources) {
+		t.Fatal("explicitly excluded group was accepted")
+	}
+}
+
+func TestReviewedEvaluationGroupRejectsDerivedVideo(t *testing.T) {
+	// These test-only identifiers do not assert any real re-edit relationship.
+	// A derivative must be explicitly registered before its split can be checked.
+	sources := map[string]researchSource{
+		"original001": {group: "holdout", split: "evaluation"},
+		"derivative1": {group: "holdout", split: "evaluation"},
+	}
+	card := ResearchCard{VideoURL: "https://www.youtube.com/watch?v=derivative1", SourceGroup: "holdout", Split: "retrieval"}
+	if researchCandidate(card, nil, sources) {
+		t.Fatal("evaluation derivative was accepted as retrieval")
+	}
+	// A conflicting reviewed assignment must also fail closed for the group.
+	sources["derivative1"] = researchSource{group: "holdout", split: "retrieval"}
+	if researchCandidate(card, nil, sources) {
+		t.Fatal("mixed group split was accepted")
+	}
+	delete(sources, "derivative1")
+	if researchCandidate(card, nil, sources) {
+		t.Fatal("unregistered derivative was accepted")
+	}
+}

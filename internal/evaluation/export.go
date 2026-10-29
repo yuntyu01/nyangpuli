@@ -164,10 +164,10 @@ func Export(dir string, results []generation.Result, seed int64) error {
 	}
 	var buffer bytes.Buffer
 	w := csv.NewWriter(&buffer)
-	_ = w.Write([]string{"case_id", "label", "invented_fact_count", "partner_mind_certainty_count", "boundary_violation_count", "stale_fact_count", "helpfulness_1_5", "empathy_1_5", "problem_quote", "reviewer_id"})
+	_ = w.Write([]string{"case_id", "label", "invented_fact_count", "partner_mind_certainty_count", "boundary_violation_count", "stale_fact_count", "helpfulness_1_5", "empathy_1_5", "situation_fit_1_5", "specific_action_1_5", "exception_compliance_1_5", "repetition_observed", "problem_quote", "reviewer_id"})
 	for _, c := range set.Cases {
 		for _, a := range c.Answers {
-			_ = w.Write([]string{c.ID, a.Label, "", "", "", "", "", "", "", ""})
+			_ = w.Write([]string{c.ID, a.Label, "", "", "", "", "", "", "", "", "", "", "", ""})
 		}
 	}
 	w.Flush()

@@ -13,6 +13,17 @@ import (
 // receive the same BCcampus references, question, facts and serialized context.
 // It prepares inputs and never invokes a model.
 func (l *Lab) ResearchComparison(ctx context.Context, caseID string, input json.RawMessage) ([]generation.Input, error) {
+	return l.researchComparison(ctx, caseID, input, true)
+}
+
+// ResearchComparisonForEvaluation also prepares an exception case when no card
+// is eligible. expectedCard must be fixed before running the comparison; a
+// mismatch fails closed rather than silently changing the intended condition.
+func (l *Lab) ResearchComparisonForEvaluation(ctx context.Context, caseID string, input json.RawMessage, expectedCard bool) ([]generation.Input, error) {
+	return l.researchComparison(ctx, caseID, input, expectedCard)
+}
+
+func (l *Lab) researchComparison(ctx context.Context, caseID string, input json.RawMessage, expectedCard bool) ([]generation.Input, error) {
 	var req counsel.Request
 	if err := Decode(input, &req); err != nil {
 		return nil, err
@@ -36,8 +47,8 @@ func (l *Lab) ResearchComparison(ctx context.Context, caseID string, input json.
 		return nil, err
 	}
 	ev, ok := treatment.Evidence.(counsel.Response)
-	if !ok || len(ev.Enhanced.ResearchEvidence) == 0 {
-		return nil, errors.New("no eligible research card; confirm context or select another case")
+	if !ok || (len(ev.Enhanced.ResearchEvidence) > 0) != expectedCard {
+		return nil, errors.New("research card selection does not match the expected evaluation condition")
 	}
 	left, right := control.Inputs[1], treatment.Inputs[1]
 	left.VariantID = "without_research"

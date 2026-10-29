@@ -118,4 +118,9 @@ func TestExportSeparateFilesAndRefuseOverwrite(t *testing.T) {
 	if strings.Contains(string(csv), "secret") {
 		t.Fatal("condition in judge sheet")
 	}
+	for _, col := range []string{"empathy_1_5", "situation_fit_1_5", "specific_action_1_5", "partner_mind_certainty_count", "exception_compliance_1_5", "repetition_observed"} {
+		if !strings.Contains(string(csv), col) {
+			t.Fatalf("missing review metric %s", col)
+		}
+	}
 }
