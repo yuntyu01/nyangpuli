@@ -91,8 +91,8 @@ func TestProfileAndDailyPostgres(t *testing.T) {
 	if w = call(h, "POST", "/v1/daily", "a", fmt.Sprintf(`{"profile_id":%q}`, profile.ID)); w.Code != 400 {
 		t.Fatalf("missing current timezone %d", w.Code)
 	}
-	if w = call(h, "POST", "/v1/daily", "a", fmt.Sprintf(`{"profile_id":%q,"time_zone":"UTC"}`, profile.ID)); w.Code != 422 {
-		t.Fatalf("different current timezone %d", w.Code)
+	if w = call(h, "POST", "/v1/daily", "a", fmt.Sprintf(`{"profile_id":%q,"time_zone":"Invalid/Zone"}`, profile.ID)); w.Code != 400 {
+		t.Fatalf("invalid current timezone %d", w.Code)
 	}
 	first := make(chan int, 1)
 	go func() { first <- call(h, "POST", "/v1/daily", "a", req).Code }()
@@ -219,5 +219,17 @@ func TestDailyRealEngineWithMockProvider(t *testing.T) {
 	}
 	if calls.Load() != 1 {
 		t.Fatalf("provider calls=%d", calls.Load())
+	}
+	// The current zone can differ from the natal zone. A new zone uses its own
+	// cached result while repeated requests do not call the provider again.
+	req = fmt.Sprintf(`{"profile_id":%q,"time_zone":"America/New_York"}`, p.ID)
+	for i := 0; i < 2; i++ {
+		w = call(h, "POST", "/v1/daily", "a", req)
+		if w.Code != 200 {
+			t.Fatalf("cross-zone daily %d %s", w.Code, w.Body.String())
+		}
+	}
+	if calls.Load() != 2 {
+		t.Fatalf("cross-zone provider calls=%d", calls.Load())
 	}
 }

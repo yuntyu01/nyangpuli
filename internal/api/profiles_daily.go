@@ -64,13 +64,7 @@ func (s *Server) handleProfileDaily(w http.ResponseWriter, r *http.Request, user
 			fail(w, 400, "valid current IANA time_zone required")
 			return true
 		}
-		// The pinned engine calculates the daily noon in the natal zone only.
-		// Do not present that result as the current zone when they differ.
-		if req.TimeZone != profile.Birth.TimeZone {
-			fail(w, 422, "current timezone differs from birth timezone; daily calculation unavailable")
-			return true
-		}
-		key := daily.Key{AccountID: user, ProfileID: profile.ID, ProfileVersion: profile.Version, Date: date, TimeZone: req.TimeZone, EngineVersion: saju.OhMySajuCommit, SourceVersion: saju.YueYuanCommit, PromptVersion: "daily-summary-v1", ModelVersion: s.DailyModelVersion}
+		key := daily.Key{AccountID: user, ProfileID: profile.ID, ProfileVersion: profile.Version, Date: date, TimeZone: req.TimeZone, EngineVersion: saju.OhMySajuCommit, SourceVersion: saju.YueYuanCommit, PromptVersion: "daily-summary-v2", ModelVersion: s.DailyModelVersion}
 		cached, err := s.ProfileDaily.GetDaily(r.Context(), key)
 		if err == nil {
 			var v readings.View
@@ -90,7 +84,7 @@ func (s *Server) handleProfileDaily(w http.ResponseWriter, r *http.Request, user
 			fail(w, 500, "daily date invalid")
 			return true
 		}
-		input, _ := json.Marshal(saju.Request{Question: "오늘의 전반적인 흐름과 연애에서 참고할 행동을 알려 주세요.", Birth: profile.Birth, Date: &saju.Date{Year: day.Year(), Month: int(day.Month()), Day: day.Day()}})
+		input, _ := json.Marshal(saju.Request{Question: "오늘의 전반적인 흐름과 연애에서 참고할 행동을 알려 주세요.", Birth: profile.Birth, Date: &saju.Date{Year: day.Year(), Month: int(day.Month()), Day: day.Day()}, DailyTimeZone: req.TimeZone})
 		envelope, _ := json.Marshal(readingEnvelope{Input: input})
 		rawKey, _ := json.Marshal(key)
 		digest := sha256.Sum256(rawKey)
