@@ -35,6 +35,7 @@ type Server struct {
 	TarotStore           TarotStore
 	Auth                 Authenticator
 	AccountDeletion      AccountDeleter
+	PostgresOnlyStorage  bool
 	DevelopmentPurchaser DevelopmentPurchaser
 	Lab                  *lab.Lab
 	Memory               MemoryStore

@@ -38,8 +38,12 @@ func TestAccountDeletionAndStaleJobPostgres(t *testing.T) {
 		{`INSERT INTO conversations(id,account_id) VALUES($1,$2)`, []any{"conversation-" + id, a}},
 		{`INSERT INTO messages(id,conversation_id,role,content) VALUES($1,$2,'user','private')`, []any{"message-" + id, "conversation-" + id}},
 		{`INSERT INTO memories(id,account_id,kind,value,source_message_id) VALUES($1,$2,'fact','{"secret":true}',$3)`, []any{"memory-" + id, a, "message-" + id}},
+		{`INSERT INTO memory_history(memory_id,value) VALUES($1,'{"private":"previous"}')`, []any{"memory-" + id}},
+		{`INSERT INTO daily_cache(account_id,profile_id,profile_version,local_date,time_zone,engine_version,source_version,prompt_version,model_version,result) VALUES($1,$2,1,'2026-10-29','Asia/Seoul','1','1','1','1','{"summary":"private"}')`, []any{a, "profile-" + id}},
 		{`INSERT INTO readings(id,account_id,request_key,request_hash,status,evidence,summary) VALUES($1,$2,'key','hash','ready','{"private":true}','private')`, []any{"reading-" + id, a}},
 		{`INSERT INTO generation_jobs(id,account_id,reading_id,request_key,state) VALUES($1,$2,$3,'key','pending')`, []any{"job-" + id, a, "reading-" + id}},
+		{`INSERT INTO dev_reading_unlocks(account_id,reading_job_id) VALUES($1,$2)`, []any{a, "job-" + id}},
+		{`INSERT INTO dev_purchase_transactions(transaction_id,account_id,reading_job_id,status,revision) VALUES($1,$2,$3,'purchased',2)`, []any{"devtx-" + id, a, "job-" + id}},
 		{`INSERT INTO tarot_sessions(id,account_id,question,cards) VALUES($1,$2,'private','[]')`, []any{"tarot-" + id, a}},
 		{`INSERT INTO purchase_transactions(provider,transaction_id,account_id,product_id,status) VALUES('mock',$1,$2,$3,'purchased')`, []any{"tx-" + id, a, "prod-" + id}},
 		{`INSERT INTO entitlements(account_id,reading_id,provider,transaction_id) VALUES($1,$2,'mock',$3)`, []any{a, "reading-" + id, "tx-" + id}},
@@ -68,7 +72,7 @@ func TestAccountDeletionAndStaleJobPostgres(t *testing.T) {
 	if _, err = store.Authenticate(ctx, token); !errors.Is(err, ErrUnauthenticated) {
 		t.Fatal(err)
 	}
-	for _, table := range []string{"profiles", "conversations", "memories", "readings", "generation_jobs", "tarot_sessions", "entitlements", "auth_sessions", "account_identities"} {
+	for _, table := range []string{"profiles", "conversations", "memories", "readings", "generation_jobs", "tarot_sessions", "entitlements", "auth_sessions", "account_identities", "daily_cache", "dev_reading_unlocks", "dev_purchase_transactions", "password_credentials", "memory_deletion_watermarks"} {
 		var n int
 		if err = db.QueryRowContext(ctx, `SELECT count(*) FROM `+table+` WHERE account_id=$1`, a).Scan(&n); err != nil || n != 0 {
 			t.Fatalf("%s: %d %v", table, n, err)
