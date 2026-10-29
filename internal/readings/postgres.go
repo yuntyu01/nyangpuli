@@ -42,6 +42,9 @@ func (s *PostgresService) jobByKey(ctx context.Context, user, key string) (persi
 }
 func decodeJob(j persistence.Job) (record, error) {
 	var r record
+	if j.State == "invalidated" {
+		return r, ErrInvalidated
+	}
 	if j.State == "pending" || j.State == "unknown" {
 		return r, ErrOutcomeUnknown
 	}
@@ -86,6 +89,10 @@ func (s *PostgresService) Create(ctx context.Context, user, key, domain, variant
 	if s.Builder == nil || s.Generator == nil {
 		return View{}, ErrNotConfigured
 	}
+	memoryVersion, err := s.captureMemoryGeneration(ctx, user, domain, canonical)
+	if err != nil {
+		return View{}, err
+	}
 	frozen, err := s.Builder.Build(ctx, domain, variant, canonical)
 	if err != nil {
 		return View{}, fmt.Errorf("%w: source builder rejected request", ErrInvalidInput)
@@ -104,8 +111,8 @@ func (s *PostgresService) Create(ctx context.Context, user, key, domain, variant
 		return View{}, ErrStorage
 	}
 	store := persistence.Store{DB: s.DB}
-	j, created, err := store.ClaimJob(ctx, user, id, jobKey, hash, evidence)
-	if errors.Is(err, persistence.ErrJobConflict) {
+	j, created, err := store.ClaimJobWithMemory(ctx, user, id, jobKey, hash, evidence, memoryVersion)
+	if errors.Is(err, persistence.ErrJobConflict) || errors.Is(err, persistence.ErrMemoryChanged) {
 		return View{}, ErrConflict
 	}
 	if err != nil {
@@ -144,7 +151,7 @@ func (s *PostgresService) Create(ctx context.Context, user, key, domain, variant
 	if callErr != nil {
 		return View{}, callErr
 	}
-	return view(r), nil
+	return s.Get(user, r.ID)
 }
 func (s *PostgresService) getRecord(ctx context.Context, user, id string) (record, error) {
 	if err := validateUser(user); err != nil {
@@ -249,6 +256,10 @@ func (s *PostgresService) UnlockForTest(user, id string) (View, error) {
 	return view(r), nil
 }
 func (s *PostgresService) Detail(ctx context.Context, user, id string) (View, error) {
+	memoryVersion, err := s.readJobMemoryGeneration(ctx, user, id)
+	if err != nil {
+		return View{}, err
+	}
 	r, err := s.getRecord(ctx, user, id)
 	if err != nil {
 		return View{}, err
@@ -278,7 +289,7 @@ func (s *PostgresService) Detail(ctx context.Context, user, id string) (View, er
 	}
 	evidence, _ := json.Marshal(r)
 	store := persistence.Store{DB: s.DB}
-	j, created, err := store.ClaimJob(ctx, user, jobID, jobKey, r.RequestHash, evidence)
+	j, created, err := store.ClaimJobWithMemory(ctx, user, jobID, jobKey, r.RequestHash, evidence, memoryVersion)
 	if err != nil {
 		return View{}, ErrStorage
 	}
@@ -329,4 +340,38 @@ func (s *PostgresService) currentDetail(ctx context.Context, user, id string) (V
 		return View{}, ErrLocked
 	}
 	return view(r), nil
+}
+
+// Only requests that opt into memory need a memory-version guard. Read before
+// building the prompt; the transaction verifies this value again at claim.
+func (s *PostgresService) captureMemoryGeneration(ctx context.Context, user, domain string, input json.RawMessage) (*int64, error) {
+	var envelope struct {
+		UseMemory bool `json:"use_memory"`
+	}
+	if domain != "counsel" || json.Unmarshal(input, &envelope) != nil || !envelope.UseMemory {
+		return nil, nil
+	}
+	var version int64
+	err := s.DB.QueryRowContext(ctx, `SELECT memory_generation FROM accounts WHERE id=$1 AND deleted_at IS NULL`, user).Scan(&version)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, ErrNotFound
+	}
+	if err != nil {
+		return nil, ErrStorage
+	}
+	return &version, nil
+}
+func (s *PostgresService) readJobMemoryGeneration(ctx context.Context, user, id string) (*int64, error) {
+	var version sql.NullInt64
+	err := s.DB.QueryRowContext(ctx, `SELECT j.memory_generation FROM generation_jobs j JOIN accounts a ON a.id=j.account_id WHERE j.id=$1 AND j.account_id=$2 AND a.deleted_at IS NULL AND j.request_key LIKE 'summary:%'`, id, user).Scan(&version)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, ErrNotFound
+	}
+	if err != nil {
+		return nil, ErrStorage
+	}
+	if !version.Valid {
+		return nil, nil
+	}
+	return &version.Int64, nil
 }

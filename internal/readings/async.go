@@ -37,7 +37,7 @@ func jobStatus(j persistence.Job) (JobStatus, error) {
 		v.DetailLocked = true
 		v.EntitlementSource = "none"
 		out.Summary = &v
-	case "failed", "unknown":
+	case "failed", "unknown", "invalidated":
 	default:
 		return JobStatus{}, ErrStorage
 	}
@@ -76,6 +76,10 @@ func (s *PostgresService) StartSummary(ctx context.Context, user, key, domain, v
 	if s.Builder == nil || s.Generator == nil {
 		return JobStatus{}, ErrNotConfigured
 	}
+	memoryVersion, err := s.captureMemoryGeneration(ctx, user, domain, canonical)
+	if err != nil {
+		return JobStatus{}, err
+	}
 	frozen, err := s.Builder.Build(ctx, domain, variant, canonical)
 	if err != nil {
 		return JobStatus{}, ErrInvalidInput
@@ -93,8 +97,8 @@ func (s *PostgresService) StartSummary(ctx context.Context, user, key, domain, v
 	if err != nil {
 		return JobStatus{}, ErrStorage
 	}
-	j, created, err := (persistence.Store{DB: s.DB}).ClaimJob(ctx, user, id, jobKey, hash, evidence)
-	if errors.Is(err, persistence.ErrJobConflict) {
+	j, created, err := (persistence.Store{DB: s.DB}).ClaimJobWithMemory(ctx, user, id, jobKey, hash, evidence, memoryVersion)
+	if errors.Is(err, persistence.ErrJobConflict) || errors.Is(err, persistence.ErrMemoryChanged) {
 		return JobStatus{}, ErrConflict
 	}
 	if err != nil {

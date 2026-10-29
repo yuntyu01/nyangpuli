@@ -82,6 +82,9 @@ func (s *PostgresStore) Set(user string, fact Fact) (Record, error) {
 	if err != nil {
 		return Record{}, err
 	}
+	if err = invalidateMemorySnapshots(ctx, tx, user); err != nil {
+		return Record{}, err
+	}
 	if err = tx.Commit(); err != nil {
 		return Record{}, err
 	}
@@ -166,6 +169,9 @@ func (s *PostgresStore) DeleteUser(user string) error {
 		return err
 	}
 	if _, err = tx.ExecContext(ctx, `DELETE FROM memories WHERE account_id=$1`, user); err != nil {
+		return err
+	}
+	if err = invalidateMemorySnapshots(ctx, tx, user); err != nil {
 		return err
 	}
 	return tx.Commit()

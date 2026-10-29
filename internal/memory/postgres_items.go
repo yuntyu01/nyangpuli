@@ -72,6 +72,9 @@ func (s *PostgresStore) Correct(user, id string, fact Fact) (Record, error) {
 		return Record{}, ErrConflict
 	}
 	if old.Value != fact.Value || old.Note != fact.Note || !old.ObservedAt.Equal(fact.ObservedAt) {
+		if err = invalidateMemorySnapshots(ctx, tx, user); err != nil {
+			return Record{}, err
+		}
 		if _, err = tx.ExecContext(ctx, `INSERT INTO memory_history(memory_id,value) VALUES($1,$2)`, id, oldBytes); err != nil {
 			return Record{}, err
 		}
@@ -183,5 +186,18 @@ func (s *PostgresStore) Delete(user, id string) error {
 	if _, err = tx.ExecContext(ctx, `DELETE FROM memories WHERE id=$1 AND account_id=$2`, id, user); err != nil {
 		return err
 	}
+	if err = invalidateMemorySnapshots(ctx, tx, user); err != nil {
+		return err
+	}
 	return tx.Commit()
+}
+
+// Called under the account lock in the same transaction as the memory change.
+// Retaining request keys prevents a costly provider retry after invalidation.
+func invalidateMemorySnapshots(ctx context.Context, tx *sql.Tx, user string) error {
+	if _, err := tx.ExecContext(ctx, `UPDATE accounts SET memory_generation=memory_generation+1 WHERE id=$1`, user); err != nil {
+		return err
+	}
+	_, err := tx.ExecContext(ctx, `UPDATE generation_jobs SET state='invalidated',evidence=NULL,result=NULL,updated_at=now() WHERE account_id=$1 AND memory_generation IS NOT NULL AND state<>'invalidated'`, user)
+	return err
 }

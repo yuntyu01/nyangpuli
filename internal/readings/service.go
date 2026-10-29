@@ -31,6 +31,7 @@ var (
 	ErrConflict       = errors.New("idempotency key already has different input")
 	ErrInvalidInput   = errors.New("invalid reading input")
 	ErrGeneration     = errors.New("reading generation failed")
+	ErrInvalidated    = errors.New("reading invalidated after memory change")
 	ErrOutcomeUnknown = errors.New("provider outcome is unknown; reconciliation required")
 	ErrStorage        = errors.New("reading storage failed")
 )
