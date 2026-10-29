@@ -1,0 +1,95 @@
+{
+  "executed_at": "2026-10-29T04:14:33.676753+00:00",
+  "scope": "implementation_and_integration_not_prediction_or_counsel_quality",
+  "compiler": "go version go1.27.3 linux/amd64",
+  "node": "v24.22.1",
+  "live_llm_calls": 0,
+  "live_mem0_calls": 0,
+  "human_evaluators": 0,
+  "real_future_outcomes": 0,
+  "checks": [
+    {
+      "command": "go test -race -count=1 -json ./...",
+      "exit_code": 0,
+      "passed_test_events": 94,
+      "skipped_tests": [
+        "TestIntegrationActualOhMySajuAndDaily",
+        "TestIntegrationCompatibilityActualOhMySaju"
+      ],
+      "package_test_counts": {
+        "github.com/yuntyu01/nyangpuli-lab/internal/api": 6,
+        "github.com/yuntyu01/nyangpuli-lab/internal/counsel": 15,
+        "github.com/yuntyu01/nyangpuli-lab/internal/evaluation": 12,
+        "github.com/yuntyu01/nyangpuli-lab/internal/generation": 5,
+        "github.com/yuntyu01/nyangpuli-lab/internal/lab": 1,
+        "github.com/yuntyu01/nyangpuli-lab/internal/memory": 10,
+        "github.com/yuntyu01/nyangpuli-lab/internal/readings": 13,
+        "github.com/yuntyu01/nyangpuli-lab/internal/saju": 17,
+        "github.com/yuntyu01/nyangpuli-lab/internal/tarot": 15
+      }
+    },
+    {
+      "command": "go vet ./...",
+      "exit_code": 0,
+      "passed_test_events": 0,
+      "skipped_tests": [],
+      "package_test_counts": {}
+    },
+    {
+      "command": "SAJU_INTEGRATION=1 go test -count=1 -json ./internal/saju",
+      "exit_code": 0,
+      "passed_test_events": 19,
+      "skipped_tests": [],
+      "package_test_counts": {
+        "github.com/yuntyu01/nyangpuli-lab/internal/saju": 19
+      }
+    },
+    {
+      "command": "nyangpuli compare -domain tarot -input fixtures/tarot.json",
+      "exit_code": 0,
+      "variants": 2,
+      "model_status": "not_run"
+    },
+    {
+      "command": "nyangpuli compare -domain saju -input fixtures/saju.json",
+      "exit_code": 0,
+      "variants": 2,
+      "model_status": "not_run"
+    },
+    {
+      "command": "nyangpuli compare -domain daily -input fixtures/daily.json",
+      "exit_code": 0,
+      "variants": 2,
+      "model_status": "not_run"
+    },
+    {
+      "command": "nyangpuli compare -domain compatibility -input fixtures/compatibility.json",
+      "exit_code": 0,
+      "variants": 2,
+      "model_status": "not_run"
+    },
+    {
+      "command": "nyangpuli compare -domain counsel -input fixtures/counsel.json",
+      "exit_code": 0,
+      "variants": 2,
+      "model_status": "not_run"
+    },
+    {
+      "command": "compiled binary HTTP health + authenticated counsel POST + graceful shutdown",
+      "exit_code": 0
+    },
+    {
+      "command": "node scripts/engine-regression.mjs",
+      "exit_code": 0,
+      "scope": "pinned_original_engine_regression_not_independent_accuracy"
+    }
+  ],
+  "tarot_source_coverage": {
+    "tarotoo_cards": 78,
+    "arcanite_cards": 78,
+    "spreads": 11,
+    "relationship_entries": 1379,
+    "placeholder_relationships": 676,
+    "unknown_relationship_targets": 23
+  }
+}

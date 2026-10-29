@@ -1,0 +1,6 @@
+{
+  "question": "서로 다른 연락 방식에 대해 어떻게 이야기해 보면 좋을까?",
+  "person_a": {"year": 1992, "month": 10, "day": 24, "hour": 5, "minute": 30, "time_zone": "Asia/Seoul"},
+  "person_b": {"year": 1997, "month": 6, "day": 15, "hour": 14, "minute": 30, "time_zone": "Asia/Seoul"},
+  "relationship_context": "합성 예제: 연애 중인 두 사람은 평일 연락 빈도에 대한 기대가 다르다. 아직 서로 편한 기준을 합의하지 않았다. 상대방의 마음이나 의도는 확인되지 않았다."
+}

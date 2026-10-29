@@ -1,0 +1,4189 @@
+{
+  "schema_version": 1,
+  "purpose": "original_engine_compatibility_only_not_independent_truth_or_future_accuracy",
+  "recorded_at": "2026-10-29T04:11:54.149Z",
+  "inputs_sha256": "a5034fcc2dc508682557a8a91386676db0fa92d2bb9e43ce177a71f7d14df8c9",
+  "provenance": {
+    "source_revision": "a8c0cf64adfde8fb1ce253112529edd8e90cc94b",
+    "node_version": "v24.22.1",
+    "package_manager": "pnpm@10.15.0",
+    "pnpm_lock_sha256": "dceda8390a43b8f1753e9baa70b315e57ae06a39e4cce46b72a7b3f993685abb",
+    "build_tree_sha256": "3019d2c96d57ec577d153176023520d3e8b86c88dc3c059309a4ae496fe886fe",
+    "build_file_count": 38,
+    "adapter_sha256": "69253088661c4eee3c84854e5903af2dbb56fdd0df52b6a1aa7cdb605f855baf"
+  },
+  "projection_version": 1,
+  "results": {
+    "ordinary-daily": {
+      "outcome": "success",
+      "semantic": {
+        "chart": {
+          "chronology": {
+            "civilDateTime": "1997-06-15T14:30:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "1997-06-15T14:30:00.000",
+            "daylightSaving": {
+              "isDaylightSavingTime": false,
+              "offsetSeconds": 0,
+              "representation": "iana-tzif-isdst-with-derived-save"
+            },
+            "disambiguation": "exact",
+            "epochMilliseconds": 866352600000,
+            "gregorianDate": {
+              "calendar": "gregorian",
+              "day": 15,
+              "month": 6,
+              "year": 1997
+            },
+            "instantUtc": "1997-06-15T05:30:00.000Z",
+            "koreanLunarDate": {
+              "calendar": "korean-lunar",
+              "day": 11,
+              "month": 5,
+              "monthKind": "regular",
+              "year": 1997
+            },
+            "offsetSeconds": 32400,
+            "solarTimeCorrection": null,
+            "timeZone": "Asia/Seoul"
+          },
+          "facts": {
+            "dayMaster": {
+              "element": "토",
+              "hanja": "戊",
+              "index": 4,
+              "korean": "무",
+              "yinYang": "양"
+            },
+            "structure": {
+              "elementBalance": {
+                "percentages": {
+                  "금": 1.25,
+                  "목": 1.25,
+                  "수": 16.25,
+                  "토": 43.75,
+                  "화": 37.5
+                },
+                "profileId": "visible-stems-1-hidden-stems-normalized-v1",
+                "scores": {
+                  "금": 0.1,
+                  "목": 0.1,
+                  "수": 1.3,
+                  "토": 3.5,
+                  "화": 3
+                },
+                "strongest": [
+                  "토"
+                ],
+                "totalWeight": 8,
+                "weakest": [
+                  "목",
+                  "금"
+                ]
+              },
+              "hiddenStems": {
+                "day": [
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "정재",
+                    "weight": 1
+                  }
+                ],
+                "hour": [
+                  {
+                    "element": "토",
+                    "stem": "기",
+                    "tenGod": "겁재",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "화",
+                    "stem": "정",
+                    "tenGod": "정인",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "목",
+                    "stem": "을",
+                    "tenGod": "정관",
+                    "weight": 0.1
+                  }
+                ],
+                "month": [
+                  {
+                    "element": "화",
+                    "stem": "정",
+                    "tenGod": "정인",
+                    "weight": 0.7
+                  },
+                  {
+                    "element": "토",
+                    "stem": "기",
+                    "tenGod": "겁재",
+                    "weight": 0.3
+                  }
+                ],
+                "year": [
+                  {
+                    "element": "토",
+                    "stem": "기",
+                    "tenGod": "겁재",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "정재",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "상관",
+                    "weight": 0.1
+                  }
+                ]
+              },
+              "relationships": {
+                "branchBreaks": [],
+                "branchClashes": [
+                  {
+                    "members": [
+                      "축",
+                      "미"
+                    ],
+                    "positions": [
+                      "year",
+                      "hour"
+                    ]
+                  },
+                  {
+                    "members": [
+                      "오",
+                      "자"
+                    ],
+                    "positions": [
+                      "month",
+                      "day"
+                    ]
+                  }
+                ],
+                "branchCombinations": [
+                  {
+                    "members": [
+                      "축",
+                      "자"
+                    ],
+                    "positions": [
+                      "year",
+                      "day"
+                    ]
+                  },
+                  {
+                    "members": [
+                      "오",
+                      "미"
+                    ],
+                    "positions": [
+                      "month",
+                      "hour"
+                    ]
+                  }
+                ],
+                "branchHarms": [
+                  {
+                    "members": [
+                      "축",
+                      "오"
+                    ],
+                    "positions": [
+                      "year",
+                      "month"
+                    ]
+                  },
+                  {
+                    "members": [
+                      "자",
+                      "미"
+                    ],
+                    "positions": [
+                      "day",
+                      "hour"
+                    ]
+                  }
+                ],
+                "branchPunishments": [
+                  {
+                    "kind": "directed-cycle",
+                    "members": [
+                      "미",
+                      "축"
+                    ],
+                    "positions": [
+                      "hour",
+                      "year"
+                    ]
+                  }
+                ],
+                "stemCombinations": [],
+                "threeHarmonies": []
+              },
+              "yinYangBalance": {
+                "basis": "eight-visible-characters",
+                "counts": {
+                  "양": 4,
+                  "음": 4
+                },
+                "percentages": {
+                  "양": 50,
+                  "음": 50
+                }
+              }
+            },
+            "tenGods": {
+              "day": {
+                "branch": "정재",
+                "stem": "일간"
+              },
+              "hour": {
+                "branch": "겁재",
+                "stem": "겁재"
+              },
+              "month": {
+                "branch": "정인",
+                "stem": "편인"
+              },
+              "year": {
+                "branch": "겁재",
+                "stem": "정인"
+              }
+            },
+            "voidBranches": [
+              "오",
+              "미"
+            ]
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "수",
+                "hanja": "子",
+                "index": 0,
+                "korean": "자",
+                "yinYang": "양"
+              },
+              "cycleIndex": 24,
+              "hanja": "戊子",
+              "korean": "무자",
+              "stem": {
+                "element": "토",
+                "hanja": "戊",
+                "index": 4,
+                "korean": "무",
+                "yinYang": "양"
+              }
+            },
+            "hour": {
+              "branch": {
+                "element": "토",
+                "hanja": "未",
+                "index": 7,
+                "korean": "미",
+                "yinYang": "음"
+              },
+              "cycleIndex": 55,
+              "hanja": "己未",
+              "korean": "기미",
+              "stem": {
+                "element": "토",
+                "hanja": "己",
+                "index": 5,
+                "korean": "기",
+                "yinYang": "음"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "화",
+                "hanja": "午",
+                "index": 6,
+                "korean": "오",
+                "yinYang": "양"
+              },
+              "cycleIndex": 42,
+              "hanja": "丙午",
+              "korean": "병오",
+              "stem": {
+                "element": "화",
+                "hanja": "丙",
+                "index": 2,
+                "korean": "병",
+                "yinYang": "양"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "토",
+                "hanja": "丑",
+                "index": 1,
+                "korean": "축",
+                "yinYang": "음"
+              },
+              "cycleIndex": 13,
+              "hanja": "丁丑",
+              "korean": "정축",
+              "stem": {
+                "element": "화",
+                "hanja": "丁",
+                "index": 3,
+                "korean": "정",
+                "yinYang": "음"
+              }
+            }
+          },
+          "warning_codes": []
+        },
+        "daily": {
+          "date": {
+            "calendar": "gregorian",
+            "day": 28,
+            "month": 10,
+            "year": 2026
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "수",
+                "hanja": "亥",
+                "index": 11,
+                "korean": "해",
+                "yinYang": "음"
+              },
+              "cycleIndex": 11,
+              "hanja": "乙亥",
+              "korean": "을해",
+              "stem": {
+                "element": "목",
+                "hanja": "乙",
+                "index": 1,
+                "korean": "을",
+                "yinYang": "음"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "토",
+                "hanja": "戌",
+                "index": 10,
+                "korean": "술",
+                "yinYang": "양"
+              },
+              "cycleIndex": 34,
+              "hanja": "戊戌",
+              "korean": "무술",
+              "stem": {
+                "element": "토",
+                "hanja": "戊",
+                "index": 4,
+                "korean": "무",
+                "yinYang": "양"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "화",
+                "hanja": "午",
+                "index": 6,
+                "korean": "오",
+                "yinYang": "양"
+              },
+              "cycleIndex": 42,
+              "hanja": "丙午",
+              "korean": "병오",
+              "stem": {
+                "element": "화",
+                "hanja": "丙",
+                "index": 2,
+                "korean": "병",
+                "yinYang": "양"
+              }
+            }
+          },
+          "relationships": {
+            "branchBreaks": [],
+            "branchClashes": [],
+            "branchCombinations": [],
+            "branchHarms": [],
+            "branchPunishments": [],
+            "stemCombinations": []
+          },
+          "representative": {
+            "civilDateTime": "2026-10-28T12:00:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "2026-10-28T12:00:00.000",
+            "epochMilliseconds": 1793156400000,
+            "instantUtc": "2026-10-28T03:00:00.000Z",
+            "offsetSeconds": 32400,
+            "policy": "local-civil-noon",
+            "solarTimeCorrection": null,
+            "timeZone": "Asia/Seoul"
+          },
+          "tenGods": {
+            "day": {
+              "branch": "편재",
+              "stem": "정관"
+            },
+            "month": {
+              "branch": "비견",
+              "stem": "비견"
+            },
+            "year": {
+              "branch": "정인",
+              "stem": "편인"
+            }
+          },
+          "warning_codes": []
+        }
+      }
+    },
+    "civil-before-midnight": {
+      "outcome": "success",
+      "semantic": {
+        "chart": {
+          "chronology": {
+            "civilDateTime": "2024-01-01T23:59:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "2024-01-01T23:59:00.000",
+            "daylightSaving": {
+              "isDaylightSavingTime": false,
+              "offsetSeconds": 0,
+              "representation": "iana-tzif-isdst-with-derived-save"
+            },
+            "disambiguation": "exact",
+            "epochMilliseconds": 1704121140000,
+            "gregorianDate": {
+              "calendar": "gregorian",
+              "day": 1,
+              "month": 1,
+              "year": 2024
+            },
+            "instantUtc": "2024-01-01T14:59:00.000Z",
+            "koreanLunarDate": {
+              "calendar": "korean-lunar",
+              "day": 20,
+              "month": 11,
+              "monthKind": "regular",
+              "year": 2023
+            },
+            "offsetSeconds": 32400,
+            "solarTimeCorrection": null,
+            "timeZone": "Asia/Seoul"
+          },
+          "facts": {
+            "dayMaster": {
+              "element": "목",
+              "hanja": "甲",
+              "index": 0,
+              "korean": "갑",
+              "yinYang": "양"
+            },
+            "structure": {
+              "elementBalance": {
+                "percentages": {
+                  "금": 0,
+                  "목": 50,
+                  "수": 50,
+                  "토": 0,
+                  "화": 0
+                },
+                "profileId": "visible-stems-1-hidden-stems-normalized-v1",
+                "scores": {
+                  "금": 0,
+                  "목": 4,
+                  "수": 4,
+                  "토": 0,
+                  "화": 0
+                },
+                "strongest": [
+                  "목",
+                  "수"
+                ],
+                "totalWeight": 8,
+                "weakest": [
+                  "화",
+                  "토",
+                  "금"
+                ]
+              },
+              "hiddenStems": {
+                "day": [
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "정인",
+                    "weight": 1
+                  }
+                ],
+                "hour": [
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "정인",
+                    "weight": 1
+                  }
+                ],
+                "month": [
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "정인",
+                    "weight": 1
+                  }
+                ],
+                "year": [
+                  {
+                    "element": "목",
+                    "stem": "을",
+                    "tenGod": "겁재",
+                    "weight": 1
+                  }
+                ]
+              },
+              "relationships": {
+                "branchBreaks": [],
+                "branchClashes": [],
+                "branchCombinations": [],
+                "branchHarms": [],
+                "branchPunishments": [
+                  {
+                    "kind": "mutual",
+                    "members": [
+                      "자",
+                      "묘"
+                    ],
+                    "positions": [
+                      "month",
+                      "year"
+                    ]
+                  },
+                  {
+                    "kind": "mutual",
+                    "members": [
+                      "자",
+                      "묘"
+                    ],
+                    "positions": [
+                      "day",
+                      "year"
+                    ]
+                  },
+                  {
+                    "kind": "mutual",
+                    "members": [
+                      "자",
+                      "묘"
+                    ],
+                    "positions": [
+                      "hour",
+                      "year"
+                    ]
+                  }
+                ],
+                "stemCombinations": [],
+                "threeHarmonies": []
+              },
+              "yinYangBalance": {
+                "basis": "eight-visible-characters",
+                "counts": {
+                  "양": 6,
+                  "음": 2
+                },
+                "percentages": {
+                  "양": 75,
+                  "음": 25
+                }
+              }
+            },
+            "tenGods": {
+              "day": {
+                "branch": "정인",
+                "stem": "일간"
+              },
+              "hour": {
+                "branch": "정인",
+                "stem": "비견"
+              },
+              "month": {
+                "branch": "정인",
+                "stem": "비견"
+              },
+              "year": {
+                "branch": "겁재",
+                "stem": "정인"
+              }
+            },
+            "voidBranches": [
+              "술",
+              "해"
+            ]
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "수",
+                "hanja": "子",
+                "index": 0,
+                "korean": "자",
+                "yinYang": "양"
+              },
+              "cycleIndex": 0,
+              "hanja": "甲子",
+              "korean": "갑자",
+              "stem": {
+                "element": "목",
+                "hanja": "甲",
+                "index": 0,
+                "korean": "갑",
+                "yinYang": "양"
+              }
+            },
+            "hour": {
+              "branch": {
+                "element": "수",
+                "hanja": "子",
+                "index": 0,
+                "korean": "자",
+                "yinYang": "양"
+              },
+              "cycleIndex": 0,
+              "hanja": "甲子",
+              "korean": "갑자",
+              "stem": {
+                "element": "목",
+                "hanja": "甲",
+                "index": 0,
+                "korean": "갑",
+                "yinYang": "양"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "수",
+                "hanja": "子",
+                "index": 0,
+                "korean": "자",
+                "yinYang": "양"
+              },
+              "cycleIndex": 0,
+              "hanja": "甲子",
+              "korean": "갑자",
+              "stem": {
+                "element": "목",
+                "hanja": "甲",
+                "index": 0,
+                "korean": "갑",
+                "yinYang": "양"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "목",
+                "hanja": "卯",
+                "index": 3,
+                "korean": "묘",
+                "yinYang": "음"
+              },
+              "cycleIndex": 39,
+              "hanja": "癸卯",
+              "korean": "계묘",
+              "stem": {
+                "element": "수",
+                "hanja": "癸",
+                "index": 9,
+                "korean": "계",
+                "yinYang": "음"
+              }
+            }
+          },
+          "warning_codes": []
+        },
+        "daily": null
+      }
+    },
+    "civil-midnight": {
+      "outcome": "success",
+      "semantic": {
+        "chart": {
+          "chronology": {
+            "civilDateTime": "2024-01-02T00:00:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "2024-01-02T00:00:00.000",
+            "daylightSaving": {
+              "isDaylightSavingTime": false,
+              "offsetSeconds": 0,
+              "representation": "iana-tzif-isdst-with-derived-save"
+            },
+            "disambiguation": "exact",
+            "epochMilliseconds": 1704121200000,
+            "gregorianDate": {
+              "calendar": "gregorian",
+              "day": 2,
+              "month": 1,
+              "year": 2024
+            },
+            "instantUtc": "2024-01-01T15:00:00.000Z",
+            "koreanLunarDate": {
+              "calendar": "korean-lunar",
+              "day": 21,
+              "month": 11,
+              "monthKind": "regular",
+              "year": 2023
+            },
+            "offsetSeconds": 32400,
+            "solarTimeCorrection": null,
+            "timeZone": "Asia/Seoul"
+          },
+          "facts": {
+            "dayMaster": {
+              "element": "목",
+              "hanja": "乙",
+              "index": 1,
+              "korean": "을",
+              "yinYang": "음"
+            },
+            "structure": {
+              "elementBalance": {
+                "percentages": {
+                  "금": 1.25,
+                  "목": 37.5,
+                  "수": 41.25,
+                  "토": 7.5,
+                  "화": 12.5
+                },
+                "profileId": "visible-stems-1-hidden-stems-normalized-v1",
+                "scores": {
+                  "금": 0.1,
+                  "목": 3,
+                  "수": 3.3,
+                  "토": 0.6,
+                  "화": 1
+                },
+                "strongest": [
+                  "수"
+                ],
+                "totalWeight": 8,
+                "weakest": [
+                  "금"
+                ]
+              },
+              "hiddenStems": {
+                "day": [
+                  {
+                    "element": "토",
+                    "stem": "기",
+                    "tenGod": "편재",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "편인",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "편관",
+                    "weight": 0.1
+                  }
+                ],
+                "hour": [
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "편인",
+                    "weight": 1
+                  }
+                ],
+                "month": [
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "편인",
+                    "weight": 1
+                  }
+                ],
+                "year": [
+                  {
+                    "element": "목",
+                    "stem": "을",
+                    "tenGod": "비견",
+                    "weight": 1
+                  }
+                ]
+              },
+              "relationships": {
+                "branchBreaks": [],
+                "branchClashes": [],
+                "branchCombinations": [
+                  {
+                    "members": [
+                      "자",
+                      "축"
+                    ],
+                    "positions": [
+                      "month",
+                      "day"
+                    ]
+                  },
+                  {
+                    "members": [
+                      "축",
+                      "자"
+                    ],
+                    "positions": [
+                      "day",
+                      "hour"
+                    ]
+                  }
+                ],
+                "branchHarms": [],
+                "branchPunishments": [
+                  {
+                    "kind": "mutual",
+                    "members": [
+                      "자",
+                      "묘"
+                    ],
+                    "positions": [
+                      "month",
+                      "year"
+                    ]
+                  },
+                  {
+                    "kind": "mutual",
+                    "members": [
+                      "자",
+                      "묘"
+                    ],
+                    "positions": [
+                      "hour",
+                      "year"
+                    ]
+                  }
+                ],
+                "stemCombinations": [],
+                "threeHarmonies": []
+              },
+              "yinYangBalance": {
+                "basis": "eight-visible-characters",
+                "counts": {
+                  "양": 4,
+                  "음": 4
+                },
+                "percentages": {
+                  "양": 50,
+                  "음": 50
+                }
+              }
+            },
+            "tenGods": {
+              "day": {
+                "branch": "편재",
+                "stem": "일간"
+              },
+              "hour": {
+                "branch": "편인",
+                "stem": "상관"
+              },
+              "month": {
+                "branch": "편인",
+                "stem": "겁재"
+              },
+              "year": {
+                "branch": "비견",
+                "stem": "편인"
+              }
+            },
+            "voidBranches": [
+              "술",
+              "해"
+            ]
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "토",
+                "hanja": "丑",
+                "index": 1,
+                "korean": "축",
+                "yinYang": "음"
+              },
+              "cycleIndex": 1,
+              "hanja": "乙丑",
+              "korean": "을축",
+              "stem": {
+                "element": "목",
+                "hanja": "乙",
+                "index": 1,
+                "korean": "을",
+                "yinYang": "음"
+              }
+            },
+            "hour": {
+              "branch": {
+                "element": "수",
+                "hanja": "子",
+                "index": 0,
+                "korean": "자",
+                "yinYang": "양"
+              },
+              "cycleIndex": 12,
+              "hanja": "丙子",
+              "korean": "병자",
+              "stem": {
+                "element": "화",
+                "hanja": "丙",
+                "index": 2,
+                "korean": "병",
+                "yinYang": "양"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "수",
+                "hanja": "子",
+                "index": 0,
+                "korean": "자",
+                "yinYang": "양"
+              },
+              "cycleIndex": 0,
+              "hanja": "甲子",
+              "korean": "갑자",
+              "stem": {
+                "element": "목",
+                "hanja": "甲",
+                "index": 0,
+                "korean": "갑",
+                "yinYang": "양"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "목",
+                "hanja": "卯",
+                "index": 3,
+                "korean": "묘",
+                "yinYang": "음"
+              },
+              "cycleIndex": 39,
+              "hanja": "癸卯",
+              "korean": "계묘",
+              "stem": {
+                "element": "수",
+                "hanja": "癸",
+                "index": 9,
+                "korean": "계",
+                "yinYang": "음"
+              }
+            }
+          },
+          "warning_codes": []
+        },
+        "daily": null
+      }
+    },
+    "leap-day": {
+      "outcome": "success",
+      "semantic": {
+        "chart": {
+          "chronology": {
+            "civilDateTime": "2024-02-29T12:00:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "2024-02-29T12:00:00.000",
+            "daylightSaving": {
+              "isDaylightSavingTime": false,
+              "offsetSeconds": 0,
+              "representation": "iana-tzif-isdst-with-derived-save"
+            },
+            "disambiguation": "exact",
+            "epochMilliseconds": 1709175600000,
+            "gregorianDate": {
+              "calendar": "gregorian",
+              "day": 29,
+              "month": 2,
+              "year": 2024
+            },
+            "instantUtc": "2024-02-29T03:00:00.000Z",
+            "koreanLunarDate": {
+              "calendar": "korean-lunar",
+              "day": 20,
+              "month": 1,
+              "monthKind": "regular",
+              "year": 2024
+            },
+            "offsetSeconds": 32400,
+            "solarTimeCorrection": null,
+            "timeZone": "Asia/Seoul"
+          },
+          "facts": {
+            "dayMaster": {
+              "element": "수",
+              "hanja": "癸",
+              "index": 9,
+              "korean": "계",
+              "yinYang": "음"
+            },
+            "structure": {
+              "elementBalance": {
+                "percentages": {
+                  "금": 0,
+                  "목": 27.5,
+                  "수": 22.5,
+                  "토": 25,
+                  "화": 25
+                },
+                "profileId": "visible-stems-1-hidden-stems-normalized-v1",
+                "scores": {
+                  "금": 0,
+                  "목": 2.2,
+                  "수": 1.8,
+                  "토": 2,
+                  "화": 2
+                },
+                "strongest": [
+                  "목"
+                ],
+                "totalWeight": 8,
+                "weakest": [
+                  "금"
+                ]
+              },
+              "hiddenStems": {
+                "day": [
+                  {
+                    "element": "수",
+                    "stem": "임",
+                    "tenGod": "겁재",
+                    "weight": 0.7
+                  },
+                  {
+                    "element": "목",
+                    "stem": "갑",
+                    "tenGod": "상관",
+                    "weight": 0.3
+                  }
+                ],
+                "hour": [
+                  {
+                    "element": "화",
+                    "stem": "정",
+                    "tenGod": "편재",
+                    "weight": 0.7
+                  },
+                  {
+                    "element": "토",
+                    "stem": "기",
+                    "tenGod": "편관",
+                    "weight": 0.3
+                  }
+                ],
+                "month": [
+                  {
+                    "element": "목",
+                    "stem": "갑",
+                    "tenGod": "상관",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "화",
+                    "stem": "병",
+                    "tenGod": "정재",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "정관",
+                    "weight": 0.1
+                  }
+                ],
+                "year": [
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "정관",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "목",
+                    "stem": "을",
+                    "tenGod": "식신",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "비견",
+                    "weight": 0.1
+                  }
+                ]
+              },
+              "relationships": {
+                "branchBreaks": [
+                  {
+                    "members": [
+                      "인",
+                      "해"
+                    ],
+                    "positions": [
+                      "month",
+                      "day"
+                    ]
+                  }
+                ],
+                "branchClashes": [],
+                "branchCombinations": [
+                  {
+                    "members": [
+                      "인",
+                      "해"
+                    ],
+                    "positions": [
+                      "month",
+                      "day"
+                    ]
+                  }
+                ],
+                "branchHarms": [],
+                "branchPunishments": [],
+                "stemCombinations": [
+                  {
+                    "members": [
+                      "계",
+                      "무"
+                    ],
+                    "positions": [
+                      "day",
+                      "hour"
+                    ]
+                  }
+                ],
+                "threeHarmonies": []
+              },
+              "yinYangBalance": {
+                "basis": "eight-visible-characters",
+                "counts": {
+                  "양": 6,
+                  "음": 2
+                },
+                "percentages": {
+                  "양": 75,
+                  "음": 25
+                }
+              }
+            },
+            "tenGods": {
+              "day": {
+                "branch": "겁재",
+                "stem": "일간"
+              },
+              "hour": {
+                "branch": "편재",
+                "stem": "정관"
+              },
+              "month": {
+                "branch": "상관",
+                "stem": "정재"
+              },
+              "year": {
+                "branch": "정관",
+                "stem": "상관"
+              }
+            },
+            "voidBranches": [
+              "자",
+              "축"
+            ]
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "수",
+                "hanja": "亥",
+                "index": 11,
+                "korean": "해",
+                "yinYang": "음"
+              },
+              "cycleIndex": 59,
+              "hanja": "癸亥",
+              "korean": "계해",
+              "stem": {
+                "element": "수",
+                "hanja": "癸",
+                "index": 9,
+                "korean": "계",
+                "yinYang": "음"
+              }
+            },
+            "hour": {
+              "branch": {
+                "element": "화",
+                "hanja": "午",
+                "index": 6,
+                "korean": "오",
+                "yinYang": "양"
+              },
+              "cycleIndex": 54,
+              "hanja": "戊午",
+              "korean": "무오",
+              "stem": {
+                "element": "토",
+                "hanja": "戊",
+                "index": 4,
+                "korean": "무",
+                "yinYang": "양"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "목",
+                "hanja": "寅",
+                "index": 2,
+                "korean": "인",
+                "yinYang": "양"
+              },
+              "cycleIndex": 2,
+              "hanja": "丙寅",
+              "korean": "병인",
+              "stem": {
+                "element": "화",
+                "hanja": "丙",
+                "index": 2,
+                "korean": "병",
+                "yinYang": "양"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "토",
+                "hanja": "辰",
+                "index": 4,
+                "korean": "진",
+                "yinYang": "양"
+              },
+              "cycleIndex": 40,
+              "hanja": "甲辰",
+              "korean": "갑진",
+              "stem": {
+                "element": "목",
+                "hanja": "甲",
+                "index": 0,
+                "korean": "갑",
+                "yinYang": "양"
+              }
+            }
+          },
+          "warning_codes": []
+        },
+        "daily": {
+          "date": {
+            "calendar": "gregorian",
+            "day": 29,
+            "month": 2,
+            "year": 2024
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "수",
+                "hanja": "亥",
+                "index": 11,
+                "korean": "해",
+                "yinYang": "음"
+              },
+              "cycleIndex": 59,
+              "hanja": "癸亥",
+              "korean": "계해",
+              "stem": {
+                "element": "수",
+                "hanja": "癸",
+                "index": 9,
+                "korean": "계",
+                "yinYang": "음"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "목",
+                "hanja": "寅",
+                "index": 2,
+                "korean": "인",
+                "yinYang": "양"
+              },
+              "cycleIndex": 2,
+              "hanja": "丙寅",
+              "korean": "병인",
+              "stem": {
+                "element": "화",
+                "hanja": "丙",
+                "index": 2,
+                "korean": "병",
+                "yinYang": "양"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "토",
+                "hanja": "辰",
+                "index": 4,
+                "korean": "진",
+                "yinYang": "양"
+              },
+              "cycleIndex": 40,
+              "hanja": "甲辰",
+              "korean": "갑진",
+              "stem": {
+                "element": "목",
+                "hanja": "甲",
+                "index": 0,
+                "korean": "갑",
+                "yinYang": "양"
+              }
+            }
+          },
+          "relationships": {
+            "branchBreaks": [
+              {
+                "direction": "mutual",
+                "members": [
+                  "해",
+                  "인"
+                ],
+                "positions": [
+                  "transit-day",
+                  "natal-month"
+                ]
+              }
+            ],
+            "branchClashes": [],
+            "branchCombinations": [
+              {
+                "direction": "mutual",
+                "members": [
+                  "해",
+                  "인"
+                ],
+                "positions": [
+                  "transit-day",
+                  "natal-month"
+                ]
+              }
+            ],
+            "branchHarms": [],
+            "branchPunishments": [
+              {
+                "direction": "self",
+                "kind": "self",
+                "members": [
+                  "해",
+                  "해"
+                ],
+                "positions": [
+                  "transit-day",
+                  "natal-day"
+                ]
+              }
+            ],
+            "stemCombinations": [
+              {
+                "direction": "mutual",
+                "members": [
+                  "계",
+                  "무"
+                ],
+                "positions": [
+                  "transit-day",
+                  "natal-hour"
+                ]
+              }
+            ]
+          },
+          "representative": {
+            "civilDateTime": "2024-02-29T12:00:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "2024-02-29T12:00:00.000",
+            "epochMilliseconds": 1709175600000,
+            "instantUtc": "2024-02-29T03:00:00.000Z",
+            "offsetSeconds": 32400,
+            "policy": "local-civil-noon",
+            "solarTimeCorrection": null,
+            "timeZone": "Asia/Seoul"
+          },
+          "tenGods": {
+            "day": {
+              "branch": "겁재",
+              "stem": "비견"
+            },
+            "month": {
+              "branch": "상관",
+              "stem": "정재"
+            },
+            "year": {
+              "branch": "정관",
+              "stem": "상관"
+            }
+          },
+          "warning_codes": []
+        }
+      }
+    },
+    "invalid-non-leap-day": {
+      "outcome": "error",
+      "error_code": "INVALID_DATE"
+    },
+    "lichun-before-minute": {
+      "outcome": "success",
+      "semantic": {
+        "chart": {
+          "chronology": {
+            "civilDateTime": "2024-02-04T17:26:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "2024-02-04T17:26:00.000",
+            "daylightSaving": {
+              "isDaylightSavingTime": false,
+              "offsetSeconds": 0,
+              "representation": "iana-tzif-isdst-with-derived-save"
+            },
+            "disambiguation": "exact",
+            "epochMilliseconds": 1707035160000,
+            "gregorianDate": {
+              "calendar": "gregorian",
+              "day": 4,
+              "month": 2,
+              "year": 2024
+            },
+            "instantUtc": "2024-02-04T08:26:00.000Z",
+            "koreanLunarDate": {
+              "calendar": "korean-lunar",
+              "day": 25,
+              "month": 12,
+              "monthKind": "regular",
+              "year": 2023
+            },
+            "offsetSeconds": 32400,
+            "solarTimeCorrection": null,
+            "timeZone": "Asia/Seoul"
+          },
+          "facts": {
+            "dayMaster": {
+              "element": "토",
+              "hanja": "戊",
+              "index": 4,
+              "korean": "무",
+              "yinYang": "양"
+            },
+            "structure": {
+              "elementBalance": {
+                "percentages": {
+                  "금": 30,
+                  "목": 25,
+                  "수": 16.25,
+                  "토": 27.5,
+                  "화": 1.25
+                },
+                "profileId": "visible-stems-1-hidden-stems-normalized-v1",
+                "scores": {
+                  "금": 2.4,
+                  "목": 2,
+                  "수": 1.3,
+                  "토": 2.2,
+                  "화": 0.1
+                },
+                "strongest": [
+                  "금"
+                ],
+                "totalWeight": 8,
+                "weakest": [
+                  "화"
+                ]
+              },
+              "hiddenStems": {
+                "day": [
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "비견",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "상관",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "화",
+                    "stem": "정",
+                    "tenGod": "정인",
+                    "weight": 0.1
+                  }
+                ],
+                "hour": [
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "상관",
+                    "weight": 1
+                  }
+                ],
+                "month": [
+                  {
+                    "element": "토",
+                    "stem": "기",
+                    "tenGod": "겁재",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "정재",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "상관",
+                    "weight": 0.1
+                  }
+                ],
+                "year": [
+                  {
+                    "element": "목",
+                    "stem": "을",
+                    "tenGod": "정관",
+                    "weight": 1
+                  }
+                ]
+              },
+              "relationships": {
+                "branchBreaks": [],
+                "branchClashes": [
+                  {
+                    "members": [
+                      "묘",
+                      "유"
+                    ],
+                    "positions": [
+                      "year",
+                      "hour"
+                    ]
+                  }
+                ],
+                "branchCombinations": [
+                  {
+                    "members": [
+                      "묘",
+                      "술"
+                    ],
+                    "positions": [
+                      "year",
+                      "day"
+                    ]
+                  }
+                ],
+                "branchHarms": [
+                  {
+                    "members": [
+                      "술",
+                      "유"
+                    ],
+                    "positions": [
+                      "day",
+                      "hour"
+                    ]
+                  }
+                ],
+                "branchPunishments": [
+                  {
+                    "kind": "directed-cycle",
+                    "members": [
+                      "축",
+                      "술"
+                    ],
+                    "positions": [
+                      "month",
+                      "day"
+                    ]
+                  }
+                ],
+                "stemCombinations": [
+                  {
+                    "members": [
+                      "계",
+                      "무"
+                    ],
+                    "positions": [
+                      "year",
+                      "day"
+                    ]
+                  }
+                ],
+                "threeHarmonies": []
+              },
+              "yinYangBalance": {
+                "basis": "eight-visible-characters",
+                "counts": {
+                  "양": 2,
+                  "음": 6
+                },
+                "percentages": {
+                  "양": 25,
+                  "음": 75
+                }
+              }
+            },
+            "tenGods": {
+              "day": {
+                "branch": "비견",
+                "stem": "일간"
+              },
+              "hour": {
+                "branch": "상관",
+                "stem": "상관"
+              },
+              "month": {
+                "branch": "겁재",
+                "stem": "정관"
+              },
+              "year": {
+                "branch": "정관",
+                "stem": "정재"
+              }
+            },
+            "voidBranches": [
+              "진",
+              "사"
+            ]
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "토",
+                "hanja": "戌",
+                "index": 10,
+                "korean": "술",
+                "yinYang": "양"
+              },
+              "cycleIndex": 34,
+              "hanja": "戊戌",
+              "korean": "무술",
+              "stem": {
+                "element": "토",
+                "hanja": "戊",
+                "index": 4,
+                "korean": "무",
+                "yinYang": "양"
+              }
+            },
+            "hour": {
+              "branch": {
+                "element": "금",
+                "hanja": "酉",
+                "index": 9,
+                "korean": "유",
+                "yinYang": "음"
+              },
+              "cycleIndex": 57,
+              "hanja": "辛酉",
+              "korean": "신유",
+              "stem": {
+                "element": "금",
+                "hanja": "辛",
+                "index": 7,
+                "korean": "신",
+                "yinYang": "음"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "토",
+                "hanja": "丑",
+                "index": 1,
+                "korean": "축",
+                "yinYang": "음"
+              },
+              "cycleIndex": 1,
+              "hanja": "乙丑",
+              "korean": "을축",
+              "stem": {
+                "element": "목",
+                "hanja": "乙",
+                "index": 1,
+                "korean": "을",
+                "yinYang": "음"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "목",
+                "hanja": "卯",
+                "index": 3,
+                "korean": "묘",
+                "yinYang": "음"
+              },
+              "cycleIndex": 39,
+              "hanja": "癸卯",
+              "korean": "계묘",
+              "stem": {
+                "element": "수",
+                "hanja": "癸",
+                "index": 9,
+                "korean": "계",
+                "yinYang": "음"
+              }
+            }
+          },
+          "warning_codes": [
+            "BOUNDARY_WITHIN_SOURCE_UNCERTAINTY"
+          ]
+        },
+        "daily": null
+      }
+    },
+    "lichun-after-minute": {
+      "outcome": "success",
+      "semantic": {
+        "chart": {
+          "chronology": {
+            "civilDateTime": "2024-02-04T17:27:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "2024-02-04T17:27:00.000",
+            "daylightSaving": {
+              "isDaylightSavingTime": false,
+              "offsetSeconds": 0,
+              "representation": "iana-tzif-isdst-with-derived-save"
+            },
+            "disambiguation": "exact",
+            "epochMilliseconds": 1707035220000,
+            "gregorianDate": {
+              "calendar": "gregorian",
+              "day": 4,
+              "month": 2,
+              "year": 2024
+            },
+            "instantUtc": "2024-02-04T08:27:00.000Z",
+            "koreanLunarDate": {
+              "calendar": "korean-lunar",
+              "day": 25,
+              "month": 12,
+              "monthKind": "regular",
+              "year": 2023
+            },
+            "offsetSeconds": 32400,
+            "solarTimeCorrection": null,
+            "timeZone": "Asia/Seoul"
+          },
+          "facts": {
+            "dayMaster": {
+              "element": "토",
+              "hanja": "戊",
+              "index": 4,
+              "korean": "무",
+              "yinYang": "양"
+            },
+            "structure": {
+              "elementBalance": {
+                "percentages": {
+                  "금": 28.75,
+                  "목": 23.75,
+                  "수": 1.25,
+                  "토": 28.75,
+                  "화": 17.5
+                },
+                "profileId": "visible-stems-1-hidden-stems-normalized-v1",
+                "scores": {
+                  "금": 2.3,
+                  "목": 1.9,
+                  "수": 0.1,
+                  "토": 2.3,
+                  "화": 1.4
+                },
+                "strongest": [
+                  "토",
+                  "금"
+                ],
+                "totalWeight": 8,
+                "weakest": [
+                  "수"
+                ]
+              },
+              "hiddenStems": {
+                "day": [
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "비견",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "상관",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "화",
+                    "stem": "정",
+                    "tenGod": "정인",
+                    "weight": 0.1
+                  }
+                ],
+                "hour": [
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "상관",
+                    "weight": 1
+                  }
+                ],
+                "month": [
+                  {
+                    "element": "목",
+                    "stem": "갑",
+                    "tenGod": "편관",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "화",
+                    "stem": "병",
+                    "tenGod": "편인",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "비견",
+                    "weight": 0.1
+                  }
+                ],
+                "year": [
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "비견",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "목",
+                    "stem": "을",
+                    "tenGod": "정관",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "정재",
+                    "weight": 0.1
+                  }
+                ]
+              },
+              "relationships": {
+                "branchBreaks": [],
+                "branchClashes": [
+                  {
+                    "members": [
+                      "진",
+                      "술"
+                    ],
+                    "positions": [
+                      "year",
+                      "day"
+                    ]
+                  }
+                ],
+                "branchCombinations": [
+                  {
+                    "members": [
+                      "진",
+                      "유"
+                    ],
+                    "positions": [
+                      "year",
+                      "hour"
+                    ]
+                  }
+                ],
+                "branchHarms": [
+                  {
+                    "members": [
+                      "술",
+                      "유"
+                    ],
+                    "positions": [
+                      "day",
+                      "hour"
+                    ]
+                  }
+                ],
+                "branchPunishments": [],
+                "stemCombinations": [
+                  {
+                    "members": [
+                      "병",
+                      "신"
+                    ],
+                    "positions": [
+                      "month",
+                      "hour"
+                    ]
+                  }
+                ],
+                "threeHarmonies": []
+              },
+              "yinYangBalance": {
+                "basis": "eight-visible-characters",
+                "counts": {
+                  "양": 6,
+                  "음": 2
+                },
+                "percentages": {
+                  "양": 75,
+                  "음": 25
+                }
+              }
+            },
+            "tenGods": {
+              "day": {
+                "branch": "비견",
+                "stem": "일간"
+              },
+              "hour": {
+                "branch": "상관",
+                "stem": "상관"
+              },
+              "month": {
+                "branch": "편관",
+                "stem": "편인"
+              },
+              "year": {
+                "branch": "비견",
+                "stem": "편관"
+              }
+            },
+            "voidBranches": [
+              "진",
+              "사"
+            ]
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "토",
+                "hanja": "戌",
+                "index": 10,
+                "korean": "술",
+                "yinYang": "양"
+              },
+              "cycleIndex": 34,
+              "hanja": "戊戌",
+              "korean": "무술",
+              "stem": {
+                "element": "토",
+                "hanja": "戊",
+                "index": 4,
+                "korean": "무",
+                "yinYang": "양"
+              }
+            },
+            "hour": {
+              "branch": {
+                "element": "금",
+                "hanja": "酉",
+                "index": 9,
+                "korean": "유",
+                "yinYang": "음"
+              },
+              "cycleIndex": 57,
+              "hanja": "辛酉",
+              "korean": "신유",
+              "stem": {
+                "element": "금",
+                "hanja": "辛",
+                "index": 7,
+                "korean": "신",
+                "yinYang": "음"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "목",
+                "hanja": "寅",
+                "index": 2,
+                "korean": "인",
+                "yinYang": "양"
+              },
+              "cycleIndex": 2,
+              "hanja": "丙寅",
+              "korean": "병인",
+              "stem": {
+                "element": "화",
+                "hanja": "丙",
+                "index": 2,
+                "korean": "병",
+                "yinYang": "양"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "토",
+                "hanja": "辰",
+                "index": 4,
+                "korean": "진",
+                "yinYang": "양"
+              },
+              "cycleIndex": 40,
+              "hanja": "甲辰",
+              "korean": "갑진",
+              "stem": {
+                "element": "목",
+                "hanja": "甲",
+                "index": 0,
+                "korean": "갑",
+                "yinYang": "양"
+              }
+            }
+          },
+          "warning_codes": [
+            "BOUNDARY_WITHIN_SOURCE_UNCERTAINTY"
+          ]
+        },
+        "daily": null
+      }
+    },
+    "seoul-lmt-1908": {
+      "outcome": "success",
+      "semantic": {
+        "chart": {
+          "chronology": {
+            "civilDateTime": "1908-03-31T23:59:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "1908-03-31T23:59:00.000",
+            "daylightSaving": {
+              "isDaylightSavingTime": false,
+              "offsetSeconds": 0,
+              "representation": "iana-tzif-isdst-with-derived-save"
+            },
+            "disambiguation": "exact",
+            "epochMilliseconds": -1948782532000,
+            "gregorianDate": {
+              "calendar": "gregorian",
+              "day": 31,
+              "month": 3,
+              "year": 1908
+            },
+            "instantUtc": "1908-03-31T15:31:08.000Z",
+            "koreanLunarDate": {
+              "calendar": "korean-lunar",
+              "day": 29,
+              "month": 2,
+              "monthKind": "regular",
+              "year": 1908
+            },
+            "offsetSeconds": 30472,
+            "solarTimeCorrection": null,
+            "timeZone": "Asia/Seoul"
+          },
+          "facts": {
+            "dayMaster": {
+              "element": "목",
+              "hanja": "乙",
+              "index": 1,
+              "korean": "을",
+              "yinYang": "음"
+            },
+            "structure": {
+              "elementBalance": {
+                "percentages": {
+                  "금": 20,
+                  "목": 37.5,
+                  "수": 16.25,
+                  "토": 13.75,
+                  "화": 12.5
+                },
+                "profileId": "visible-stems-1-hidden-stems-normalized-v1",
+                "scores": {
+                  "금": 1.6,
+                  "목": 3,
+                  "수": 1.3,
+                  "토": 1.1,
+                  "화": 1
+                },
+                "strongest": [
+                  "목"
+                ],
+                "totalWeight": 8,
+                "weakest": [
+                  "화"
+                ]
+              },
+              "hiddenStems": {
+                "day": [
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "편관",
+                    "weight": 1
+                  }
+                ],
+                "hour": [
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "편인",
+                    "weight": 1
+                  }
+                ],
+                "month": [
+                  {
+                    "element": "목",
+                    "stem": "을",
+                    "tenGod": "비견",
+                    "weight": 1
+                  }
+                ],
+                "year": [
+                  {
+                    "element": "금",
+                    "stem": "경",
+                    "tenGod": "정관",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "수",
+                    "stem": "임",
+                    "tenGod": "정인",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "정재",
+                    "weight": 0.1
+                  }
+                ]
+              },
+              "relationships": {
+                "branchBreaks": [
+                  {
+                    "members": [
+                      "유",
+                      "자"
+                    ],
+                    "positions": [
+                      "day",
+                      "hour"
+                    ]
+                  }
+                ],
+                "branchClashes": [
+                  {
+                    "members": [
+                      "묘",
+                      "유"
+                    ],
+                    "positions": [
+                      "month",
+                      "day"
+                    ]
+                  }
+                ],
+                "branchCombinations": [],
+                "branchHarms": [],
+                "branchPunishments": [
+                  {
+                    "kind": "mutual",
+                    "members": [
+                      "자",
+                      "묘"
+                    ],
+                    "positions": [
+                      "hour",
+                      "month"
+                    ]
+                  }
+                ],
+                "stemCombinations": [],
+                "threeHarmonies": []
+              },
+              "yinYangBalance": {
+                "basis": "eight-visible-characters",
+                "counts": {
+                  "양": 4,
+                  "음": 4
+                },
+                "percentages": {
+                  "양": 50,
+                  "음": 50
+                }
+              }
+            },
+            "tenGods": {
+              "day": {
+                "branch": "편관",
+                "stem": "일간"
+              },
+              "hour": {
+                "branch": "편인",
+                "stem": "상관"
+              },
+              "month": {
+                "branch": "비견",
+                "stem": "비견"
+              },
+              "year": {
+                "branch": "정관",
+                "stem": "정재"
+              }
+            },
+            "voidBranches": [
+              "오",
+              "미"
+            ]
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "금",
+                "hanja": "酉",
+                "index": 9,
+                "korean": "유",
+                "yinYang": "음"
+              },
+              "cycleIndex": 21,
+              "hanja": "乙酉",
+              "korean": "을유",
+              "stem": {
+                "element": "목",
+                "hanja": "乙",
+                "index": 1,
+                "korean": "을",
+                "yinYang": "음"
+              }
+            },
+            "hour": {
+              "branch": {
+                "element": "수",
+                "hanja": "子",
+                "index": 0,
+                "korean": "자",
+                "yinYang": "양"
+              },
+              "cycleIndex": 12,
+              "hanja": "丙子",
+              "korean": "병자",
+              "stem": {
+                "element": "화",
+                "hanja": "丙",
+                "index": 2,
+                "korean": "병",
+                "yinYang": "양"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "목",
+                "hanja": "卯",
+                "index": 3,
+                "korean": "묘",
+                "yinYang": "음"
+              },
+              "cycleIndex": 51,
+              "hanja": "乙卯",
+              "korean": "을묘",
+              "stem": {
+                "element": "목",
+                "hanja": "乙",
+                "index": 1,
+                "korean": "을",
+                "yinYang": "음"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "금",
+                "hanja": "申",
+                "index": 8,
+                "korean": "신",
+                "yinYang": "양"
+              },
+              "cycleIndex": 44,
+              "hanja": "戊申",
+              "korean": "무신",
+              "stem": {
+                "element": "토",
+                "hanja": "戊",
+                "index": 4,
+                "korean": "무",
+                "yinYang": "양"
+              }
+            }
+          },
+          "warning_codes": [
+            "PRE_STANDARD_TIME_LOCAL_MEAN_APPROXIMATION"
+          ]
+        },
+        "daily": null
+      }
+    },
+    "seoul-standard-1908": {
+      "outcome": "success",
+      "semantic": {
+        "chart": {
+          "chronology": {
+            "civilDateTime": "1908-04-01T00:03:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "1908-04-01T00:03:00.000",
+            "daylightSaving": {
+              "isDaylightSavingTime": false,
+              "offsetSeconds": 0,
+              "representation": "iana-tzif-isdst-with-derived-save"
+            },
+            "disambiguation": "exact",
+            "epochMilliseconds": -1948782420000,
+            "gregorianDate": {
+              "calendar": "gregorian",
+              "day": 1,
+              "month": 4,
+              "year": 1908
+            },
+            "instantUtc": "1908-03-31T15:33:00.000Z",
+            "koreanLunarDate": {
+              "calendar": "korean-lunar",
+              "day": 1,
+              "month": 3,
+              "monthKind": "regular",
+              "year": 1908
+            },
+            "offsetSeconds": 30600,
+            "solarTimeCorrection": null,
+            "timeZone": "Asia/Seoul"
+          },
+          "facts": {
+            "dayMaster": {
+              "element": "화",
+              "hanja": "丙",
+              "index": 2,
+              "korean": "병",
+              "yinYang": "양"
+            },
+            "structure": {
+              "elementBalance": {
+                "percentages": {
+                  "금": 11.25,
+                  "목": 25,
+                  "수": 16.25,
+                  "토": 33.75,
+                  "화": 13.75
+                },
+                "profileId": "visible-stems-1-hidden-stems-normalized-v1",
+                "scores": {
+                  "금": 0.9,
+                  "목": 2,
+                  "수": 1.3,
+                  "토": 2.7,
+                  "화": 1.1
+                },
+                "strongest": [
+                  "토"
+                ],
+                "totalWeight": 8,
+                "weakest": [
+                  "금"
+                ]
+              },
+              "hiddenStems": {
+                "day": [
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "식신",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "정재",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "화",
+                    "stem": "정",
+                    "tenGod": "겁재",
+                    "weight": 0.1
+                  }
+                ],
+                "hour": [
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "정관",
+                    "weight": 1
+                  }
+                ],
+                "month": [
+                  {
+                    "element": "목",
+                    "stem": "을",
+                    "tenGod": "정인",
+                    "weight": 1
+                  }
+                ],
+                "year": [
+                  {
+                    "element": "금",
+                    "stem": "경",
+                    "tenGod": "편재",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "수",
+                    "stem": "임",
+                    "tenGod": "편관",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "식신",
+                    "weight": 0.1
+                  }
+                ]
+              },
+              "relationships": {
+                "branchBreaks": [],
+                "branchClashes": [],
+                "branchCombinations": [
+                  {
+                    "members": [
+                      "묘",
+                      "술"
+                    ],
+                    "positions": [
+                      "month",
+                      "day"
+                    ]
+                  }
+                ],
+                "branchHarms": [],
+                "branchPunishments": [
+                  {
+                    "kind": "mutual",
+                    "members": [
+                      "자",
+                      "묘"
+                    ],
+                    "positions": [
+                      "hour",
+                      "month"
+                    ]
+                  }
+                ],
+                "stemCombinations": [],
+                "threeHarmonies": []
+              },
+              "yinYangBalance": {
+                "basis": "eight-visible-characters",
+                "counts": {
+                  "양": 6,
+                  "음": 2
+                },
+                "percentages": {
+                  "양": 75,
+                  "음": 25
+                }
+              }
+            },
+            "tenGods": {
+              "day": {
+                "branch": "식신",
+                "stem": "일간"
+              },
+              "hour": {
+                "branch": "정관",
+                "stem": "식신"
+              },
+              "month": {
+                "branch": "정인",
+                "stem": "정인"
+              },
+              "year": {
+                "branch": "편재",
+                "stem": "식신"
+              }
+            },
+            "voidBranches": [
+              "오",
+              "미"
+            ]
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "토",
+                "hanja": "戌",
+                "index": 10,
+                "korean": "술",
+                "yinYang": "양"
+              },
+              "cycleIndex": 22,
+              "hanja": "丙戌",
+              "korean": "병술",
+              "stem": {
+                "element": "화",
+                "hanja": "丙",
+                "index": 2,
+                "korean": "병",
+                "yinYang": "양"
+              }
+            },
+            "hour": {
+              "branch": {
+                "element": "수",
+                "hanja": "子",
+                "index": 0,
+                "korean": "자",
+                "yinYang": "양"
+              },
+              "cycleIndex": 24,
+              "hanja": "戊子",
+              "korean": "무자",
+              "stem": {
+                "element": "토",
+                "hanja": "戊",
+                "index": 4,
+                "korean": "무",
+                "yinYang": "양"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "목",
+                "hanja": "卯",
+                "index": 3,
+                "korean": "묘",
+                "yinYang": "음"
+              },
+              "cycleIndex": 51,
+              "hanja": "乙卯",
+              "korean": "을묘",
+              "stem": {
+                "element": "목",
+                "hanja": "乙",
+                "index": 1,
+                "korean": "을",
+                "yinYang": "음"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "금",
+                "hanja": "申",
+                "index": 8,
+                "korean": "신",
+                "yinYang": "양"
+              },
+              "cycleIndex": 44,
+              "hanja": "戊申",
+              "korean": "무신",
+              "stem": {
+                "element": "토",
+                "hanja": "戊",
+                "index": 4,
+                "korean": "무",
+                "yinYang": "양"
+              }
+            }
+          },
+          "warning_codes": []
+        },
+        "daily": null
+      }
+    },
+    "seoul-gap-1908": {
+      "outcome": "error",
+      "error_code": "NONEXISTENT_LOCAL_TIME"
+    },
+    "seoul-before-1961": {
+      "outcome": "success",
+      "semantic": {
+        "chart": {
+          "chronology": {
+            "civilDateTime": "1961-08-09T23:59:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "1961-08-09T23:59:00.000",
+            "daylightSaving": {
+              "isDaylightSavingTime": false,
+              "offsetSeconds": 0,
+              "representation": "iana-tzif-isdst-with-derived-save"
+            },
+            "disambiguation": "exact",
+            "epochMilliseconds": -264933060000,
+            "gregorianDate": {
+              "calendar": "gregorian",
+              "day": 9,
+              "month": 8,
+              "year": 1961
+            },
+            "instantUtc": "1961-08-09T15:29:00.000Z",
+            "koreanLunarDate": {
+              "calendar": "korean-lunar",
+              "day": 28,
+              "month": 6,
+              "monthKind": "regular",
+              "year": 1961
+            },
+            "offsetSeconds": 30600,
+            "solarTimeCorrection": null,
+            "timeZone": "Asia/Seoul"
+          },
+          "facts": {
+            "dayMaster": {
+              "element": "목",
+              "hanja": "甲",
+              "index": 0,
+              "korean": "갑",
+              "yinYang": "양"
+            },
+            "structure": {
+              "elementBalance": {
+                "percentages": {
+                  "금": 25,
+                  "목": 25,
+                  "수": 20,
+                  "토": 16.25,
+                  "화": 13.75
+                },
+                "profileId": "visible-stems-1-hidden-stems-normalized-v1",
+                "scores": {
+                  "금": 2,
+                  "목": 2,
+                  "수": 1.6,
+                  "토": 1.3,
+                  "화": 1.1
+                },
+                "strongest": [
+                  "목",
+                  "금"
+                ],
+                "totalWeight": 8,
+                "weakest": [
+                  "화"
+                ]
+              },
+              "hiddenStems": {
+                "day": [
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "편재",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "정관",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "화",
+                    "stem": "정",
+                    "tenGod": "상관",
+                    "weight": 0.1
+                  }
+                ],
+                "hour": [
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "정인",
+                    "weight": 1
+                  }
+                ],
+                "month": [
+                  {
+                    "element": "금",
+                    "stem": "경",
+                    "tenGod": "편관",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "수",
+                    "stem": "임",
+                    "tenGod": "편인",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "편재",
+                    "weight": 0.1
+                  }
+                ],
+                "year": [
+                  {
+                    "element": "토",
+                    "stem": "기",
+                    "tenGod": "정재",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "정인",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "정관",
+                    "weight": 0.1
+                  }
+                ]
+              },
+              "relationships": {
+                "branchBreaks": [],
+                "branchClashes": [],
+                "branchCombinations": [
+                  {
+                    "members": [
+                      "축",
+                      "자"
+                    ],
+                    "positions": [
+                      "year",
+                      "hour"
+                    ]
+                  }
+                ],
+                "branchHarms": [],
+                "branchPunishments": [
+                  {
+                    "kind": "directed-cycle",
+                    "members": [
+                      "축",
+                      "술"
+                    ],
+                    "positions": [
+                      "year",
+                      "day"
+                    ]
+                  }
+                ],
+                "stemCombinations": [
+                  {
+                    "members": [
+                      "신",
+                      "병"
+                    ],
+                    "positions": [
+                      "year",
+                      "month"
+                    ]
+                  }
+                ],
+                "threeHarmonies": []
+              },
+              "yinYangBalance": {
+                "basis": "eight-visible-characters",
+                "counts": {
+                  "양": 6,
+                  "음": 2
+                },
+                "percentages": {
+                  "양": 75,
+                  "음": 25
+                }
+              }
+            },
+            "tenGods": {
+              "day": {
+                "branch": "편재",
+                "stem": "일간"
+              },
+              "hour": {
+                "branch": "정인",
+                "stem": "비견"
+              },
+              "month": {
+                "branch": "편관",
+                "stem": "식신"
+              },
+              "year": {
+                "branch": "정재",
+                "stem": "정관"
+              }
+            },
+            "voidBranches": [
+              "신",
+              "유"
+            ]
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "토",
+                "hanja": "戌",
+                "index": 10,
+                "korean": "술",
+                "yinYang": "양"
+              },
+              "cycleIndex": 10,
+              "hanja": "甲戌",
+              "korean": "갑술",
+              "stem": {
+                "element": "목",
+                "hanja": "甲",
+                "index": 0,
+                "korean": "갑",
+                "yinYang": "양"
+              }
+            },
+            "hour": {
+              "branch": {
+                "element": "수",
+                "hanja": "子",
+                "index": 0,
+                "korean": "자",
+                "yinYang": "양"
+              },
+              "cycleIndex": 0,
+              "hanja": "甲子",
+              "korean": "갑자",
+              "stem": {
+                "element": "목",
+                "hanja": "甲",
+                "index": 0,
+                "korean": "갑",
+                "yinYang": "양"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "금",
+                "hanja": "申",
+                "index": 8,
+                "korean": "신",
+                "yinYang": "양"
+              },
+              "cycleIndex": 32,
+              "hanja": "丙申",
+              "korean": "병신",
+              "stem": {
+                "element": "화",
+                "hanja": "丙",
+                "index": 2,
+                "korean": "병",
+                "yinYang": "양"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "토",
+                "hanja": "丑",
+                "index": 1,
+                "korean": "축",
+                "yinYang": "음"
+              },
+              "cycleIndex": 37,
+              "hanja": "辛丑",
+              "korean": "신축",
+              "stem": {
+                "element": "금",
+                "hanja": "辛",
+                "index": 7,
+                "korean": "신",
+                "yinYang": "음"
+              }
+            }
+          },
+          "warning_codes": []
+        },
+        "daily": null
+      }
+    },
+    "seoul-after-1961": {
+      "outcome": "success",
+      "semantic": {
+        "chart": {
+          "chronology": {
+            "civilDateTime": "1961-08-10T00:30:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "1961-08-10T00:30:00.000",
+            "daylightSaving": {
+              "isDaylightSavingTime": false,
+              "offsetSeconds": 0,
+              "representation": "iana-tzif-isdst-with-derived-save"
+            },
+            "disambiguation": "exact",
+            "epochMilliseconds": -264933000000,
+            "gregorianDate": {
+              "calendar": "gregorian",
+              "day": 10,
+              "month": 8,
+              "year": 1961
+            },
+            "instantUtc": "1961-08-09T15:30:00.000Z",
+            "koreanLunarDate": {
+              "calendar": "korean-lunar",
+              "day": 29,
+              "month": 6,
+              "monthKind": "regular",
+              "year": 1961
+            },
+            "offsetSeconds": 32400,
+            "solarTimeCorrection": null,
+            "timeZone": "Asia/Seoul"
+          },
+          "facts": {
+            "dayMaster": {
+              "element": "목",
+              "hanja": "乙",
+              "index": 1,
+              "korean": "을",
+              "yinYang": "음"
+            },
+            "structure": {
+              "elementBalance": {
+                "percentages": {
+                  "금": 21.25,
+                  "목": 16.25,
+                  "수": 28.75,
+                  "토": 8.75,
+                  "화": 25
+                },
+                "profileId": "visible-stems-1-hidden-stems-normalized-v1",
+                "scores": {
+                  "금": 1.7,
+                  "목": 1.3,
+                  "수": 2.3,
+                  "토": 0.7,
+                  "화": 2
+                },
+                "strongest": [
+                  "수"
+                ],
+                "totalWeight": 8,
+                "weakest": [
+                  "토"
+                ]
+              },
+              "hiddenStems": {
+                "day": [
+                  {
+                    "element": "수",
+                    "stem": "임",
+                    "tenGod": "정인",
+                    "weight": 0.7
+                  },
+                  {
+                    "element": "목",
+                    "stem": "갑",
+                    "tenGod": "겁재",
+                    "weight": 0.3
+                  }
+                ],
+                "hour": [
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "편인",
+                    "weight": 1
+                  }
+                ],
+                "month": [
+                  {
+                    "element": "금",
+                    "stem": "경",
+                    "tenGod": "정관",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "수",
+                    "stem": "임",
+                    "tenGod": "정인",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "정재",
+                    "weight": 0.1
+                  }
+                ],
+                "year": [
+                  {
+                    "element": "토",
+                    "stem": "기",
+                    "tenGod": "편재",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "편인",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "편관",
+                    "weight": 0.1
+                  }
+                ]
+              },
+              "relationships": {
+                "branchBreaks": [],
+                "branchClashes": [],
+                "branchCombinations": [
+                  {
+                    "members": [
+                      "축",
+                      "자"
+                    ],
+                    "positions": [
+                      "year",
+                      "hour"
+                    ]
+                  }
+                ],
+                "branchHarms": [
+                  {
+                    "members": [
+                      "신",
+                      "해"
+                    ],
+                    "positions": [
+                      "month",
+                      "day"
+                    ]
+                  }
+                ],
+                "branchPunishments": [],
+                "stemCombinations": [
+                  {
+                    "members": [
+                      "신",
+                      "병"
+                    ],
+                    "positions": [
+                      "year",
+                      "month"
+                    ]
+                  },
+                  {
+                    "members": [
+                      "신",
+                      "병"
+                    ],
+                    "positions": [
+                      "year",
+                      "hour"
+                    ]
+                  }
+                ],
+                "threeHarmonies": []
+              },
+              "yinYangBalance": {
+                "basis": "eight-visible-characters",
+                "counts": {
+                  "양": 4,
+                  "음": 4
+                },
+                "percentages": {
+                  "양": 50,
+                  "음": 50
+                }
+              }
+            },
+            "tenGods": {
+              "day": {
+                "branch": "정인",
+                "stem": "일간"
+              },
+              "hour": {
+                "branch": "편인",
+                "stem": "상관"
+              },
+              "month": {
+                "branch": "정관",
+                "stem": "상관"
+              },
+              "year": {
+                "branch": "편재",
+                "stem": "편관"
+              }
+            },
+            "voidBranches": [
+              "신",
+              "유"
+            ]
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "수",
+                "hanja": "亥",
+                "index": 11,
+                "korean": "해",
+                "yinYang": "음"
+              },
+              "cycleIndex": 11,
+              "hanja": "乙亥",
+              "korean": "을해",
+              "stem": {
+                "element": "목",
+                "hanja": "乙",
+                "index": 1,
+                "korean": "을",
+                "yinYang": "음"
+              }
+            },
+            "hour": {
+              "branch": {
+                "element": "수",
+                "hanja": "子",
+                "index": 0,
+                "korean": "자",
+                "yinYang": "양"
+              },
+              "cycleIndex": 12,
+              "hanja": "丙子",
+              "korean": "병자",
+              "stem": {
+                "element": "화",
+                "hanja": "丙",
+                "index": 2,
+                "korean": "병",
+                "yinYang": "양"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "금",
+                "hanja": "申",
+                "index": 8,
+                "korean": "신",
+                "yinYang": "양"
+              },
+              "cycleIndex": 32,
+              "hanja": "丙申",
+              "korean": "병신",
+              "stem": {
+                "element": "화",
+                "hanja": "丙",
+                "index": 2,
+                "korean": "병",
+                "yinYang": "양"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "토",
+                "hanja": "丑",
+                "index": 1,
+                "korean": "축",
+                "yinYang": "음"
+              },
+              "cycleIndex": 37,
+              "hanja": "辛丑",
+              "korean": "신축",
+              "stem": {
+                "element": "금",
+                "hanja": "辛",
+                "index": 7,
+                "korean": "신",
+                "yinYang": "음"
+              }
+            }
+          },
+          "warning_codes": []
+        },
+        "daily": null
+      }
+    },
+    "seoul-gap-1961": {
+      "outcome": "error",
+      "error_code": "NONEXISTENT_LOCAL_TIME"
+    },
+    "ny-dst-before": {
+      "outcome": "success",
+      "semantic": {
+        "chart": {
+          "chronology": {
+            "civilDateTime": "2024-03-10T01:59:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "2024-03-10T01:59:00.000",
+            "daylightSaving": {
+              "isDaylightSavingTime": false,
+              "offsetSeconds": 0,
+              "representation": "iana-tzif-isdst-with-derived-save"
+            },
+            "disambiguation": "exact",
+            "epochMilliseconds": 1710053940000,
+            "gregorianDate": {
+              "calendar": "gregorian",
+              "day": 10,
+              "month": 3,
+              "year": 2024
+            },
+            "instantUtc": "2024-03-10T06:59:00.000Z",
+            "koreanLunarDate": {
+              "calendar": "korean-lunar",
+              "day": 1,
+              "month": 2,
+              "monthKind": "regular",
+              "year": 2024
+            },
+            "offsetSeconds": -18000,
+            "solarTimeCorrection": null,
+            "timeZone": "America/New_York"
+          },
+          "facts": {
+            "dayMaster": {
+              "element": "수",
+              "hanja": "癸",
+              "index": 9,
+              "korean": "계",
+              "yinYang": "음"
+            },
+            "structure": {
+              "elementBalance": {
+                "percentages": {
+                  "금": 13.75,
+                  "목": 28.75,
+                  "수": 30,
+                  "토": 15,
+                  "화": 12.5
+                },
+                "profileId": "visible-stems-1-hidden-stems-normalized-v1",
+                "scores": {
+                  "금": 1.1,
+                  "목": 2.3,
+                  "수": 2.4,
+                  "토": 1.2,
+                  "화": 1
+                },
+                "strongest": [
+                  "수"
+                ],
+                "totalWeight": 8,
+                "weakest": [
+                  "화"
+                ]
+              },
+              "hiddenStems": {
+                "day": [
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "편인",
+                    "weight": 1
+                  }
+                ],
+                "hour": [
+                  {
+                    "element": "토",
+                    "stem": "기",
+                    "tenGod": "편관",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "비견",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "편인",
+                    "weight": 0.1
+                  }
+                ],
+                "month": [
+                  {
+                    "element": "목",
+                    "stem": "을",
+                    "tenGod": "식신",
+                    "weight": 1
+                  }
+                ],
+                "year": [
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "정관",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "목",
+                    "stem": "을",
+                    "tenGod": "식신",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "비견",
+                    "weight": 0.1
+                  }
+                ]
+              },
+              "relationships": {
+                "branchBreaks": [
+                  {
+                    "members": [
+                      "진",
+                      "축"
+                    ],
+                    "positions": [
+                      "year",
+                      "hour"
+                    ]
+                  }
+                ],
+                "branchClashes": [
+                  {
+                    "members": [
+                      "묘",
+                      "유"
+                    ],
+                    "positions": [
+                      "month",
+                      "day"
+                    ]
+                  }
+                ],
+                "branchCombinations": [
+                  {
+                    "members": [
+                      "진",
+                      "유"
+                    ],
+                    "positions": [
+                      "year",
+                      "day"
+                    ]
+                  }
+                ],
+                "branchHarms": [
+                  {
+                    "members": [
+                      "진",
+                      "묘"
+                    ],
+                    "positions": [
+                      "year",
+                      "month"
+                    ]
+                  }
+                ],
+                "branchPunishments": [],
+                "stemCombinations": [],
+                "threeHarmonies": []
+              },
+              "yinYangBalance": {
+                "basis": "eight-visible-characters",
+                "counts": {
+                  "양": 2,
+                  "음": 6
+                },
+                "percentages": {
+                  "양": 25,
+                  "음": 75
+                }
+              }
+            },
+            "tenGods": {
+              "day": {
+                "branch": "편인",
+                "stem": "일간"
+              },
+              "hour": {
+                "branch": "편관",
+                "stem": "비견"
+              },
+              "month": {
+                "branch": "식신",
+                "stem": "편재"
+              },
+              "year": {
+                "branch": "정관",
+                "stem": "상관"
+              }
+            },
+            "voidBranches": [
+              "술",
+              "해"
+            ]
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "금",
+                "hanja": "酉",
+                "index": 9,
+                "korean": "유",
+                "yinYang": "음"
+              },
+              "cycleIndex": 9,
+              "hanja": "癸酉",
+              "korean": "계유",
+              "stem": {
+                "element": "수",
+                "hanja": "癸",
+                "index": 9,
+                "korean": "계",
+                "yinYang": "음"
+              }
+            },
+            "hour": {
+              "branch": {
+                "element": "토",
+                "hanja": "丑",
+                "index": 1,
+                "korean": "축",
+                "yinYang": "음"
+              },
+              "cycleIndex": 49,
+              "hanja": "癸丑",
+              "korean": "계축",
+              "stem": {
+                "element": "수",
+                "hanja": "癸",
+                "index": 9,
+                "korean": "계",
+                "yinYang": "음"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "목",
+                "hanja": "卯",
+                "index": 3,
+                "korean": "묘",
+                "yinYang": "음"
+              },
+              "cycleIndex": 3,
+              "hanja": "丁卯",
+              "korean": "정묘",
+              "stem": {
+                "element": "화",
+                "hanja": "丁",
+                "index": 3,
+                "korean": "정",
+                "yinYang": "음"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "토",
+                "hanja": "辰",
+                "index": 4,
+                "korean": "진",
+                "yinYang": "양"
+              },
+              "cycleIndex": 40,
+              "hanja": "甲辰",
+              "korean": "갑진",
+              "stem": {
+                "element": "목",
+                "hanja": "甲",
+                "index": 0,
+                "korean": "갑",
+                "yinYang": "양"
+              }
+            }
+          },
+          "warning_codes": []
+        },
+        "daily": null
+      }
+    },
+    "ny-dst-gap": {
+      "outcome": "error",
+      "error_code": "NONEXISTENT_LOCAL_TIME"
+    },
+    "ny-dst-after": {
+      "outcome": "success",
+      "semantic": {
+        "chart": {
+          "chronology": {
+            "civilDateTime": "2024-03-10T03:00:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "2024-03-10T03:00:00.000",
+            "daylightSaving": {
+              "isDaylightSavingTime": true,
+              "offsetSeconds": 3600,
+              "representation": "iana-tzif-isdst-with-derived-save"
+            },
+            "disambiguation": "exact",
+            "epochMilliseconds": 1710054000000,
+            "gregorianDate": {
+              "calendar": "gregorian",
+              "day": 10,
+              "month": 3,
+              "year": 2024
+            },
+            "instantUtc": "2024-03-10T07:00:00.000Z",
+            "koreanLunarDate": {
+              "calendar": "korean-lunar",
+              "day": 1,
+              "month": 2,
+              "monthKind": "regular",
+              "year": 2024
+            },
+            "offsetSeconds": -14400,
+            "solarTimeCorrection": null,
+            "timeZone": "America/New_York"
+          },
+          "facts": {
+            "dayMaster": {
+              "element": "수",
+              "hanja": "癸",
+              "index": 9,
+              "korean": "계",
+              "yinYang": "음"
+            },
+            "structure": {
+              "elementBalance": {
+                "percentages": {
+                  "금": 12.5,
+                  "목": 48.75,
+                  "수": 13.75,
+                  "토": 8.75,
+                  "화": 16.25
+                },
+                "profileId": "visible-stems-1-hidden-stems-normalized-v1",
+                "scores": {
+                  "금": 1,
+                  "목": 3.9,
+                  "수": 1.1,
+                  "토": 0.7,
+                  "화": 1.3
+                },
+                "strongest": [
+                  "목"
+                ],
+                "totalWeight": 8,
+                "weakest": [
+                  "토"
+                ]
+              },
+              "hiddenStems": {
+                "day": [
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "편인",
+                    "weight": 1
+                  }
+                ],
+                "hour": [
+                  {
+                    "element": "목",
+                    "stem": "갑",
+                    "tenGod": "상관",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "화",
+                    "stem": "병",
+                    "tenGod": "정재",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "정관",
+                    "weight": 0.1
+                  }
+                ],
+                "month": [
+                  {
+                    "element": "목",
+                    "stem": "을",
+                    "tenGod": "식신",
+                    "weight": 1
+                  }
+                ],
+                "year": [
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "정관",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "목",
+                    "stem": "을",
+                    "tenGod": "식신",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "비견",
+                    "weight": 0.1
+                  }
+                ]
+              },
+              "relationships": {
+                "branchBreaks": [],
+                "branchClashes": [
+                  {
+                    "members": [
+                      "묘",
+                      "유"
+                    ],
+                    "positions": [
+                      "month",
+                      "day"
+                    ]
+                  }
+                ],
+                "branchCombinations": [
+                  {
+                    "members": [
+                      "진",
+                      "유"
+                    ],
+                    "positions": [
+                      "year",
+                      "day"
+                    ]
+                  }
+                ],
+                "branchHarms": [
+                  {
+                    "members": [
+                      "진",
+                      "묘"
+                    ],
+                    "positions": [
+                      "year",
+                      "month"
+                    ]
+                  }
+                ],
+                "branchPunishments": [],
+                "stemCombinations": [],
+                "threeHarmonies": []
+              },
+              "yinYangBalance": {
+                "basis": "eight-visible-characters",
+                "counts": {
+                  "양": 4,
+                  "음": 4
+                },
+                "percentages": {
+                  "양": 50,
+                  "음": 50
+                }
+              }
+            },
+            "tenGods": {
+              "day": {
+                "branch": "편인",
+                "stem": "일간"
+              },
+              "hour": {
+                "branch": "상관",
+                "stem": "상관"
+              },
+              "month": {
+                "branch": "식신",
+                "stem": "편재"
+              },
+              "year": {
+                "branch": "정관",
+                "stem": "상관"
+              }
+            },
+            "voidBranches": [
+              "술",
+              "해"
+            ]
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "금",
+                "hanja": "酉",
+                "index": 9,
+                "korean": "유",
+                "yinYang": "음"
+              },
+              "cycleIndex": 9,
+              "hanja": "癸酉",
+              "korean": "계유",
+              "stem": {
+                "element": "수",
+                "hanja": "癸",
+                "index": 9,
+                "korean": "계",
+                "yinYang": "음"
+              }
+            },
+            "hour": {
+              "branch": {
+                "element": "목",
+                "hanja": "寅",
+                "index": 2,
+                "korean": "인",
+                "yinYang": "양"
+              },
+              "cycleIndex": 50,
+              "hanja": "甲寅",
+              "korean": "갑인",
+              "stem": {
+                "element": "목",
+                "hanja": "甲",
+                "index": 0,
+                "korean": "갑",
+                "yinYang": "양"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "목",
+                "hanja": "卯",
+                "index": 3,
+                "korean": "묘",
+                "yinYang": "음"
+              },
+              "cycleIndex": 3,
+              "hanja": "丁卯",
+              "korean": "정묘",
+              "stem": {
+                "element": "화",
+                "hanja": "丁",
+                "index": 3,
+                "korean": "정",
+                "yinYang": "음"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "토",
+                "hanja": "辰",
+                "index": 4,
+                "korean": "진",
+                "yinYang": "양"
+              },
+              "cycleIndex": 40,
+              "hanja": "甲辰",
+              "korean": "갑진",
+              "stem": {
+                "element": "목",
+                "hanja": "甲",
+                "index": 0,
+                "korean": "갑",
+                "yinYang": "양"
+              }
+            }
+          },
+          "warning_codes": []
+        },
+        "daily": null
+      }
+    },
+    "ny-dst-fold": {
+      "outcome": "error",
+      "error_code": "AMBIGUOUS_LOCAL_TIME"
+    },
+    "ny-standard-after-fold": {
+      "outcome": "success",
+      "semantic": {
+        "chart": {
+          "chronology": {
+            "civilDateTime": "2024-11-03T02:30:00.000",
+            "dayHourClock": "civil",
+            "dayHourDateTime": "2024-11-03T02:30:00.000",
+            "daylightSaving": {
+              "isDaylightSavingTime": false,
+              "offsetSeconds": 0,
+              "representation": "iana-tzif-isdst-with-derived-save"
+            },
+            "disambiguation": "exact",
+            "epochMilliseconds": 1730619000000,
+            "gregorianDate": {
+              "calendar": "gregorian",
+              "day": 3,
+              "month": 11,
+              "year": 2024
+            },
+            "instantUtc": "2024-11-03T07:30:00.000Z",
+            "koreanLunarDate": {
+              "calendar": "korean-lunar",
+              "day": 3,
+              "month": 10,
+              "monthKind": "regular",
+              "year": 2024
+            },
+            "offsetSeconds": -18000,
+            "solarTimeCorrection": null,
+            "timeZone": "America/New_York"
+          },
+          "facts": {
+            "dayMaster": {
+              "element": "금",
+              "hanja": "辛",
+              "index": 7,
+              "korean": "신",
+              "yinYang": "음"
+            },
+            "structure": {
+              "elementBalance": {
+                "percentages": {
+                  "금": 17.5,
+                  "목": 30,
+                  "수": 5,
+                  "토": 42.5,
+                  "화": 5
+                },
+                "profileId": "visible-stems-1-hidden-stems-normalized-v1",
+                "scores": {
+                  "금": 1.4,
+                  "목": 2.4,
+                  "수": 0.4,
+                  "토": 3.4,
+                  "화": 0.4
+                },
+                "strongest": [
+                  "토"
+                ],
+                "totalWeight": 8,
+                "weakest": [
+                  "화",
+                  "수"
+                ]
+              },
+              "hiddenStems": {
+                "day": [
+                  {
+                    "element": "토",
+                    "stem": "기",
+                    "tenGod": "편인",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "화",
+                    "stem": "정",
+                    "tenGod": "편관",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "목",
+                    "stem": "을",
+                    "tenGod": "편재",
+                    "weight": 0.1
+                  }
+                ],
+                "hour": [
+                  {
+                    "element": "토",
+                    "stem": "기",
+                    "tenGod": "편인",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "식신",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "비견",
+                    "weight": 0.1
+                  }
+                ],
+                "month": [
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "정인",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "금",
+                    "stem": "신",
+                    "tenGod": "비견",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "화",
+                    "stem": "정",
+                    "tenGod": "편관",
+                    "weight": 0.1
+                  }
+                ],
+                "year": [
+                  {
+                    "element": "토",
+                    "stem": "무",
+                    "tenGod": "정인",
+                    "weight": 0.6
+                  },
+                  {
+                    "element": "목",
+                    "stem": "을",
+                    "tenGod": "편재",
+                    "weight": 0.3
+                  },
+                  {
+                    "element": "수",
+                    "stem": "계",
+                    "tenGod": "식신",
+                    "weight": 0.1
+                  }
+                ]
+              },
+              "relationships": {
+                "branchBreaks": [
+                  {
+                    "members": [
+                      "진",
+                      "축"
+                    ],
+                    "positions": [
+                      "year",
+                      "hour"
+                    ]
+                  },
+                  {
+                    "members": [
+                      "술",
+                      "미"
+                    ],
+                    "positions": [
+                      "month",
+                      "day"
+                    ]
+                  }
+                ],
+                "branchClashes": [
+                  {
+                    "members": [
+                      "진",
+                      "술"
+                    ],
+                    "positions": [
+                      "year",
+                      "month"
+                    ]
+                  },
+                  {
+                    "members": [
+                      "미",
+                      "축"
+                    ],
+                    "positions": [
+                      "day",
+                      "hour"
+                    ]
+                  }
+                ],
+                "branchCombinations": [],
+                "branchHarms": [],
+                "branchPunishments": [
+                  {
+                    "kind": "directed-cycle",
+                    "members": [
+                      "축",
+                      "술"
+                    ],
+                    "positions": [
+                      "hour",
+                      "month"
+                    ]
+                  },
+                  {
+                    "kind": "directed-cycle",
+                    "members": [
+                      "술",
+                      "미"
+                    ],
+                    "positions": [
+                      "month",
+                      "day"
+                    ]
+                  },
+                  {
+                    "kind": "directed-cycle",
+                    "members": [
+                      "미",
+                      "축"
+                    ],
+                    "positions": [
+                      "day",
+                      "hour"
+                    ]
+                  }
+                ],
+                "stemCombinations": [
+                  {
+                    "members": [
+                      "갑",
+                      "기"
+                    ],
+                    "positions": [
+                      "year",
+                      "hour"
+                    ]
+                  },
+                  {
+                    "members": [
+                      "갑",
+                      "기"
+                    ],
+                    "positions": [
+                      "month",
+                      "hour"
+                    ]
+                  }
+                ],
+                "threeHarmonies": []
+              },
+              "yinYangBalance": {
+                "basis": "eight-visible-characters",
+                "counts": {
+                  "양": 4,
+                  "음": 4
+                },
+                "percentages": {
+                  "양": 50,
+                  "음": 50
+                }
+              }
+            },
+            "tenGods": {
+              "day": {
+                "branch": "편인",
+                "stem": "일간"
+              },
+              "hour": {
+                "branch": "편인",
+                "stem": "편인"
+              },
+              "month": {
+                "branch": "정인",
+                "stem": "정재"
+              },
+              "year": {
+                "branch": "정인",
+                "stem": "정재"
+              }
+            },
+            "voidBranches": [
+              "술",
+              "해"
+            ]
+          },
+          "pillars": {
+            "day": {
+              "branch": {
+                "element": "토",
+                "hanja": "未",
+                "index": 7,
+                "korean": "미",
+                "yinYang": "음"
+              },
+              "cycleIndex": 7,
+              "hanja": "辛未",
+              "korean": "신미",
+              "stem": {
+                "element": "금",
+                "hanja": "辛",
+                "index": 7,
+                "korean": "신",
+                "yinYang": "음"
+              }
+            },
+            "hour": {
+              "branch": {
+                "element": "토",
+                "hanja": "丑",
+                "index": 1,
+                "korean": "축",
+                "yinYang": "음"
+              },
+              "cycleIndex": 25,
+              "hanja": "己丑",
+              "korean": "기축",
+              "stem": {
+                "element": "토",
+                "hanja": "己",
+                "index": 5,
+                "korean": "기",
+                "yinYang": "음"
+              }
+            },
+            "month": {
+              "branch": {
+                "element": "토",
+                "hanja": "戌",
+                "index": 10,
+                "korean": "술",
+                "yinYang": "양"
+              },
+              "cycleIndex": 10,
+              "hanja": "甲戌",
+              "korean": "갑술",
+              "stem": {
+                "element": "목",
+                "hanja": "甲",
+                "index": 0,
+                "korean": "갑",
+                "yinYang": "양"
+              }
+            },
+            "year": {
+              "branch": {
+                "element": "토",
+                "hanja": "辰",
+                "index": 4,
+                "korean": "진",
+                "yinYang": "양"
+              },
+              "cycleIndex": 40,
+              "hanja": "甲辰",
+              "korean": "갑진",
+              "stem": {
+                "element": "목",
+                "hanja": "甲",
+                "index": 0,
+                "korean": "갑",
+                "yinYang": "양"
+              }
+            }
+          },
+          "warning_codes": []
+        },
+        "daily": null
+      }
+    },
+    "invalid-timezone": {
+      "outcome": "error",
+      "error_code": "UNKNOWN_TIME_ZONE"
+    },
+    "unknown-time": {
+      "outcome": "error",
+      "error_code": "SAJU_ADAPTER_ERROR"
+    }
+  }
+}

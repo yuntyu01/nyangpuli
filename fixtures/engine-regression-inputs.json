@@ -1,0 +1,388 @@
+{
+  "schema_version": 1,
+  "purpose": "pinned_upstream_regression_not_independent_accuracy",
+  "source_revision": "a8c0cf64adfde8fb1ce253112529edd8e90cc94b",
+  "rules": {
+    "ziHourPolicy": "civilMidnight",
+    "dayHourClock": "civil"
+  },
+  "boundary_provenance": {
+    "local": "2024-02-04T17:26:49.630+09:00",
+    "utc": "2024-02-04T08:26:49.630Z",
+    "source": "OhMySaju src/timing/calculate-saju-timing.test.ts and audit.evidence.lichun",
+    "limitation": "Bridge accepts minute precision only. 17:26 and 17:27 bracket the computed instant; exact-millisecond inclusion is not covered. Upstream uncertaintyMilliseconds=1500000 remains meaningful."
+  },
+  "cases": [
+    {
+      "id": "ordinary-daily",
+      "label": "일반 출생 + 지정 날짜 일진",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 1997,
+          "month": 6,
+          "day": 15,
+          "hour": 14,
+          "minute": 30,
+          "time_zone": "Asia/Seoul"
+        },
+        "date": {
+          "year": 2026,
+          "month": 10,
+          "day": 28
+        }
+      },
+      "expected_outcome": "success",
+      "assertions": {
+        "chart.chronology.offsetSeconds": 32400,
+        "daily.representative.policy": "local-civil-noon",
+        "daily.representative.instantUtc": "2026-10-28T03:00:00.000Z"
+      }
+    },
+    {
+      "id": "civil-before-midnight",
+      "label": "민간 자정 직전",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 2024,
+          "month": 1,
+          "day": 1,
+          "hour": 23,
+          "minute": 59,
+          "time_zone": "Asia/Seoul"
+        }
+      },
+      "expected_outcome": "success"
+    },
+    {
+      "id": "civil-midnight",
+      "label": "민간 자정 직후",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 2024,
+          "month": 1,
+          "day": 2,
+          "hour": 0,
+          "minute": 0,
+          "time_zone": "Asia/Seoul"
+        }
+      },
+      "expected_outcome": "success"
+    },
+    {
+      "id": "leap-day",
+      "label": "윤일 출생 + 윤일 일진",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 2024,
+          "month": 2,
+          "day": 29,
+          "hour": 12,
+          "minute": 0,
+          "time_zone": "Asia/Seoul"
+        },
+        "date": {
+          "year": 2024,
+          "month": 2,
+          "day": 29
+        }
+      },
+      "expected_outcome": "success"
+    },
+    {
+      "id": "invalid-non-leap-day",
+      "label": "평년 2월 29일 거부",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 2023,
+          "month": 2,
+          "day": 29,
+          "hour": 12,
+          "minute": 0,
+          "time_zone": "Asia/Seoul"
+        }
+      },
+      "expected_outcome": "error",
+      "expected_error": "INVALID_DATE"
+    },
+    {
+      "id": "lichun-before-minute",
+      "label": "원본 입춘 경계 앞 분",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 2024,
+          "month": 2,
+          "day": 4,
+          "hour": 17,
+          "minute": 26,
+          "time_zone": "Asia/Seoul"
+        }
+      },
+      "expected_outcome": "success",
+      "assertions": {
+        "chart.pillars.year.hanja": "癸卯",
+        "chart.pillars.month.hanja": "乙丑"
+      }
+    },
+    {
+      "id": "lichun-after-minute",
+      "label": "원본 입춘 경계 뒤 분",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 2024,
+          "month": 2,
+          "day": 4,
+          "hour": 17,
+          "minute": 27,
+          "time_zone": "Asia/Seoul"
+        }
+      },
+      "expected_outcome": "success",
+      "assertions": {
+        "chart.pillars.year.hanja": "甲辰",
+        "chart.pillars.month.hanja": "丙寅"
+      }
+    },
+    {
+      "id": "seoul-lmt-1908",
+      "label": "1908 표준시 이전 서울 LMT",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 1908,
+          "month": 3,
+          "day": 31,
+          "hour": 23,
+          "minute": 59,
+          "time_zone": "Asia/Seoul"
+        }
+      },
+      "expected_outcome": "success",
+      "assertions": {
+        "chart.chronology.offsetSeconds": 30472
+      }
+    },
+    {
+      "id": "seoul-standard-1908",
+      "label": "1908 표준시 적용 후",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 1908,
+          "month": 4,
+          "day": 1,
+          "hour": 0,
+          "minute": 3,
+          "time_zone": "Asia/Seoul"
+        }
+      },
+      "expected_outcome": "success",
+      "assertions": {
+        "chart.chronology.offsetSeconds": 30600
+      }
+    },
+    {
+      "id": "seoul-gap-1908",
+      "label": "1908 표준시 전환 없는 시각",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 1908,
+          "month": 4,
+          "day": 1,
+          "hour": 0,
+          "minute": 1,
+          "time_zone": "Asia/Seoul"
+        }
+      },
+      "expected_outcome": "error",
+      "expected_error": "NONEXISTENT_LOCAL_TIME"
+    },
+    {
+      "id": "seoul-before-1961",
+      "label": "1961 UTC+09 재도입 전",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 1961,
+          "month": 8,
+          "day": 9,
+          "hour": 23,
+          "minute": 59,
+          "time_zone": "Asia/Seoul"
+        }
+      },
+      "expected_outcome": "success",
+      "assertions": {
+        "chart.chronology.offsetSeconds": 30600
+      }
+    },
+    {
+      "id": "seoul-after-1961",
+      "label": "1961 UTC+09 재도입 후",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 1961,
+          "month": 8,
+          "day": 10,
+          "hour": 0,
+          "minute": 30,
+          "time_zone": "Asia/Seoul"
+        }
+      },
+      "expected_outcome": "success",
+      "assertions": {
+        "chart.chronology.offsetSeconds": 32400
+      }
+    },
+    {
+      "id": "seoul-gap-1961",
+      "label": "1961 시간대 전환 없는 시각",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 1961,
+          "month": 8,
+          "day": 10,
+          "hour": 0,
+          "minute": 15,
+          "time_zone": "Asia/Seoul"
+        }
+      },
+      "expected_outcome": "error",
+      "expected_error": "NONEXISTENT_LOCAL_TIME"
+    },
+    {
+      "id": "ny-dst-before",
+      "label": "미국 DST 시작 전 유효 시각",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 2024,
+          "month": 3,
+          "day": 10,
+          "hour": 1,
+          "minute": 59,
+          "time_zone": "America/New_York"
+        }
+      },
+      "expected_outcome": "success",
+      "assertions": {
+        "chart.chronology.offsetSeconds": -18000
+      }
+    },
+    {
+      "id": "ny-dst-gap",
+      "label": "미국 DST 시작 때 없는 시각",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 2024,
+          "month": 3,
+          "day": 10,
+          "hour": 2,
+          "minute": 30,
+          "time_zone": "America/New_York"
+        }
+      },
+      "expected_outcome": "error",
+      "expected_error": "NONEXISTENT_LOCAL_TIME"
+    },
+    {
+      "id": "ny-dst-after",
+      "label": "미국 DST 시작 후 유효 시각",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 2024,
+          "month": 3,
+          "day": 10,
+          "hour": 3,
+          "minute": 0,
+          "time_zone": "America/New_York"
+        }
+      },
+      "expected_outcome": "success",
+      "assertions": {
+        "chart.chronology.offsetSeconds": -14400
+      }
+    },
+    {
+      "id": "ny-dst-fold",
+      "label": "미국 DST 종료 때 중복 시각 거부",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 2024,
+          "month": 11,
+          "day": 3,
+          "hour": 1,
+          "minute": 30,
+          "time_zone": "America/New_York"
+        }
+      },
+      "expected_outcome": "error",
+      "expected_error": "AMBIGUOUS_LOCAL_TIME"
+    },
+    {
+      "id": "ny-standard-after-fold",
+      "label": "미국 DST 종료 후 유효 시각",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 2024,
+          "month": 11,
+          "day": 3,
+          "hour": 2,
+          "minute": 30,
+          "time_zone": "America/New_York"
+        }
+      },
+      "expected_outcome": "success",
+      "assertions": {
+        "chart.chronology.offsetSeconds": -18000
+      }
+    },
+    {
+      "id": "invalid-timezone",
+      "label": "알 수 없는 시간대 거부",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 1997,
+          "month": 6,
+          "day": 15,
+          "hour": 14,
+          "minute": 30,
+          "time_zone": "Mars/Olympus"
+        }
+      },
+      "expected_outcome": "error",
+      "expected_error": "UNKNOWN_TIME_ZONE"
+    },
+    {
+      "id": "unknown-time",
+      "label": "출생시간 미상을 임의 정오로 대체하지 않음",
+      "input": {
+        "question": "합성 회귀시험: 계산된 명식과 날짜만 확인합니다.",
+        "birth": {
+          "year": 1997,
+          "month": 6,
+          "day": 15,
+          "hour": null,
+          "minute": 0,
+          "time_zone": "Asia/Seoul"
+        }
+      },
+      "expected_outcome": "error",
+      "expected_error": "SAJU_ADAPTER_ERROR"
+    }
+  ]
+}

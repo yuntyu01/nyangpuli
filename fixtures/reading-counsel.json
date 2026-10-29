@@ -1,0 +1,17 @@
+{
+  "domain": "counsel",
+  "variant": "enhanced",
+  "input": {
+    "question": "합성 예제: 서로 연락하는 빈도가 달라서 서운해. 어떻게 기준을 정하면 좋을까?",
+    "topic": "negotiate_contact",
+    "facts": [
+      {
+        "key": "relationship_status",
+        "value": "합성 예제: 연애 중이며 서로 연락 기준을 이야기해 보기로 동의했다.",
+        "source_id": "synthetic-fixture-001",
+        "observed_at": "2026-10-29T03:00:00Z"
+      }
+    ]
+  },
+  "use_memory": false
+}

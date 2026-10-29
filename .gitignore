@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+.cache/
+.upstream/
+node_modules/
+outputs/
+bin/
+*.test
+coverage.out
+data/private/

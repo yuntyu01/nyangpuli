@@ -1,0 +1,562 @@
+[
+  {
+    "path": "LICENSE",
+    "blob_sha": "d242fb7147a00a2ec65fa343701120d7c61a94ab",
+    "size": 1069,
+    "local_path": "third_party/arcanite/LICENSE",
+    "sha256": "340c94bb1ce7c8073e768b63c172c089794a671233e2bcdbf3f061ef313fb253"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/c01.json",
+    "blob_sha": "4ff4259fec19521f1e50aca5319b25f3da7bef1b",
+    "size": 26921,
+    "local_path": "third_party/arcanite/cards/c01.json",
+    "sha256": "00037605a1cfb9d5877c5af4c4b701374e9c103d982439d1d70dd2f7d2946c7a"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/c02.json",
+    "blob_sha": "9b985338ec3316326ec7f772603966e290833336",
+    "size": 25684,
+    "local_path": "third_party/arcanite/cards/c02.json",
+    "sha256": "dcc75b077c6717a49da803a6cbd7f7e6ae2c478b493cc9a60ebcfff714d0490c"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/c03.json",
+    "blob_sha": "d0929ee4c0818b1a13676da81d10bd31887af15e",
+    "size": 26121,
+    "local_path": "third_party/arcanite/cards/c03.json",
+    "sha256": "7cbedec0e3664e28e4776ed0b662f250480bf5a45603ab4058936681522e5ad4"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/c04.json",
+    "blob_sha": "736c6e35c1e5031dd2ffcd140729e641376d4d75",
+    "size": 25272,
+    "local_path": "third_party/arcanite/cards/c04.json",
+    "sha256": "e7ebdf94eaf8c927376206ee4925bac6ce1bfbb330fca91df84eebe1c0934b29"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/c05.json",
+    "blob_sha": "1f6a36e304696b58a18b097436cd16c75a7a4cde",
+    "size": 29049,
+    "local_path": "third_party/arcanite/cards/c05.json",
+    "sha256": "51392501c2184b5beab96edb662be39e26a87bd24c7aed2a8e907dec320068c4"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/c06.json",
+    "blob_sha": "688c5f94999ac6f968ced0be7b314bec683b8420",
+    "size": 26235,
+    "local_path": "third_party/arcanite/cards/c06.json",
+    "sha256": "cef718c019fe31f84d4a4ac4c986596f9aec59923d3d7f1c8110b67f382384eb"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/c07.json",
+    "blob_sha": "296c297da7d6d276aad69b6018733cc8a9486762",
+    "size": 27034,
+    "local_path": "third_party/arcanite/cards/c07.json",
+    "sha256": "f2b950ec93b600c6838f079d2a36afc107c32dc036d038cb5df347e29e2973b2"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/c08.json",
+    "blob_sha": "6a56634801b75e005ac121239816cb4b20f5b0ca",
+    "size": 26237,
+    "local_path": "third_party/arcanite/cards/c08.json",
+    "sha256": "42e3e419d77dbdf324f3a20e4fd62b641d8854f10038fb78108178d054191f69"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/c09.json",
+    "blob_sha": "772675f69cfb58432c58629a5d705bd55e2dda40",
+    "size": 25293,
+    "local_path": "third_party/arcanite/cards/c09.json",
+    "sha256": "a064df2c1fcff792aa199558b7de10ebdd76440418789f41ce15ab8bca7e510d"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/c10.json",
+    "blob_sha": "fa8b765568d15ba69eeb01de4576839ec2a5cebf",
+    "size": 26852,
+    "local_path": "third_party/arcanite/cards/c10.json",
+    "sha256": "b1a97d42e369a8756f79d9d2c9eef3dab14d797061da904984ff337078cef6ff"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/c11.json",
+    "blob_sha": "fd7df7f6b475dad8ec96cde82f6e7b2e7cd7458b",
+    "size": 27181,
+    "local_path": "third_party/arcanite/cards/c11.json",
+    "sha256": "31cc3891bfb91aa3832f49a497e1a7bf5f6f4cb1a11e95c6568732965c0c3726"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/c12.json",
+    "blob_sha": "51a54e17aa9d34dbbc06b4e93531f5c98f27c7f5",
+    "size": 27070,
+    "local_path": "third_party/arcanite/cards/c12.json",
+    "sha256": "8491e45e5bc6e30d683faec3534a39b08c68068b00c4e707b9099c119fe10f49"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/c13.json",
+    "blob_sha": "527dfbb43d60f19cd462538b50fc13c7cee2430a",
+    "size": 24622,
+    "local_path": "third_party/arcanite/cards/c13.json",
+    "sha256": "7b8570e2010e96b48c5a49b817a45057fe1be24546f14b927400b6341f2ca090"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/c14.json",
+    "blob_sha": "818ba954086ae3c5c143e1468b87d29d7e37b179",
+    "size": 26581,
+    "local_path": "third_party/arcanite/cards/c14.json",
+    "sha256": "388b4b52dafcff801c198d518ade6aaf1e044edf580affbbb37386d8059ba1d1"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m00.json",
+    "blob_sha": "cace06cacd36c7796d2c3ee870dcdb164df091cd",
+    "size": 27220,
+    "local_path": "third_party/arcanite/cards/m00.json",
+    "sha256": "05e6f467beaa0f6c643b618ba9af5aa5c172e15027c2f49a3f173c65339e9f05"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m01.json",
+    "blob_sha": "70cbec46ecb7daee455e0a1f4316199bb413c62b",
+    "size": 28876,
+    "local_path": "third_party/arcanite/cards/m01.json",
+    "sha256": "9257efad94b686735250d73b78af339a31effdcede6bfa041bae0f6f33ea3205"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m02.json",
+    "blob_sha": "def27965ac86101bc87c8a947b269b06e26eb6bb",
+    "size": 28526,
+    "local_path": "third_party/arcanite/cards/m02.json",
+    "sha256": "6ee8844301ce23dcac32e62b4db1686a1c783c854cfeaca50b38b342f21fb934"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m03.json",
+    "blob_sha": "2e8862592bdc1b2e49f0e70398be558fb8b7042f",
+    "size": 25359,
+    "local_path": "third_party/arcanite/cards/m03.json",
+    "sha256": "f60daf0605195c31c9381bd247bba97152d3c8a40227583196f3536bbe3e8005"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m04.json",
+    "blob_sha": "bed197031ef24728e37768450f14d8c6f33367e0",
+    "size": 26222,
+    "local_path": "third_party/arcanite/cards/m04.json",
+    "sha256": "c834eed4e7367026ea1b432d1ce05c4c5b0f3b198716a041172d451b9bdf536d"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m05.json",
+    "blob_sha": "f4194312f3a0531afc14f8a5f5cf503b4dcb4531",
+    "size": 28713,
+    "local_path": "third_party/arcanite/cards/m05.json",
+    "sha256": "d634ade92a1e3920862ab00707411da4cc1038e484c20b01b6934f6df6da7009"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m06.json",
+    "blob_sha": "a70f694225d42c841561d5db4c2d02b820aeba83",
+    "size": 26671,
+    "local_path": "third_party/arcanite/cards/m06.json",
+    "sha256": "ce691c6aab96d1fad24b5a7dce77160ff11492958d3429bb0e2f1b13b698e041"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m07.json",
+    "blob_sha": "9c2cb09d1dea0945a5c819042164e534a79c957a",
+    "size": 25035,
+    "local_path": "third_party/arcanite/cards/m07.json",
+    "sha256": "e245368519e74631952ee60267ba48a3d3ccb6cdd92335bc24e8d5cf703b889f"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m08.json",
+    "blob_sha": "aabfb550990efebc8646c18c680aa51ba971bf99",
+    "size": 25892,
+    "local_path": "third_party/arcanite/cards/m08.json",
+    "sha256": "43739abc9e8cf70f1dfa0820a01deb3f6d2da6b75dc647941f3a219f7316516b"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m09.json",
+    "blob_sha": "6d17199752583ffb16ddc2f0f9eeeeb4ffd12ab0",
+    "size": 26600,
+    "local_path": "third_party/arcanite/cards/m09.json",
+    "sha256": "0a46821a06a1cff6e825b214e4b4bcc603360d3662ddbf1f714b291c446a1cee"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m10.json",
+    "blob_sha": "e60008e084c85a7b6c49f5cd8baa796f3142e425",
+    "size": 26061,
+    "local_path": "third_party/arcanite/cards/m10.json",
+    "sha256": "54e4172d70df75516c48851c64da628014cb3fa6172a99649ef192431e348990"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m11.json",
+    "blob_sha": "039694338537b515c85f09761d78e5d38cece4f8",
+    "size": 25546,
+    "local_path": "third_party/arcanite/cards/m11.json",
+    "sha256": "b11f46c9a9107d95e54b479edf3276b37d86cd1afbbea305a6fd3bf77bc87bbc"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m12.json",
+    "blob_sha": "649968f14ec4e2f0ace9daf3f157c08992a0b3cd",
+    "size": 27256,
+    "local_path": "third_party/arcanite/cards/m12.json",
+    "sha256": "b9ee20495441f4e7832e3f0ca574d6edf127f61a09a34d1f4d2a863842d8efb0"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m13.json",
+    "blob_sha": "1228dc53b66444edc33faf5cc74593c112c37262",
+    "size": 26842,
+    "local_path": "third_party/arcanite/cards/m13.json",
+    "sha256": "d4f362c950bf18efc0cd37e68558f75b416c679251c095d0af0710ef8d1e723a"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m14.json",
+    "blob_sha": "b284de205c09c071a18f49c482689c4870c43318",
+    "size": 25852,
+    "local_path": "third_party/arcanite/cards/m14.json",
+    "sha256": "83a441e5d9de25f6bac10295c86fc1be7123cebb8a76f07f9d894de2dce4e727"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m15.json",
+    "blob_sha": "3e0ad0fd13faf2677e6e5d7a19e8966d158dc160",
+    "size": 26516,
+    "local_path": "third_party/arcanite/cards/m15.json",
+    "sha256": "04b4050015069b5e562abb79a79d11fa678e98c44e21642ec1501d65b41a5598"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m16.json",
+    "blob_sha": "3f7aea5ec11f7492a7e6e37a40b86670d2fe35e1",
+    "size": 26375,
+    "local_path": "third_party/arcanite/cards/m16.json",
+    "sha256": "6222bc766f46d703197f092ca31e9ce936d1d56c1a5b9c58135712b62361a251"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m17.json",
+    "blob_sha": "f2d7018623d6dd2ab493b120e2aad6a044990c8c",
+    "size": 26154,
+    "local_path": "third_party/arcanite/cards/m17.json",
+    "sha256": "57607fe23b1c837f57e35cb0a7179450f7e4ff233ce991508da9615bb67edfdb"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m18.json",
+    "blob_sha": "f9fecb38ae7815777c359ed354eca3918790c3fd",
+    "size": 27189,
+    "local_path": "third_party/arcanite/cards/m18.json",
+    "sha256": "f60ef89b7972b1e103a7162cc8b8f6892a5aba5f2e90d745ebec1c0b2386bd04"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m19.json",
+    "blob_sha": "d35e8b867a37df844d0868c8fe65319efe16bcfa",
+    "size": 25719,
+    "local_path": "third_party/arcanite/cards/m19.json",
+    "sha256": "b14b3328c2cf331d88c1d0342f14e660d30a01ffe245f810f1e11ccacb2b8dc1"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m20.json",
+    "blob_sha": "c4969feb4f0e677ddd9a15c270293533aef6abb4",
+    "size": 25982,
+    "local_path": "third_party/arcanite/cards/m20.json",
+    "sha256": "bd79de0fc9fb5a62ca01c8d4dd8ccf527ba7c7e26de80876578905c4673a39ae"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/m21.json",
+    "blob_sha": "fceea4cdfbc2165958e40813c9655315f3e626a3",
+    "size": 26002,
+    "local_path": "third_party/arcanite/cards/m21.json",
+    "sha256": "5858037422e177a061453cf118e74585cb8c4762a10087879dd90babe2c34d84"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/p01.json",
+    "blob_sha": "ac002947f741dee46d0f87a0822240c64f3470a5",
+    "size": 26569,
+    "local_path": "third_party/arcanite/cards/p01.json",
+    "sha256": "20d8a7b455a9935c0ab3e2201c200544aacae9e235e6e1469d0583752bc4aec8"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/p02.json",
+    "blob_sha": "c9e14d672f23a6b5aa97e3307bd0dbefc6666a45",
+    "size": 24658,
+    "local_path": "third_party/arcanite/cards/p02.json",
+    "sha256": "414f4628c19a516dd17da1964658e42bbdc99d3d87435f6a16613d10884d2b5b"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/p03.json",
+    "blob_sha": "cb0b447dc0928adaa28308b2bc8b472326c91e38",
+    "size": 25889,
+    "local_path": "third_party/arcanite/cards/p03.json",
+    "sha256": "86a0f716110300977a1a745d7c87a29c718d18d7dcd20e37d74492d4076c478e"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/p04.json",
+    "blob_sha": "74024a43a73d4d6139046573d0cd125d10e6acab",
+    "size": 25037,
+    "local_path": "third_party/arcanite/cards/p04.json",
+    "sha256": "cea57fb57eea3705a6c44c7e8489c44e020bdff3bef264a807566f8042a1cbc3"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/p05.json",
+    "blob_sha": "0cf6588e401da81ba08d44683e765dae9c273b3a",
+    "size": 27290,
+    "local_path": "third_party/arcanite/cards/p05.json",
+    "sha256": "5d0ff357813e0268056490450aaa4382dd7db5b942b9546e39d36e9659d81b04"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/p06.json",
+    "blob_sha": "94985412a7a7e9cf0752c72da4ccfc07e24b92e7",
+    "size": 27828,
+    "local_path": "third_party/arcanite/cards/p06.json",
+    "sha256": "e409d28410e3f4a598b2e5646bd9dca414ceaf215f2f19aec3d183f30b7d5938"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/p07.json",
+    "blob_sha": "c2be9fe29efb6e8ed19dc066906e975fef974992",
+    "size": 27643,
+    "local_path": "third_party/arcanite/cards/p07.json",
+    "sha256": "5d24f7ad1158e2f1f24d7f2a4ab044c9a9f042059694751b8b31bb663e58823b"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/p08.json",
+    "blob_sha": "a14d4cd4dfd20720851b6814f46fadb77c94cad1",
+    "size": 25500,
+    "local_path": "third_party/arcanite/cards/p08.json",
+    "sha256": "3475b6e269c0eff059d9bbcd2aac47b9c59624c504f90c00e896fc344d2d790f"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/p09.json",
+    "blob_sha": "1d67c4dc16402a5607f92155184a3a64c5c1addd",
+    "size": 25354,
+    "local_path": "third_party/arcanite/cards/p09.json",
+    "sha256": "b92c990660e390c75387e5402198f829a10be3b755a5f95595cada4ea688fed3"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/p10.json",
+    "blob_sha": "4a19b0fff21ca7aad4962145fb7db607f82f2e42",
+    "size": 26894,
+    "local_path": "third_party/arcanite/cards/p10.json",
+    "sha256": "6a20edee5a96d23f97189dcda8d8e0ed7892a820cb6373f713279b19f6acbc39"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/p11.json",
+    "blob_sha": "3474dd71ea77256c184cd7363f1e8e76c46adcd8",
+    "size": 26185,
+    "local_path": "third_party/arcanite/cards/p11.json",
+    "sha256": "6444e7d5e9e96f2a21a135b1e03c8f66e5b9a2f8942662085296d2b49f111589"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/p12.json",
+    "blob_sha": "b9ecbb988fad8486893ba9eac1d7e2fb67e5bfb7",
+    "size": 28232,
+    "local_path": "third_party/arcanite/cards/p12.json",
+    "sha256": "c3cdc9da7e2b3853b0ee4bda6269af319d823e4e691b3869b9a65ab67c574426"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/p13.json",
+    "blob_sha": "7f874064b6254349e914f2f78153d038acac1937",
+    "size": 27060,
+    "local_path": "third_party/arcanite/cards/p13.json",
+    "sha256": "78b775352574d8b42bc4036dc0434ec685bf38e49c389afe1e27a39a0fe7bbbd"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/p14.json",
+    "blob_sha": "48f9db69c0d08d99ae94c4b2848b7eaa76b0ee8f",
+    "size": 26890,
+    "local_path": "third_party/arcanite/cards/p14.json",
+    "sha256": "f14db0437e6c52453dc1742f4c9726f6725dd064fed82cadf13e764919ea429b"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/s01.json",
+    "blob_sha": "30eb061b85bf9dbc281ab13fe4caead6a2b9128d",
+    "size": 25384,
+    "local_path": "third_party/arcanite/cards/s01.json",
+    "sha256": "ae8f8e0b5b76a6b1119774051e6304bdae03bb6e82dcb31c1426a15a852119e8"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/s02.json",
+    "blob_sha": "9752e2d0d357aadab09fba9ea61c63d17f91fe60",
+    "size": 24554,
+    "local_path": "third_party/arcanite/cards/s02.json",
+    "sha256": "e218c6aff02f9ebf0433a1d6566e18db549da51f5912a16afd977f6b7c46f744"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/s03.json",
+    "blob_sha": "646f203571401164a7bba553bf20a57b0d834d8c",
+    "size": 26523,
+    "local_path": "third_party/arcanite/cards/s03.json",
+    "sha256": "4b9440546a2d41089fd563fea5e3c6a3c6e7f2e22788efaf062effab7a216928"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/s04.json",
+    "blob_sha": "18fd5551010d5f19771a059c82a876162e4362a8",
+    "size": 26070,
+    "local_path": "third_party/arcanite/cards/s04.json",
+    "sha256": "42510fd4c10de7315c42adfcc82e85dcc3f8a2caf005dde4039d5343b9639609"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/s05.json",
+    "blob_sha": "45a2d5aea978ae394a19e07fbd05dee553b991fb",
+    "size": 25166,
+    "local_path": "third_party/arcanite/cards/s05.json",
+    "sha256": "f31b288a1da929223606822c9c7ed2270938abce8bf1b4e0ac2898540a010beb"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/s06.json",
+    "blob_sha": "71cf7637f7bd1e52c395aee3249a4b9b598bd8ca",
+    "size": 25544,
+    "local_path": "third_party/arcanite/cards/s06.json",
+    "sha256": "d67c089c223c8cbff5b174eb12ad99c60493615a65f86f1b573832188573e163"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/s07.json",
+    "blob_sha": "6f782821903ac907dcac4f603e5d465e2ddda9c9",
+    "size": 26575,
+    "local_path": "third_party/arcanite/cards/s07.json",
+    "sha256": "cca494a68a30a293cd1add32e4e8162ad6e074d669850ba826b6739220635ae4"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/s08.json",
+    "blob_sha": "e23481665130cc1e1a87b3eb2e78158fb672822f",
+    "size": 25264,
+    "local_path": "third_party/arcanite/cards/s08.json",
+    "sha256": "e25fd8d39601f3b9ab7c6f19a41af76a2af8b70d86f6bef6e5b1e885a2dbb5ad"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/s09.json",
+    "blob_sha": "c1ae31fe1020b300d84ad9e1f8c53fb0b7b6470d",
+    "size": 25488,
+    "local_path": "third_party/arcanite/cards/s09.json",
+    "sha256": "898689a74a30f9d77e26c9bfa0d5a8a0a2f1f6e076ff4fe38f8b10e410196c1c"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/s10.json",
+    "blob_sha": "007e625a79258cb83f18d9b8a8c0d75eb5d454e5",
+    "size": 25645,
+    "local_path": "third_party/arcanite/cards/s10.json",
+    "sha256": "1f05ef44a45b0b172eb984887996cf521305cffd8daad4005af20217002bd0ac"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/s11.json",
+    "blob_sha": "2a37f77a0935b6c635e601dd7353a23378e8249d",
+    "size": 25676,
+    "local_path": "third_party/arcanite/cards/s11.json",
+    "sha256": "b8b39d9c8d88f456d1a7c6f02fc215eb6a16e235425383151ce996fe2d46ce6a"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/s12.json",
+    "blob_sha": "651d3299d9468220a9c7539c10a2839ab87287b2",
+    "size": 26488,
+    "local_path": "third_party/arcanite/cards/s12.json",
+    "sha256": "642bcf7885e16c78a2755d092950a771ba9048b4f8faf3c0b85d514be222711a"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/s13.json",
+    "blob_sha": "4a4ed1ee57fce740ba85126e12f0632e0ce98e8c",
+    "size": 24920,
+    "local_path": "third_party/arcanite/cards/s13.json",
+    "sha256": "e854d9deb4c8208ccf5855332c68e2d6b964b89fe83be88608d393aaba59b0d4"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/s14.json",
+    "blob_sha": "cab9c3ecf9f5d9de501195e240c0db16aceadee3",
+    "size": 26851,
+    "local_path": "third_party/arcanite/cards/s14.json",
+    "sha256": "af2c7a1e476bfb58af2c1a3df19733fb49d62008bec3f597ee467127f0f4373d"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/w01.json",
+    "blob_sha": "6af01777f8a3e9759b8b17e2a34db56efd976065",
+    "size": 26073,
+    "local_path": "third_party/arcanite/cards/w01.json",
+    "sha256": "b11e2ba3ccb3091bad3a19a4069ace91f10cd4a268d1072e379142b21a46a352"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/w02.json",
+    "blob_sha": "f0ed90f9fb3f5c9600618d5b839eaeb25cc7fe58",
+    "size": 26029,
+    "local_path": "third_party/arcanite/cards/w02.json",
+    "sha256": "8208885c374c7964cc6c2b6bf1e4a1c787636af81c6665588c64c8d1b8764ad1"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/w03.json",
+    "blob_sha": "39be5026a1248b631078ceabb7f93713dc9b16ac",
+    "size": 24502,
+    "local_path": "third_party/arcanite/cards/w03.json",
+    "sha256": "1bc1b2c9dc868a42846b8d9758780a0f6f13a05150432d0646aa0debd2cdd458"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/w04.json",
+    "blob_sha": "6e11beff7c72f0e356fad8df35e466e6294a2730",
+    "size": 27141,
+    "local_path": "third_party/arcanite/cards/w04.json",
+    "sha256": "93768f238ff16e4f5bba7b99b77658e959de0f3cb858521c6aef14aed0d57121"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/w05.json",
+    "blob_sha": "894a57b1969a22afbdba4b9eba99a1a7dd09401d",
+    "size": 25845,
+    "local_path": "third_party/arcanite/cards/w05.json",
+    "sha256": "994931ec4b210e418de94afa54266542fcb3c5e6f768a9de87b7f9a7b8d169a9"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/w06.json",
+    "blob_sha": "9f15fcbaf87042cc9bee4aa25066cb2c51ace42a",
+    "size": 26783,
+    "local_path": "third_party/arcanite/cards/w06.json",
+    "sha256": "f5b0fa133a38f1af276e4cb1e08bf1c7fbacc028349d20798dad18da4e7bd4c2"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/w07.json",
+    "blob_sha": "066ef1203c29de5853ca00622ae9d56a75c3e0e0",
+    "size": 27108,
+    "local_path": "third_party/arcanite/cards/w07.json",
+    "sha256": "494b933ebf8249810073df50dfa6a32b7b389f79cbea628c86080c88dd463456"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/w08.json",
+    "blob_sha": "ed608c826e848a31b84c85ac22cf94ef3d6bc7df",
+    "size": 25672,
+    "local_path": "third_party/arcanite/cards/w08.json",
+    "sha256": "8e836a95c314f42705a5dd74d1b5469413da84a125ee37f98aa69005ac45b038"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/w09.json",
+    "blob_sha": "ba338c1b118b5775f0080e402b5f21b8a37fde16",
+    "size": 25242,
+    "local_path": "third_party/arcanite/cards/w09.json",
+    "sha256": "3fe850fe8e78adcae435dd0d5d4beac3eca2d92662884bff762dddecf7a73e2a"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/w10.json",
+    "blob_sha": "838dffd8a0e8b74779a11a8eaeaa3a43fe63b048",
+    "size": 25069,
+    "local_path": "third_party/arcanite/cards/w10.json",
+    "sha256": "16cbe8388a25cc92cd2f417d6878738a8c3dd0cebb30ea9202c01334cd3ce29e"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/w11.json",
+    "blob_sha": "ad00a56503f0d526c6fa3c8b52e234d791ae3fef",
+    "size": 27196,
+    "local_path": "third_party/arcanite/cards/w11.json",
+    "sha256": "8564d76bc1ff38af52262b8a9e3c4278b4095a20adcf9b89c256d4c10cad59d4"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/w12.json",
+    "blob_sha": "08dabf37e7c58efcbbcaaf5bce2896c2927052d6",
+    "size": 24867,
+    "local_path": "third_party/arcanite/cards/w12.json",
+    "sha256": "4a5f7bbeb5d05b53ace3440cbc1cb835e90ee81600262230b697412c18a9f86c"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/w13.json",
+    "blob_sha": "d0c73aefc1224cf70778d64b8eb23e580e271535",
+    "size": 26711,
+    "local_path": "third_party/arcanite/cards/w13.json",
+    "sha256": "5ac20e94de3cf3754dc633fbf1292f8d66af114dc9aba78c7c2d0eb4d00a8bb0"
+  },
+  {
+    "path": "src/arcanite/cards/json/tarot/w14.json",
+    "blob_sha": "ce3622f7e83a6c3d8ed627256db97255a1a091a7",
+    "size": 26152,
+    "local_path": "third_party/arcanite/cards/w14.json",
+    "sha256": "f316eb6e821ac44f36047699329e7b8568b44234fc78f5a751f3370566ede282"
+  },
+  {
+    "path": "src/arcanite/spreads/tarot-spreads.json",
+    "blob_sha": "1f93ace3d877520fd24d8a982c482a1121a53571",
+    "size": 55322,
+    "local_path": "third_party/arcanite/tarot-spreads.json",
+    "sha256": "b3cb518eb71456cc86c03ad8ee426f37f1a78f8da962344e67e9afd8108b015c"
+  }
+]

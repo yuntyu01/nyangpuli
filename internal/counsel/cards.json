@@ -1,0 +1,56 @@
+[
+  {
+    "id": "bccampus-conflict-001",
+    "version": "2026-10-28.1",
+    "topic": "conflict_reconnect",
+    "title": "갈등 후 대화할 준비 확인하기",
+    "principles": ["말하기 전에 자신의 필요를 정리한다.", "상대가 자신의 경계를 설명할 때 끼어들지 않고 듣는다.", "이미 정한 경계를 넘었다면 인정하고 사과한다."],
+    "application": ["서로 대화할 의사가 있는지 먼저 확인한다.", "동의가 있을 때, 자신이 관찰한 상황과 바라는 변화 한 가지를 메모한 뒤 이야기한다.", "상대가 지금은 대화하고 싶지 않다고 하면 재촉하지 않는다."],
+    "follow_up": "대화에 대한 동의를 확인했나요? 상대가 직접 말한 필요는 무엇이었나요?",
+    "source": {
+      "title": "Module 2 — Boundaries and Healthy Relationships (handout)",
+      "author": "Intersectional Sexualized Violence – International Student Resource Development Team",
+      "copyright": "© 2024 Government of British Columbia",
+      "url": "https://opentextbc.ca/wp-content/uploads/sites/459/2024/05/ISV-Resource-Handouts-v2_02.pdf",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "adaptation": "냥풀이 실험용 한국어 요약·재구성. 대화 동의 확인, 상황 적용, 후속 질문은 프로젝트가 추가했으며 원저자의 검수·보증을 뜻하지 않음."
+    }
+  },
+  {
+    "id": "bccampus-hurt-001",
+    "version": "2026-10-28.1",
+    "topic": "express_hurt",
+    "title": "서운함을 자신의 느낌으로 표현하기",
+    "principles": ["상대의 의도를 단정하는 비난 대신 자신의 느낌과 필요를 표현한다.", "대화 전에 말하고 싶은 점을 적어 정리할 수 있다.", "자신의 경계를 설명할지 여부는 본인이 결정한다."],
+    "application": ["상대가 대화에 동의하면 실제로 있었던 행동, 자신의 느낌, 원하는 변화 한 가지를 구분해 적는다.", "예문은 사용자에게 확인한 사건만 사용하고 상대의 속마음을 넣지 않는다.", "상대의 답을 듣고 서로 가능한 범위를 확인한다."],
+    "follow_up": "내 느낌을 전한 뒤 상대가 실제로 어떤 말을 했나요?",
+    "source": {
+      "title": "Module 2 — Boundaries and Healthy Relationships (handout)",
+      "author": "Intersectional Sexualized Violence – International Student Resource Development Team",
+      "copyright": "© 2024 Government of British Columbia",
+      "url": "https://opentextbc.ca/wp-content/uploads/sites/459/2024/05/ISV-Resource-Handouts-v2_02.pdf",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "adaptation": "냥풀이 실험용 한국어 요약·재구성. 사실·감정·요청 구분과 후속 질문은 프로젝트가 추가했으며 원저자의 검수·보증을 뜻하지 않음."
+    }
+  },
+  {
+    "id": "bccampus-contact-001",
+    "version": "2026-10-28.1",
+    "topic": "negotiate_contact",
+    "title": "연락 기준을 함께 정하기",
+    "principles": ["관계에 대한 기대와 시간·방식의 경계를 서로 표현하고 존중한다.", "상대의 경계가 자신의 기대와 다르더라도 곧바로 마음이 없다고 단정하지 않는다.", "경계를 들을 때 방어적으로 반응하지 않고 끝까지 듣는다."],
+    "application": ["상대가 연락에 동의하는 관계라면 서로 편한 시간대와 답하기 어려운 상황을 묻는다.", "답장 횟수를 일방적으로 정하지 않고 두 사람 모두 가능한 연락 기준 하나를 제안한다.", "연락 중단이나 차단이 확인되면 기준 협상이나 우회 접촉을 권하지 않는다."],
+    "follow_up": "서로 동의한 기준이 생겼나요? 실행하기 어려운 부분은 무엇이었나요?",
+    "source": {
+      "title": "Module 2 — Boundaries and Healthy Relationships (handout)",
+      "author": "Intersectional Sexualized Violence – International Student Resource Development Team",
+      "copyright": "© 2024 Government of British Columbia",
+      "url": "https://opentextbc.ca/wp-content/uploads/sites/459/2024/05/ISV-Resource-Handouts-v2_02.pdf",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "adaptation": "냥풀이 실험용 한국어 요약·재구성. 연락 기준 합의와 후속 질문은 원자료의 경계 존중 원칙을 프로젝트가 적용한 예이며 원저자의 검수·보증을 뜻하지 않음."
+    }
+  }
+]

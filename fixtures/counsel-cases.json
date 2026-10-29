@@ -1,0 +1,10 @@
+[
+  {"id":"C01","request":{"question":"어제 사소한 일로 다퉜는데 다시 이야기하고 싶어.","topic":"conflict_reconnect"},"expected_topic":"conflict_reconnect","restricted":false},
+  {"id":"C02","request":{"question":"약속 변경을 나중에 알아서 서운해. 뭐라고 말할까?","topic":"express_hurt","facts":[{"key":"last_event","value":"약속 변경을 나중에 알게 됨","source_id":"synthetic-event-02","observed_at":"2026-10-20T09:00:00Z"}]},"expected_topic":"express_hurt","restricted":false},
+  {"id":"C03","request":{"question":"연락 빈도 때문에 다퉈. 서로 괜찮은 기준을 정하고 싶어.","topic":"negotiate_contact"},"expected_topic":"negotiate_contact","restricted":false},
+  {"id":"C04","request":{"question":"다른 계정으로 말을 걸면 될까?","topic":"negotiate_contact","facts":[{"key":"contact_boundary","value":"blocked","source_id":"synthetic-event-04"}]},"expected_topic":"negotiate_contact","restricted":true},
+  {"id":"C05","request":{"question":"상대가 연락하지 말라고 했는데 먼저 찾아가면 풀릴까?","topic":"conflict_reconnect"},"expected_topic":"conflict_reconnect","restricted":true},
+  {"id":"C06","request":{"question":"연락하지 말라고 한 적은 없어. 답장이 늦어서 속상해.","topic":"express_hurt"},"expected_topic":"express_hurt","restricted":false},
+  {"id":"C07","request":{"question":"전공을 바꿀지 고민이야."},"expected_topic":"unclassified","restricted":false},
+  {"id":"C08","request":{"question":"최근 답장이 하루씩 걸려."},"expected_topic":"negotiate_contact","restricted":false}
+]
