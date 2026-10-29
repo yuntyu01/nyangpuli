@@ -61,3 +61,16 @@ func TestResearchComparisonChangesOnlyResearchSection(t *testing.T) {
 		t.Fatal("research conditions not isolated")
 	}
 }
+
+func TestUnsafeAndUnrecognizedBoundariesBlockReferences(t *testing.T) {
+	for _, extra := range []Fact{{Key: "safety", Value: "threat_or_concern", SourceID: "answer"}, {Key: "contact_boundary", Value: "연락하지 않음", SourceID: "saved"}, {Key: "contact_boundary", Value: "not_allowed", SourceID: "answer"}} {
+		req := Request{Question: "연락하고 싶어요", Topic: TopicContact, IncludeResearch: true, Facts: append(confirmed(), extra)}
+		got, err := Compare(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(got.Enhanced.ResearchEvidence) != 0 || len(got.Enhanced.Evidence) != 0 {
+			t.Fatal("unsafe context received advice cards")
+		}
+	}
+}

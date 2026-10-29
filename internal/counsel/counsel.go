@@ -134,13 +134,25 @@ func Compare(req Request) (Response, error) {
 		}
 	}
 	boundary := contactBoundary(req)
+	unsafe := false
+	for _, f := range req.Facts {
+		if f.Key == "safety" && f.Value != "no_threat" {
+			unsafe = true
+		}
+	}
 	questions := []string{"지금 상대와 어떤 관계이고, 이번 대화에서 바라는 변화는 무엇인가요?", "상대가 연락이나 대화에 관해 분명히 말한 경계가 있나요?"}
 	guardrails := []string{"상대의 마음과 미래를 단정하지 않음", "제공되지 않은 사건을 만들지 않음", "사용자 주장과 외부 참고 자료를 구분함"}
 	basePlan := []string{"확인된 사실과 추정을 나눈다", "모르는 핵심 상황을 먼저 질문한다", "당사자 모두의 경계를 존중하는 행동 하나를 조건부로 제시한다"}
 	enhancedPlan := append([]string{}, basePlan...)
-	if boundary == "restricted" {
+	if boundary == "restricted" || boundary == "uncertain" || unsafe {
+		selected = nil
 		questions = []string{"연락하지 않는 동안 자신의 감정을 정리하는 데 어떤 도움이 필요하나요?"}
-		guardrails = append(guardrails, "연락 중단·차단 신호 감지: 접촉이나 우회 연락을 제안하지 않음")
+		if unsafe {
+			questions = []string{"지금 안전하게 지내는 데 필요한 도움이나 믿을 수 있는 사람이 있나요?"}
+		} else if boundary == "uncertain" {
+			questions = []string{"상대가 연락과 대화에 대해 어떤 경계를 말했나요?"}
+		}
+		guardrails = append(guardrails, "연락 경계가 제한되었거나 불명확함: 확인 전 접촉이나 우회 연락을 제안하지 않음")
 		basePlan = []string{"상대의 연락 경계를 존중한다", "보내지 않을 메모로 자신의 감정을 정리하는 방법을 제안한다", "본인이 원하는 도움을 확인한다"}
 		enhancedPlan = append([]string{}, basePlan...)
 	} else {
@@ -149,7 +161,7 @@ func Compare(req Request) (Response, error) {
 		}
 	}
 	research := []ResearchCard{}
-	if req.IncludeResearch && boundary != "restricted" {
+	if req.IncludeResearch && boundary != "restricted" && boundary != "uncertain" && !unsafe {
 		research = SelectResearch(topic, req.Facts, evaluationSourceGroups())
 	}
 	data, err := json.MarshalIndent(struct {
@@ -214,11 +226,23 @@ func selectTopic(explicit, question string) (string, string, error) {
 }
 
 func contactBoundary(req Request) string {
+	uncertain := false
 	for _, f := range req.Facts {
-		if f.Key == "contact_boundary" && (f.Value == "no_contact" || f.Value == "blocked") {
+		if f.Key != "contact_boundary" {
+			continue
+		}
+		switch f.Value {
+		case "no_contact", "blocked", "not_allowed", "연락하지 않음":
 			return "restricted"
+		case "allowed":
+		default:
+			uncertain = true
 		}
 	}
+	if uncertain {
+		return "uncertain"
+	}
+
 	// Restrictive facts are retained when facts conflict: never infer permission.
 	// These phrases merely trigger a precaution. Clarification remains necessary.
 	clauses := strings.FieldsFunc(req.Question, func(r rune) bool { return r == '.' || r == '?' || r == '!' || r == '\n' || r == '。' })
