@@ -1,6 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
 import * as Crypto from 'expo-crypto';
 import { responseMessage, validateApiBase } from './network';
+import { accountApiBase } from './account';
 
 const tokenKey = 'nyangpuli_token';
 const tarotKey = 'nyangpuli_tarot_session';
@@ -26,4 +27,21 @@ export async function request<T>(path: string, options: { method?: string; body?
   }
   try { return await response.json() as T; }
   catch { throw new Error('서버 응답을 읽을 수 없어요. 잠시 뒤 다시 시도해 주세요.'); }
+}
+
+// Account credentials are never sent to a remote cleartext destination, even in a development build.
+export async function accountRequest<T>(path:string, body?:unknown, authenticated=false):Promise<T> {
+  const destination=accountApiBase(base,__DEV__);
+  const token=authenticated ? await SecureStore.getItemAsync(tokenKey) : null;
+  if(authenticated && !token) throw new Error('먼저 계정을 연결해 주세요.');
+  let response:Response;
+  try { response=await fetch(`${destination}${path}`,{method:'POST',headers:{...(token ? {Authorization:`Bearer ${token}`} : {}),...(body ? {'Content-Type':'application/json'} : {})},body:body ? JSON.stringify(body):undefined}); }
+  catch { throw new Error('계정 서버에 연결할 수 없어요.'); }
+  if(!response.ok) {
+    if(response.status===401) throw new Error(authenticated ? '연결이 만료되었어요.' : '로그인 정보를 확인하거나 잠시 후 다시 시도해 주세요.');
+    if(response.status===409) throw new Error('사용할 수 없는 사용자명이거나 이미 연결된 계정이에요.');
+    if(response.status===400) throw new Error('사용자명과 비밀번호를 확인해 주세요.');
+    throw new Error('계정 요청을 처리하지 못했어요.');
+  }
+  try { return await response.json() as T; } catch { throw new Error('계정 서버 응답을 읽을 수 없어요.'); }
 }
