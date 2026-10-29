@@ -1,0 +1,7 @@
+# Opt-in PostgreSQL application mode. Existing JSON data is not migrated.
+services:
+  api:
+    environment:
+      DATABASE_URL: postgres://nyangpuli:${POSTGRES_PASSWORD:?Set a URL-safe development password}@db:5432/nyangpuli?sslmode=disable
+      NYANG_MEMORY_PATH: /data-db/memory.json
+    command: ["nyangpuli", "serve", "--addr", "0.0.0.0:8080", "--allow-container-bind", "--readings", "/data-db/readings.json"]

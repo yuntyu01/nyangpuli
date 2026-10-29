@@ -34,3 +34,18 @@ DB 사용 기능을 연결하고 검증한 뒤에만 PostgreSQL 백업을 사용
 ## 외부 서비스
 
 모델 호출은 별도 설정과 명시적 활성화가 필요하며 비용이 발생할 수 있다. 스토어 구매와 R2는 기본 구성에 필요하지 않다. 실제 키는 소스, 이미지, CI에 넣지 않는다. 사용 가능한 외부 계정과 실제 연동 상태는 `docs/implementation-status.md`를 확인한다.
+
+## PostgreSQL 앱 모드
+
+개발 계정, 프로필, 저장된 타로 세션, 개인 기억과 풀이를 실제 PostgreSQL로 사용하려면 기본 Compose에 `compose.postgres.yaml`을 더한다. 기존 JSON 데이터는 변환하거나 삭제하지 않는다. 두 모드의 데이터는 별개이며 JSON 이관 도구는 아직 없다. URL에 넣기 안전한 16진 개발 암호를 사용하고 운영 데이터나 비밀을 사용하지 않는다. 아래 암호 생성은 새 볼륨을 처음 만들 때 한 번만 실행한다. 기존 PostgreSQL 볼륨을 다시 시작할 때는 처음 설정한 비밀번호를 그대로 사용한다. 비밀번호를 바꾼 환경변수만으로 기존 DB 비밀번호는 변경되지 않는다.
+
+```sh
+export POSTGRES_PASSWORD="$(openssl rand -hex 24)"
+export NYANG_API_TOKEN="$(openssl rand -hex 32)"
+export BUILDX_CONFIG=/tmp/nyang-buildx
+# 관리형 클라우드의 프록시 CA를 사용하는 빌드
+docker compose -f compose.yaml -f compose.proxy.yaml -f compose.postgres.yaml up --build -d
+curl --fail http://127.0.0.1:8080/healthz
+```
+
+이 모드의 계정 생성·로그인 계약은 `docs/accounts.md`를 참조한다. API 기본값은 실제 모델 생성과 테스트 구매를 켜지 않는다. 각 통합은 별도로 명시적 설정이 필요하며, 운영 모드는 차단된다. 포트 바인딩은 로컬 전용이고 실제 기기에서는 적절한 TLS 개발 연결이 필요하다.
