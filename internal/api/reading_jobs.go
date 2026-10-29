@@ -35,6 +35,10 @@ func (s *Server) handleReadingJobs(w http.ResponseWriter, r *http.Request, user 
 		if !read(w, r, &req) {
 			return true
 		}
+		if req.Domain == "daily" || req.Domain == "tarot" {
+			fail(w, 400, "daily and tarot readings require their saved profile or session")
+			return true
+		}
 		envelope, _ := json.Marshal(readingEnvelope{Input: req.Input, UseMemory: req.UseMemory})
 		ctx := context.WithValue(r.Context(), readingUserKey{}, user)
 		status, err := jobs.StartSummary(ctx, user, r.Header.Get("Idempotency-Key"), req.Domain, req.Variant, envelope)

@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"net/http"
 	"strings"
@@ -83,14 +84,59 @@ func (s *Server) handleTarot(w http.ResponseWriter, r *http.Request, user string
 	}
 	tail := strings.TrimPrefix(r.URL.Path, base+"/")
 	selectPath := strings.HasSuffix(tail, "/select")
-	id := strings.TrimSuffix(tail, "/select")
+	readingPath := strings.HasSuffix(tail, "/reading")
+	id := tail
+	if selectPath {
+		id = strings.TrimSuffix(tail, "/select")
+	} else if readingPath {
+		id = strings.TrimSuffix(tail, "/reading")
+	}
 	if id == "" || strings.Contains(id, "/") {
 		fail(w, 404, "not found")
 		return true
 	}
 	var session tarot.Session
 	var err error
-	if selectPath && r.Method == http.MethodPost {
+	if readingPath && r.Method == http.MethodPost {
+		if s.Readings == nil {
+			fail(w, 503, "reading service is not configured")
+			return true
+		}
+		session, err = s.TarotStore.GetTarot(r.Context(), user, id)
+		if err != nil {
+			if errors.Is(err, persistence.ErrTarotNotFound) {
+				fail(w, 404, "not found")
+			} else {
+				fail(w, 500, "tarot storage failed")
+			}
+			return true
+		}
+		req, err := engine.SessionRequest(session)
+		if err != nil {
+			fail(w, 409, "complete card selection first")
+			return true
+		}
+		input, err := json.Marshal(req)
+		if err != nil {
+			fail(w, 500, "tarot session invalid")
+			return true
+		}
+		envelope, err := json.Marshal(readingEnvelope{Input: input, UseMemory: false})
+		if err != nil {
+			fail(w, 500, "tarot session invalid")
+			return true
+		}
+		// A server-derived key makes retries and repeated taps on the same
+		// completed draw resolve to one reading, independently per account.
+		ctx := context.WithValue(r.Context(), readingUserKey{}, user)
+		v, err := s.Readings.Create(ctx, user, "tarot-session:"+id, "tarot", "enhanced", envelope)
+		if err != nil {
+			readingError(w, err)
+		} else {
+			write(w, 201, v)
+		}
+		return true
+	} else if selectPath && r.Method == http.MethodPost {
 		var req struct {
 			Position *int `json:"position"`
 		}
@@ -102,7 +148,7 @@ func (s *Server) handleTarot(w http.ResponseWriter, r *http.Request, user string
 			return true
 		}
 		session, err = s.TarotStore.SelectTarot(r.Context(), user, id, engine, *req.Position)
-	} else if !selectPath && r.Method == http.MethodGet {
+	} else if !selectPath && !readingPath && r.Method == http.MethodGet {
 		session, err = s.TarotStore.GetTarot(r.Context(), user, id)
 	} else {
 		fail(w, 404, "not found")

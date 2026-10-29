@@ -145,6 +145,10 @@ func (s *Server) handleReadings(w http.ResponseWriter, r *http.Request, user str
 				fail(w, 400, "daily readings require a saved profile; use /v1/daily")
 				return true
 			}
+			if req.Domain == "tarot" {
+				fail(w, 400, "tarot readings require a completed saved session")
+				return true
+			}
 			envelope, _ := json.Marshal(readingEnvelope{Input: req.Input, UseMemory: req.UseMemory})
 			v, err := s.Readings.Create(ctx, user, r.Header.Get("Idempotency-Key"), req.Domain, req.Variant, envelope)
 			if err != nil {
