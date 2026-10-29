@@ -7,3 +7,9 @@
 PostgreSQL 개발 모드에서 `NYANG_ENV=development`와 `--test-unlocks`를 함께 설정하면 `POST /v1/dev/purchases`로 구매 상태를 모의할 수 있습니다. 인증 헤더와 함께 `{"reading_id":"...","transaction_id":"...","status":"purchased"}`을 보내고 같은 거래의 `status`를 `refunded`로 변경해 환불을 시험합니다. `pending`과 `cancelled`도 지원합니다. 서버가 인증 사용자, 풀이와 거래를 연결하며 중복 호출은 멱등 처리하고 다른 사용자나 풀이의 거래 재사용을 차단합니다. 환불한 거래를 오래된 성공 상태로 되돌릴 수 없고, 상세 생성 중 환불이 발생하면 결과를 반환하기 전에 권한을 다시 확인합니다. 서버를 테스트 권한 없이 시작하면 저장된 개발 권한을 사용하지 않습니다. 이는 개발 시뮬레이터로 실제 거래나 영수증 검증이 아닙니다.
 
 `GET /v1/dev/purchases`는 인증 사용자의 저장된 모의 구매 상태만 조회합니다. `POST /v1/dev/purchases/restore`는 같은 데이터를 서버에서 다시 읽어 반환하며, 클라이언트가 거래나 권한을 주장하지 않습니다. 응답 `kind`는 `development_simulation_not_store_restore`입니다. 앱 스토어 계정과 연동하거나 기기·계정 간 실제 구매를 복원하지 않으며, 복구 가능한 로그인도 별도로 구현해야 합니다. 이 두 경로도 동일한 개발 모드 및 테스트 해제 설정에서만 사용할 수 있습니다.
+
+## 스토어 검증 경계
+
+`StoreAdapter`는 Apple 거래 ID 또는 Google 상품 ID·구매 토큰을 신뢰할 수 없는 조회 참조로만 받아, 인증된 스토어 조회 구현(`StoreLookup`)의 현재 상태와 서버에서 사전 생성·연결한 계정 토큰 매핑(`AccountBindings`)을 결합합니다. 앱 식별자, 환경, 상품, 상태와 거래 식별자, 계정 바인딩 및 단조 증가하는 동기화 버전이 맞지 않으면 권한을 부여하지 않습니다. 원시 구매 토큰은 결과에 포함하지 않고 공급자 오류도 외부에 그대로 전달하지 않습니다. 모의 조회자를 사용한 계약 시험은 불일치·토큰 노출·환불·대기 상태를 검사합니다.
+
+이 구성요소는 Apple JWS 서명·인증서 검증, Apple 서버 API 인증, Google Play Developer API OAuth·현재 상태 조회, 스토어 알림 검증 또는 실제 계정 토큰 발급을 구현하지 않습니다. `StoreLookup` 구현을 가짜 응답이나 클라이언트 입력으로 채우면 안 됩니다. 구매 저장소의 권한·동기화 버전도 실제 제공자의 현재 상태를 직렬화하여 보장해야 하며 스토어 알림 순서나 로컬 시계만으로 버전을 만들면 안 됩니다. Apple 공식 문서 `https://developer.apple.com/documentation/appstoreserverapi/get_transaction_info`와 Google 공식 문서 `https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/get`는 현재 네트워크 정책에서 HTTP 403이라 확인하지 못했습니다. 공식 계약·SDK 버전·스토어 자격증명을 확인하고 실제 샌드박스 테스트를 마치기 전까지 운영용 스토어 검증으로 등록하지 않습니다.
