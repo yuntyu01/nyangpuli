@@ -12,3 +12,17 @@ export async function pendingScope(server:string, account:unknown, digest:(value
 export async function saveSessionToken(token:string, store:{setItemAsync(key:string,value:string):Promise<void>}) {
   await store.setItemAsync('nyangpuli_token',token);
 }
+
+export function detailScope(summaryScope:string):string {
+  if(!/^nyangpuli_pending_[a-f0-9]{64}$/.test(summaryScope)) throw new Error('기기 연결 정보를 확인할 수 없어요.');
+  return summaryScope.replace('nyangpuli_pending_','nyangpuli_detail_');
+}
+
+/** Clear both scoped recovery slots and the token even if an earlier operation fails. */
+export async function clearAccountRecovery(scope:string,remove:(key:string)=>Promise<void>,clearToken:()=>Promise<void>):Promise<void> {
+  const detail=detailScope(scope);let failure:unknown;
+  try { await remove(scope); } catch(e) { failure=e; }
+  try { await remove(detail); } catch(e) { failure=e; }
+  try { await clearToken(); } catch(e) { failure=e; }
+  if(failure) throw failure;
+}

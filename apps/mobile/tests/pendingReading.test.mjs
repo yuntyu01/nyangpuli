@@ -26,3 +26,16 @@ test('a failed session replacement does not erase the previous account request',
 test('malformed authenticated identity is rejected',async()=>{
   for(const identity of [null,{}, {account_id:''}]) await assert.rejects(pendingScope('https://server.example',identity,hash));
 });
+test('detail recovery is isolated by account and never uses the summary slot',async()=>{
+ const {detailScope}=await import('../src/pendingReading.ts');
+ const first=await pendingScope('https://server.example',{account_id:'alice'},hash);
+ const second=await pendingScope('https://server.example',{account_id:'bob'},hash);
+ assert.notEqual(detailScope(first),first);assert.notEqual(detailScope(first),detailScope(second));
+ assert.throws(()=>detailScope('nyangpuli_token'));
+});
+test('account deletion attempts both recovery slots and token even after one removal fails',async()=>{
+ const {clearAccountRecovery,detailScope}=await import('../src/pendingReading.ts');
+ const scope=await pendingScope('https://server.example',{account_id:'alice'},hash);const calls=[];
+ await assert.rejects(clearAccountRecovery(scope,async key=>{calls.push(key);if(key===scope)throw new Error('failure')},async()=>{calls.push('token')}));
+ assert.deepEqual(calls,[scope,detailScope(scope),'token']);
+});

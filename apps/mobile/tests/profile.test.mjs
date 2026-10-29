@@ -13,7 +13,7 @@ test('malformed or unknown time profile is rejected',()=>{
 test('daily request uses separately selected current timezone',()=>{
  assert.deepEqual(dailyRequest(profile.id,'Asia/Seoul','Asia/Seoul'),{profile_id:profile.id,time_zone:'Asia/Seoul'});
  assert.throws(()=>dailyRequest(profile.id,'invalid/zone','Asia/Seoul'));
- assert.throws(()=>dailyRequest(profile.id,'America/Los_Angeles','Asia/Seoul'));
+ assert.deepEqual(dailyRequest(profile.id,'America/Los_Angeles','Asia/Seoul'),{profile_id:profile.id,time_zone:'America/Los_Angeles'});
 });
 
 test('profile discovery preserves choices and rejects duplicates',()=>{

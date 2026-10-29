@@ -2,7 +2,8 @@ import * as SecureStore from 'expo-secure-store';
 import * as Crypto from 'expo-crypto';
 import { responseMessage, validateApiBase, noRedirect } from './network';
 import { accountApiBase } from './account';
-import { pendingScope, saveSessionToken } from './pendingReading';
+import { pendingScope, saveSessionToken, detailScope, clearAccountRecovery } from './pendingReading';
+import { validateDetailReadingId } from './detailJob';
 
 const tokenKey = 'nyangpuli_token';
 const tarotKey = 'nyangpuli_tarot_session';
@@ -26,13 +27,10 @@ export async function clearDeletionRecoveryScope() { await SecureStore.deleteIte
 export async function savePendingReadingKey(key:string) { await SecureStore.setItemAsync(await pendingReadingScope(),key); }
 export async function getPendingReadingKey() { return await SecureStore.getItemAsync(await pendingReadingScope()); }
 export async function clearPendingReadingKey() { await SecureStore.deleteItemAsync(await pendingReadingScope()); }
-export async function clearDeletedAccountToken(scope:string) {
-  if(!/^nyangpuli_pending_[a-f0-9]{64}$/.test(scope)) throw new Error('기기 연결 정보를 확인할 수 없어요.');
-  let failure:unknown;
-  try { await SecureStore.deleteItemAsync(scope); } catch(e) { failure=e; }
-  try { await clearToken(); } catch(e) { failure=e; }
-  if(failure) throw failure;
-}
+export async function savePendingDetailId(id:string) { await SecureStore.setItemAsync(detailScope(await pendingReadingScope()),validateDetailReadingId(id)); }
+export async function getPendingDetailId() { const id=await SecureStore.getItemAsync(detailScope(await pendingReadingScope())); return id ? validateDetailReadingId(id) : null; }
+export async function clearPendingDetailId() { await SecureStore.deleteItemAsync(detailScope(await pendingReadingScope())); }
+export async function clearDeletedAccountToken(scope:string) { await clearAccountRecovery(scope,key=>SecureStore.deleteItemAsync(key),clearToken); }
 export async function saveTarotSessionId(id: string) { await SecureStore.setItemAsync(tarotKey, id); }
 export async function getTarotSessionId() { return await SecureStore.getItemAsync(tarotKey); }
 export async function clearTarotSessionId() { await SecureStore.deleteItemAsync(tarotKey); }

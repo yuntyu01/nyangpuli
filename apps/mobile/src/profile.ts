@@ -12,10 +12,9 @@ export function parseProfile(input:unknown): Profile {
   return p as Profile;
 }
 export function profileBirthForm(p:Profile):Birth {return {year:String(p.birth.year),month:String(p.birth.month),day:String(p.birth.day),hour:String(p.birth.hour),minute:String(p.birth.minute),timeZone:p.birth.time_zone,...(p.birth.calendar==='korean-lunar'?{calendar:'korean-lunar' as const,monthKind:p.birth.month_kind}:{})};}
-export function dailyRequest(profileId:string, timeZone:string, birthTimeZone:string) {
+export function dailyRequest(profileId:string, timeZone:string, _birthTimeZone:string) {
   if(!profileId || !timeZone.trim()) throw new Error('프로필과 현재 시간대를 확인해 주세요.');
   try { new Intl.DateTimeFormat('en',{timeZone}).format(); } catch { throw new Error('현재 시간대를 확인해 주세요.'); }
-  if (timeZone!==birthTimeZone) throw new Error('현재 시간대와 출생 시간대가 다르면 아직 오늘의 운세를 제공할 수 없어요.');
   return {profile_id:profileId,time_zone:timeZone};
 }
 
