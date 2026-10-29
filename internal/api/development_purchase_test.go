@@ -11,12 +11,17 @@ import (
 type devPurchaseSpy struct {
 	user   string
 	called bool
+	status purchase.Status
 }
 
 func (d *devPurchaseSpy) List(_ context.Context, user string) ([]purchase.DevelopmentRecord, error) {
 	d.user = user
 	d.called = true
-	return []purchase.DevelopmentRecord{{TransactionID: "test", ReadingID: "r", Status: purchase.Purchased}}, nil
+	status := d.status
+	if status == "" {
+		status = purchase.Purchased
+	}
+	return []purchase.DevelopmentRecord{{TransactionID: "t", ReadingID: "r", Status: status}}, nil
 }
 
 func (d *devPurchaseSpy) Simulate(_ context.Context, user, reading, transaction string, status purchase.Status) error {
@@ -47,5 +52,10 @@ func TestDevelopmentPurchaseRequiresExplicitModeAndSession(t *testing.T) {
 		if w.Code != 200 || p.user != "account-a" || !strings.Contains(w.Body.String(), "development_simulation_not_store_restore") {
 			t.Fatal(w.Code, w.Body.String())
 		}
+	}
+	p.status = purchase.Refunded
+	w = call(h, "POST", path, "valid", data)
+	if w.Code != 200 || !strings.Contains(w.Body.String(), `"status":"refunded"`) {
+		t.Fatal("stale event did not return saved state", w.Code, w.Body.String())
 	}
 }

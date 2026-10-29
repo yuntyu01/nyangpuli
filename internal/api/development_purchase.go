@@ -55,13 +55,16 @@ func (s *Server) handleDevelopmentPurchase(w http.ResponseWriter, r *http.Reques
 	// Always report persisted state: a stale success event after refund is
 	// intentionally ignored and must not be reported as an active purchase.
 	rows, err := s.DevelopmentPurchaser.List(r.Context(), user)
-	if err != nil { fail(w,http.StatusInternalServerError,"simulation lookup failed"); return true }
+	if err != nil {
+		fail(w, http.StatusInternalServerError, "simulation lookup failed")
+		return true
+	}
 	for _, p := range rows {
 		if p.TransactionID == request.TransactionID && p.ReadingID == request.ReadingID {
-			write(w,http.StatusOK,map[string]string{"status":string(p.Status),"kind":"development_simulation_not_payment"})
+			write(w, http.StatusOK, map[string]string{"status": string(p.Status), "kind": "development_simulation_not_payment"})
 			return true
 		}
 	}
-	fail(w,http.StatusInternalServerError,"simulation state unavailable")
+	fail(w, http.StatusInternalServerError, "simulation state unavailable")
 	return true
 }
