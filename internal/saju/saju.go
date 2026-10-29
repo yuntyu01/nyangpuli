@@ -79,7 +79,9 @@ type Engine struct {
 	slots chan struct{}
 }
 
-func New(repoRoot string) *Engine { return &Engine{root: repoRoot, slots: make(chan struct{}, 4)} }
+var engineSlots = make(chan struct{}, 4)
+
+func New(repoRoot string) *Engine { return &Engine{root: repoRoot, slots: engineSlots} }
 
 func validDate(year, month, day int) bool {
 	if year < 1801 || year > 2100 || month < 1 || month > 12 || day < 1 {

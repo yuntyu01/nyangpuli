@@ -179,7 +179,7 @@ func TestInvalidTimeZoneRejected(t *testing.T) {
 }
 
 func TestCancelledRequestDoesNotWaitForEngineSlot(t *testing.T) {
-	engine := New(t.TempDir())
+	engine := &Engine{root: t.TempDir(), slots: make(chan struct{}, 4)}
 	for i := 0; i < cap(engine.slots); i++ {
 		engine.slots <- struct{}{}
 	}
@@ -191,5 +191,11 @@ func TestCancelledRequestDoesNotWaitForEngineSlot(t *testing.T) {
 	}
 	if len(engine.slots) != cap(engine.slots) {
 		t.Fatal("cancelled request changed slot count")
+	}
+}
+
+func TestEnginesShareProcessConcurrencyLimit(t *testing.T) {
+	if New("one").slots != New("two").slots {
+		t.Fatal("engines must share process slots")
 	}
 }

@@ -15,7 +15,6 @@ import (
 	"github.com/yuntyu01/nyangpuli-lab/internal/counsel"
 	"github.com/yuntyu01/nyangpuli-lab/internal/lab"
 	"github.com/yuntyu01/nyangpuli-lab/internal/memory"
-	"github.com/yuntyu01/nyangpuli-lab/internal/readings"
 )
 
 type Authenticator interface {
@@ -30,12 +29,14 @@ type MemoryStore interface {
 }
 
 type Server struct {
+	TarotStore      TarotStore
 	Auth            Authenticator
+	AccountDeletion AccountDeleter
 	Lab             *lab.Lab
 	Memory          MemoryStore
 	Mem0            *memory.Mem0
 	Tokens          map[string]string
-	Readings        *readings.Service
+	Readings        ReadingService
 	AllowTestUnlock bool
 }
 
@@ -67,6 +68,12 @@ func (s *Server) Handler() http.Handler {
 		}
 		if user == "" {
 			fail(w, 401, "invalid token")
+			return
+		}
+		if s.handlePostgresDataDeletion(w, r, user) {
+			return
+		}
+		if s.handleTarot(w, r, user) {
 			return
 		}
 		if s.handleReadings(w, r, user) {

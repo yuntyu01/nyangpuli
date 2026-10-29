@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/big"
 	"strings"
+	"unicode/utf8"
 )
 
 // Session is the persisted server-generated deck. Do not send Deck to clients:
@@ -22,8 +23,19 @@ type Session struct {
 // Persist the entire session before allowing the user to select positions.
 func (e *Engine) NewSession(question, questionType, spread string) (Session, error) {
 	question = strings.TrimSpace(question)
-	if question == "" || len(question) > 12000 {
+	if question == "" || utf8.RuneCountInString(question) > 4000 {
 		return Session{}, errors.New("question required (maximum 12000 bytes)")
+	}
+	if questionType == "" {
+		questionType = "general"
+	}
+	switch questionType {
+	case "general", "love", "career", "spiritual":
+	default:
+		return Session{}, errors.New("invalid question type")
+	}
+	if spread == "" {
+		spread = "single-focus"
 	}
 	s, ok := e.spreads[spread]
 	if !ok || len(s.Positions) == 0 || len(s.Positions) > 78 {

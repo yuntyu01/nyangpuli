@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -13,6 +14,22 @@ import (
 	"github.com/yuntyu01/nyangpuli-lab/internal/lab"
 	"github.com/yuntyu01/nyangpuli-lab/internal/readings"
 )
+
+type ReadingService interface {
+	Create(context.Context, string, string, string, string, json.RawMessage) (readings.View, error)
+	Get(string, string) (readings.View, error)
+	List(string) ([]readings.View, error)
+	UnlockForTest(string, string) (readings.View, error)
+	Detail(context.Context, string, string) (readings.View, error)
+}
+
+func NewPostgresReadingService(db *sql.DB, l *lab.Lab, m MemoryStore, client *generation.Client) ReadingService {
+	var generator readings.Generator
+	if client != nil {
+		generator = readingGenerator{client: client}
+	}
+	return &readings.PostgresService{DB: db, Builder: readingBuilder{lab: l, memory: m}, Generator: generator}
+}
 
 type readingUserKey struct{}
 

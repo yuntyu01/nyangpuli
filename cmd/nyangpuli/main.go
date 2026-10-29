@@ -233,6 +233,8 @@ func serve(args []string) error {
 	app := &api.Server{Lab: l, Memory: store, Tokens: tokens}
 	if db != nil {
 		app.Auth = persistence.Store{DB: db}
+		app.AccountDeletion = persistence.Store{DB: db}
+		app.TarotStore = persistence.Store{DB: db}
 	}
 	var client *generation.Client
 	if *enableGeneration {
@@ -248,9 +250,18 @@ func serve(args []string) error {
 	if *readingPath == "" {
 		*readingPath = filepath.Join(*root, "data", "private", "readings.json")
 	}
-	app.Readings, err = api.NewReadingService(l, store, client, *readingPath)
-	if err != nil {
-		return err
+	if db != nil {
+		if _, statErr := os.Stat(*readingPath); statErr == nil {
+			return errors.New("existing JSON readings require explicit migration before database mode")
+		} else if !os.IsNotExist(statErr) {
+			return statErr
+		}
+		app.Readings = api.NewPostgresReadingService(db, l, store, client)
+	} else {
+		app.Readings, err = api.NewReadingService(l, store, client, *readingPath)
+		if err != nil {
+			return err
+		}
 	}
 	app.AllowTestUnlock = *testUnlocks
 	if base := os.Getenv("MEM0_BASE_URL"); base != "" {
