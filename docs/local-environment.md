@@ -16,8 +16,12 @@ docker compose logs api
 관리형 클라우드에서 빌드할 때는 프록시 CA가 필요하다. 이 CA는 BuildKit 비밀 마운트로만 사용하며 이미지에 복사하지 않는다. 보통 환경에서는 기본 compose 파일만 사용한다.
 
 ```sh
+# 홈 디렉터리가 읽기 전용인 관리형 환경에서 buildx 상태를 저장할 위치
+export BUILDX_CONFIG=/tmp/nyang-buildx
 docker compose -f compose.yaml -f compose.proxy.yaml up --build -d
 ```
+
+이미지를 다시 빌드할 필요가 없다면 같은 환경변수와 Compose 파일을 사용해 `docker compose -f compose.yaml -f compose.proxy.yaml up -d`로 다시 시작한다. 관리형 환경에서 빌드와 재시작 후 상태 확인, 인증 거부 및 사주·타로·상담 비교 요청을 검증했다. 이는 실제 모델, 결제 또는 PostgreSQL 기반 전체 제품 흐름 검증을 뜻하지 않는다.
 
 API와 DB의 호스트 포트는 로컬 인터페이스에만 노출한다. 컨테이너 내 API의 비루프백 바인딩은 `NYANG_ENV=development`와 명시적 `--allow-container-bind`가 모두 있을 때만 가능하다. 이 구성은 개발용이며 운영 공개에 적합하지 않다. 종료는 `docker compose down`으로 한다. 명명된 볼륨은 유지된다. `down -v`는 데이터를 삭제하므로 필요한 경우에만 사용한다.
 
