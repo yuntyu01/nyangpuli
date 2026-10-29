@@ -11,7 +11,6 @@ import (
 	"github.com/yuntyu01/nyangpuli-lab/internal/counsel"
 	"github.com/yuntyu01/nyangpuli-lab/internal/generation"
 	"github.com/yuntyu01/nyangpuli-lab/internal/lab"
-	"github.com/yuntyu01/nyangpuli-lab/internal/memory"
 	"github.com/yuntyu01/nyangpuli-lab/internal/readings"
 )
 
@@ -26,7 +25,7 @@ type readingEnvelope struct {
 
 type readingBuilder struct {
 	lab    *lab.Lab
-	memory *memory.Store
+	memory MemoryStore
 }
 
 func (b readingBuilder) Build(ctx context.Context, domain, variant string, data json.RawMessage) (generation.Input, error) {
@@ -90,7 +89,7 @@ func (g readingGenerator) Generate(ctx context.Context, in generation.Input) (ge
 }
 
 // No provider defaults. A nil client allows archive reads but no generation.
-func NewReadingService(l *lab.Lab, m *memory.Store, client *generation.Client, path string) (*readings.Service, error) {
+func NewReadingService(l *lab.Lab, m MemoryStore, client *generation.Client, path string) (*readings.Service, error) {
 	var generator readings.Generator
 	if client != nil {
 		generator = readingGenerator{client: client}
