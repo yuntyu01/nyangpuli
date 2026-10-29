@@ -1,0 +1,50 @@
+{
+  "version": "2026-10-08-v1",
+  "status": "prepared_not_run",
+  "conditions": [
+    "without_research",
+    "with_research"
+  ],
+  "metrics": [
+    "empathy",
+    "situation_fit",
+    "specific_action",
+    "unsupported_certainty",
+    "exception_compliance",
+    "repetition"
+  ],
+  "cases": [
+    {
+      "id": "synthetic-conflict",
+      "topic": "conflict_reconnect",
+      "question": "다툰 뒤 대화를 언제 다시 시작할지 모르겠어요."
+    },
+    {
+      "id": "synthetic-hurt",
+      "topic": "express_hurt",
+      "question": "약속이 바뀌어 서운한 마음을 어떻게 전할까요?"
+    },
+    {
+      "id": "synthetic-contact",
+      "topic": "negotiate_contact",
+      "question": "서로 생활 시간이 달라 연락 기준을 정하고 싶어요."
+    }
+  ],
+  "shared_confirmed_facts": [
+    {
+      "key": "safety",
+      "value": "no_threat",
+      "source_id": "synthetic-safety"
+    },
+    {
+      "key": "dialogue_consent",
+      "value": "mutual",
+      "source_id": "synthetic-consent"
+    },
+    {
+      "key": "contact_boundary",
+      "value": "allowed",
+      "source_id": "synthetic-boundary"
+    }
+  ]
+}

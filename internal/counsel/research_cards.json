@@ -1,0 +1,97 @@
+[
+  {
+    "id": "dugyeol-conflict-001",
+    "version": "2026-10-08-v1",
+    "topic": "conflict_reconnect",
+    "situation": "현재 갈등 중이며 둘 다 대화를 이어갈 의사가 있을 때",
+    "empathy": "지금 풀고 싶은 마음과 잠시 진정하고 싶은 마음이 부딪힐 수 있어요.",
+    "interpretation": "시간이 필요하다는 말만으로 관계를 포기했다고 단정하기는 어려워요. 다시 대화할 약속을 지키는지도 함께 봐야 해요.",
+    "questions": [
+      "언제 다시 이야기할지 서로 정했나요?",
+      "그 약속은 지켜졌나요?"
+    ],
+    "action": "잠시 쉰 뒤 다시 이야기할 시각과 더 시간이 필요할 때 알리는 방식을 함께 정해요.",
+    "exceptions": [
+      "폭력·위협 또는 명확한 관계 종료·연락 거부 시 대화 재개를 권하지 않음",
+      "약속을 반복적으로 어기는 상황에서 무조건 기다리라고 하지 않음"
+    ],
+    "status": "conditional",
+    "conditions": [
+      "상호 대화 의사",
+      "위협 없음",
+      "연락 허용"
+    ],
+    "video_url": "https://www.youtube.com/watch?v=ojyMbYPzuTg",
+    "timestamps": [
+      "07:30–09:17"
+    ],
+    "original_reference": "쉬는 절차, 대화 복귀 시각과 연장 알림을 합의하는 구간",
+    "editorial_addition": "안전·연락 거부 예외, 약속 이행 확인 및 시간 예시는 두결 편집",
+    "rights": "원영상 권리 검토 미완료; 효과 검증 전 편집 초안",
+    "source_group": "ojyMbYPzuTg",
+    "split": "retrieval"
+  },
+  {
+    "id": "dugyeol-hurt-001",
+    "version": "2026-10-08-v1",
+    "topic": "express_hurt",
+    "situation": "하고 싶은 말은 있지만 감정적으로 쏟아낼까 두려울 때",
+    "empathy": "참으면 쌓이고 꺼내면 싸울 것 같아 막막할 수 있어요.",
+    "interpretation": "말하지 않기와 다투기 사이에, 표현을 먼저 정리해보는 선택이 있어요.",
+    "questions": [
+      "상대가 알아줬으면 하는 사실 하나와 부탁 하나는 무엇인가요?"
+    ],
+    "action": "조금 진정한 뒤 메모에 쓰고 읽어봐요. 비난하거나 마음을 단정한 문장을 고친 뒤 대화할 시간을 물어봐요.",
+    "exceptions": [
+      "잘 말하면 상대가 반드시 바뀐다고 약속하지 않음",
+      "보복·위협 우려가 있으면 대화를 강요하지 않음"
+    ],
+    "status": "conditional",
+    "conditions": [
+      "상호 대화 의사",
+      "위협 없음",
+      "연락 허용"
+    ],
+    "video_url": "https://www.youtube.com/watch?v=wYDE9EGcUxU",
+    "timestamps": [
+      "22:33–24:02"
+    ],
+    "original_reference": "감정을 정리하고 표현을 고쳐 대화하는 구간",
+    "editorial_addition": "사실 하나·부탁 하나 및 안전 예외는 두결 편집; 댓글은 실행 효과를 확인하지 못함",
+    "rights": "원영상 권리 검토 미완료; 효과 검증 전 편집 초안",
+    "source_group": "wYDE9EGcUxU",
+    "split": "retrieval"
+  },
+  {
+    "id": "dugyeol-contact-001",
+    "version": "2026-10-08-v1",
+    "topic": "negotiate_contact",
+    "situation": "통화·답장 빈도 때문에 다투지만 서로 조율할 의사가 있을 때",
+    "empathy": "연락이 적으면 멀어진 것 같고, 많으면 내 시간이 없어지는 느낌이 들 수 있어요.",
+    "interpretation": "모든 커플에게 맞는 연락 횟수는 정해져 있지 않아요. 일정과 수면을 지키면서 가능한 방식을 정해봐요.",
+    "questions": [
+      "업무 중, 퇴근 후, 쉬는 날에 각각 가능한 연락은 무엇인가요?"
+    ],
+    "action": "필요한 연락 하나와 부담스러운 연락 하나를 각각 적고, 일주일간 시험할 약속 한 가지를 정해요.",
+    "exceptions": [
+      "감시·비밀번호 강요·일방적인 상시 보고를 사랑 표현으로 정당화하지 않음",
+      "긴 통화 자체를 문제로 판단하지 않음"
+    ],
+    "status": "conditional",
+    "conditions": [
+      "상호 대화 의사",
+      "위협 없음",
+      "연락 허용"
+    ],
+    "video_url": "https://www.youtube.com/watch?v=Lyd0Ag8DY7E",
+    "timestamps": [
+      "05:34–06:34",
+      "09:19–10:16"
+    ],
+    "original_reference": "통화와 메시지 대안, 개인 시간, 두 사람의 가능한 시간과 빈도를 합의하는 구간",
+    "editorial_addition": "일주일 시험·상황별 질문·통제 예외는 두결 편집. 장거리·다른 생활시간 반례 반영",
+    "rights": "원영상 권리 검토 미완료; 효과 검증 전 편집 초안",
+    "source_group": "Lyd0Ag8DY7E",
+    "split": "retrieval"
+  }
+]

@@ -115,7 +115,11 @@ func (l *Lab) Compare(ctx context.Context, domain, caseID string, data []byte) (
 		}
 		r.Evidence = res
 		for _, v := range []counsel.Variant{res.Baseline, res.Enhanced} {
-			r.Inputs = append(r.Inputs, generation.Input{CaseID: caseID, VariantID: v.ID, Question: req.Question, SystemPrompt: v.SystemPrompt, UserPrompt: v.UserPrompt, Sources: counselSources(v.ID)})
+			sources := counselSources(v.ID)
+			for _, card := range v.ResearchEvidence {
+				sources = append(sources, "dugyeol:"+card.ID+"@"+card.Version)
+			}
+			r.Inputs = append(r.Inputs, generation.Input{CaseID: caseID, VariantID: v.ID, Question: req.Question, SystemPrompt: v.SystemPrompt, UserPrompt: v.UserPrompt, Sources: sources})
 		}
 	default:
 		return r, fmt.Errorf("unknown domain %q (tarot, saju, daily, compatibility, counsel)", domain)
