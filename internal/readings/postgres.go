@@ -19,9 +19,10 @@ import (
 // Provider calls happen after the claim transaction commits. Ambiguous or
 // interrupted jobs remain pending/unknown and are never automatically retried.
 type PostgresService struct {
-	DB        *sql.DB
-	Builder   Builder
-	Generator Generator
+	DB              *sql.DB
+	Builder         Builder
+	Generator       Generator
+	AllowTestUnlock bool
 }
 
 func randomID() (string, error) {
@@ -163,8 +164,10 @@ func (s *PostgresService) getRecord(ctx context.Context, user, id string) (recor
 		return record{}, err
 	}
 	var unlocked bool
-	if err = s.DB.QueryRowContext(ctx, `SELECT EXISTS(SELECT 1 FROM dev_reading_unlocks WHERE account_id=$1 AND reading_job_id=$2)`, user, id).Scan(&unlocked); err != nil {
-		return record{}, ErrStorage
+	if s.AllowTestUnlock {
+		if err = s.DB.QueryRowContext(ctx, `SELECT EXISTS(SELECT 1 FROM dev_reading_unlocks WHERE account_id=$1 AND reading_job_id=$2) OR EXISTS(SELECT 1 FROM dev_purchase_transactions WHERE account_id=$1 AND reading_job_id=$2 AND status='purchased')`, user, id).Scan(&unlocked); err != nil {
+			return record{}, ErrStorage
+		}
 	}
 	if unlocked {
 		r.Unlocked = true
@@ -228,6 +231,9 @@ func (s *PostgresService) List(user string) ([]View, error) {
 	return out, nil
 }
 func (s *PostgresService) UnlockForTest(user, id string) (View, error) {
+	if !s.AllowTestUnlock {
+		return View{}, ErrNotConfigured
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	r, err := s.getRecord(ctx, user, id)
@@ -258,11 +264,11 @@ func (s *PostgresService) Detail(ctx context.Context, user, id string) (View, er
 	}
 	jobKey := "detail:" + id
 	if j, e := s.jobByKey(ctx, user, jobKey); e == nil {
-		detail, e := decodeJob(j)
+		_, e := decodeJob(j)
 		if e != nil {
 			return View{}, e
 		}
-		return view(detail), nil
+		return s.currentDetail(ctx, user, id)
 	} else if !errors.Is(e, sql.ErrNoRows) {
 		return View{}, ErrStorage
 	}
@@ -277,11 +283,11 @@ func (s *PostgresService) Detail(ctx context.Context, user, id string) (View, er
 		return View{}, ErrStorage
 	}
 	if !created {
-		detail, e := decodeJob(j)
+		_, e := decodeJob(j)
 		if e != nil {
 			return View{}, e
 		}
-		return view(detail), nil
+		return s.currentDetail(ctx, user, id)
 	}
 	result, genErr := s.Generator.Generate(ctx, stageInput(r, true))
 	r.DetailUsage = addUsage(r.DetailUsage, result.Usage)
@@ -308,6 +314,19 @@ func (s *PostgresService) Detail(ctx context.Context, user, id string) (View, er
 	}
 	if callErr != nil {
 		return View{}, callErr
+	}
+	return s.currentDetail(saveCtx, user, id)
+}
+
+// Re-check authorization after generation, because a refund can occur while
+// the provider call runs. Never return persisted detail without entitlement.
+func (s *PostgresService) currentDetail(ctx context.Context, user, id string) (View, error) {
+	r, err := s.getRecord(ctx, user, id)
+	if err != nil {
+		return View{}, err
+	}
+	if !r.Unlocked {
+		return View{}, ErrLocked
 	}
 	return view(r), nil
 }

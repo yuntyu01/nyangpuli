@@ -29,15 +29,16 @@ type MemoryStore interface {
 }
 
 type Server struct {
-	TarotStore      TarotStore
-	Auth            Authenticator
-	AccountDeletion AccountDeleter
-	Lab             *lab.Lab
-	Memory          MemoryStore
-	Mem0            *memory.Mem0
-	Tokens          map[string]string
-	Readings        ReadingService
-	AllowTestUnlock bool
+	TarotStore           TarotStore
+	Auth                 Authenticator
+	AccountDeletion      AccountDeleter
+	DevelopmentPurchaser DevelopmentPurchaser
+	Lab                  *lab.Lab
+	Memory               MemoryStore
+	Mem0                 *memory.Mem0
+	Tokens               map[string]string
+	Readings             ReadingService
+	AllowTestUnlock      bool
 }
 
 // Tokens maps configured token => authenticated user. Do not accept identities from bodies/headers.
@@ -73,7 +74,16 @@ func (s *Server) Handler() http.Handler {
 		if s.handlePostgresDataDeletion(w, r, user) {
 			return
 		}
+		if s.handleDevelopmentPurchase(w, r, user) {
+			return
+		}
 		if s.handleTarot(w, r, user) {
+			return
+		}
+		if s.handleReadingJobs(w, r, user) {
+			return
+		}
+		if s.handleMemoryItem(w, r, user) {
 			return
 		}
 		if s.handleReadings(w, r, user) {

@@ -65,6 +65,12 @@ func (s *PostgresStore) Set(user string, fact Fact) (Record, error) {
 		return Record{}, err
 	}
 	record := Record{ID: hex.EncodeToString(random), Fact: fact, RecordedAt: time.Now().UTC()}
+	var watermark sql.NullTime
+	err = tx.QueryRowContext(ctx, `SELECT (SELECT deleted_at FROM memory_deletion_watermarks WHERE account_id=$1 AND kind=$2)`, user, fact.Key).Scan(&watermark)
+	if err != nil {
+		return Record{}, err
+	}
+	valid := !watermark.Valid || fact.ObservedAt.After(watermark.Time)
 	if current != nil && fact.ObservedAt.After(current.ObservedAt) {
 		record.Supersedes = current.ID
 	}
@@ -72,12 +78,15 @@ func (s *PostgresStore) Set(user string, fact Fact) (Record, error) {
 	if err != nil {
 		return Record{}, err
 	}
-	_, err = tx.ExecContext(ctx, `INSERT INTO memories(id,account_id,kind,value,occurred_at,recorded_at,confirmed,source_event_id,supersedes) VALUES($1,$2,$3,$4,$5,$6,true,$7,$8)`, record.ID, user, fact.Key, data, fact.ObservedAt, record.RecordedAt, fact.SourceEventID, record.Supersedes)
+	_, err = tx.ExecContext(ctx, `INSERT INTO memories(id,account_id,kind,value,occurred_at,recorded_at,confirmed,source_event_id,supersedes,valid) VALUES($1,$2,$3,$4,$5,$6,true,$7,$8,$9)`, record.ID, user, fact.Key, data, fact.ObservedAt, record.RecordedAt, fact.SourceEventID, record.Supersedes, valid)
 	if err != nil {
 		return Record{}, err
 	}
 	if err = tx.Commit(); err != nil {
 		return Record{}, err
+	}
+	if !valid {
+		return record, nil
 	}
 	records = markCurrent(append(records, record))
 	for _, r := range records {

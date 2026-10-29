@@ -40,7 +40,7 @@ export NYANG_API_TOKEN="$(go run ./cmd/nyangpuli token)"
 export NYANG_USER_ID=local-demo
 # NYANG_LLM_API_BASE, NYANG_LLM_API_KEY, NYANG_LLM_MODEL을 직접 설정
 # 상세 답변이 잘리지 않도록 선택 모델에 맞게 NYANG_LLM_MAX_TOKENS 설정
-go run ./cmd/nyangpuli serve --enable-generation --test-unlocks
+NYANG_ENV=development go run ./cmd/nyangpuli serve --enable-generation --test-unlocks
 ```
 
 다른 터미널에 같은 API 토큰을 설정하고:

@@ -99,7 +99,7 @@ go run ./cmd/nyangpuli compare \
 제품 API의 요약→상세 흐름은 같은 공급자 설정으로 별도 실행합니다.
 
 ```bash
-go run ./cmd/nyangpuli serve --enable-generation --test-unlocks
+NYANG_ENV=development go run ./cmd/nyangpuli serve --enable-generation --test-unlocks
 ```
 
 `--enable-generation`은 서버의 실제 모델 호출을 허용하므로 비용이 발생할 수 있습니다. `--test-unlocks`는 개발용 해제 경로만 열며 결제·영수증 검증을 하지 않습니다. 두 옵션은 기본 비활성입니다. 요약과 상세는 각각 별도 생성이며, 성공한 동일 요청이나 저장 결과의 재열람은 다시 생성하지 않습니다. 요청·응답 예시와 장애 시 재시도 한계는 [제품 흐름](docs/product-flow.md)에 있습니다. 요약은 유용한 답을 먼저 제공하고 상세는 같은 사실·카드·명식의 설명을 확장합니다. `baseline/enhanced`는 자료 조합이며 무료/유료 등급이 아닙니다.

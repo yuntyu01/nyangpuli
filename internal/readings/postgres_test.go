@@ -65,7 +65,7 @@ func TestPostgresReadingWorkflow(t *testing.T) {
 	}
 	defer db.Exec(`DELETE FROM accounts WHERE id IN ($1,$2)`, a, b)
 	g := &pgGenerator{started: make(chan struct{}, 8), release: make(chan struct{})}
-	s := &PostgresService{DB: db, Builder: pgBuilder{}, Generator: g}
+	s := &PostgresService{DB: db, Builder: pgBuilder{}, Generator: g, AllowTestUnlock: true}
 	input := json.RawMessage(`{"question":"case"}`)
 	first := make(chan View, 1)
 	firstErr := make(chan error, 1)
@@ -131,7 +131,7 @@ func TestPostgresReadingWorkflow(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db2.Close()
-	restored, err := (&PostgresService{DB: db2}).Get(a, v.ID)
+	restored, err := (&PostgresService{DB: db2, AllowTestUnlock: true}).Get(a, v.ID)
 	if err != nil || restored.Detail != "detail" {
 		t.Fatalf("restore %#v %v", restored, err)
 	}

@@ -25,6 +25,7 @@ import (
 	"github.com/yuntyu01/nyangpuli-lab/internal/lab"
 	"github.com/yuntyu01/nyangpuli-lab/internal/memory"
 	"github.com/yuntyu01/nyangpuli-lab/internal/persistence"
+	"github.com/yuntyu01/nyangpuli-lab/internal/purchase"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
@@ -182,6 +183,9 @@ func serve(args []string) error {
 	// storage is being migrated. Do not accept static lab tokens in production.
 	production := os.Getenv("NYANG_ENV") == "production"
 	dsn := os.Getenv("DATABASE_URL")
+	if *testUnlocks && os.Getenv("NYANG_ENV") != "development" {
+		return errors.New("test unlocks require NYANG_ENV=development")
+	}
 	if production {
 		return errors.New("production mode is unavailable until private data storage and account recovery are migrated")
 	}
@@ -256,7 +260,10 @@ func serve(args []string) error {
 		} else if !os.IsNotExist(statErr) {
 			return statErr
 		}
-		app.Readings = api.NewPostgresReadingService(db, l, store, client)
+		app.Readings = api.NewPostgresReadingService(db, l, store, client, *testUnlocks)
+		if *testUnlocks {
+			app.DevelopmentPurchaser = purchase.Development{DB: db}
+		}
 	} else {
 		app.Readings, err = api.NewReadingService(l, store, client, *readingPath)
 		if err != nil {

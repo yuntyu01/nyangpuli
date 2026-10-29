@@ -23,12 +23,12 @@ type ReadingService interface {
 	Detail(context.Context, string, string) (readings.View, error)
 }
 
-func NewPostgresReadingService(db *sql.DB, l *lab.Lab, m MemoryStore, client *generation.Client) ReadingService {
+func NewPostgresReadingService(db *sql.DB, l *lab.Lab, m MemoryStore, client *generation.Client, allowTestUnlock bool) ReadingService {
 	var generator readings.Generator
 	if client != nil {
 		generator = readingGenerator{client: client}
 	}
-	return &readings.PostgresService{DB: db, Builder: readingBuilder{lab: l, memory: m}, Generator: generator}
+	return &readings.PostgresService{DB: db, Builder: readingBuilder{lab: l, memory: m}, Generator: generator, AllowTestUnlock: allowTestUnlock}
 }
 
 type readingUserKey struct{}
