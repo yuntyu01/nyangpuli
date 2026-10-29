@@ -72,9 +72,14 @@ type Response struct {
 	Warnings []string        `json:"warnings"`
 }
 
-type Engine struct{ root string }
+// Engine bounds subprocesses so concurrent requests cannot exhaust the host.
+// A slot is released even if execution fails or the request is cancelled.
+type Engine struct {
+	root  string
+	slots chan struct{}
+}
 
-func New(repoRoot string) *Engine { return &Engine{root: repoRoot} }
+func New(repoRoot string) *Engine { return &Engine{root: repoRoot, slots: make(chan struct{}, 4)} }
 
 func validDate(year, month, day int) bool {
 	if year < 1801 || year > 2100 || month < 1 || month > 12 || day < 1 {
@@ -104,6 +109,9 @@ func (r Request) Validate() error {
 	if strings.TrimSpace(b.TimeZone) == "" || len(b.TimeZone) > 128 {
 		return errors.New("an explicit IANA time_zone is required")
 	}
+	if _, err := time.LoadLocation(b.TimeZone); err != nil || b.TimeZone == "Local" {
+		return errors.New("time_zone must be a valid IANA time zone")
+	}
 	if r.Date != nil && !validDate(r.Date.Year, r.Date.Month, r.Date.Day) {
 		return errors.New("date must be a valid Gregorian date in 1801..2100")
 	}
@@ -132,12 +140,18 @@ func (e *Engine) Compare(ctx context.Context, req Request) (Response, error) {
 	if err := req.Validate(); err != nil {
 		return Response{}, err
 	}
+	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+	select {
+	case e.slots <- struct{}{}:
+		defer func() { <-e.slots }()
+	case <-ctx.Done():
+		return Response{}, fmt.Errorf("OhMySaju adapter: %w", ctx.Err())
+	}
 	input, err := json.Marshal(req)
 	if err != nil {
 		return Response{}, err
 	}
-	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
-	defer cancel()
 	cmd := exec.CommandContext(ctx, "node", filepath.Join(e.root, "adapters", "ohmysaju", "bridge.mjs"))
 	cmd.Stdin = bytes.NewReader(input)
 	var stdout, stderr bytes.Buffer

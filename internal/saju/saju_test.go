@@ -3,6 +3,7 @@ package saju
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -166,5 +167,29 @@ func TestIntegrationActualOhMySajuAndDaily(t *testing.T) {
 	invalidZone.Birth.TimeZone = "Mars/Olympus"
 	if _, err := engine.Compare(context.Background(), invalidZone); err == nil {
 		t.Fatal("invalid IANA zone accepted")
+	}
+}
+
+func TestInvalidTimeZoneRejected(t *testing.T) {
+	hour := 12
+	req := Request{CaseID: "zone", Question: "질문", Birth: Birth{Year: 2000, Month: 1, Day: 1, Hour: &hour, TimeZone: "Invalid/Zone"}}
+	if err := req.Validate(); err == nil {
+		t.Fatal("invalid timezone accepted")
+	}
+}
+
+func TestCancelledRequestDoesNotWaitForEngineSlot(t *testing.T) {
+	engine := New(t.TempDir())
+	for i := 0; i < cap(engine.slots); i++ {
+		engine.slots <- struct{}{}
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	_, err := engine.Compare(ctx, exampleRequest())
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("expected cancellation, got %v", err)
+	}
+	if len(engine.slots) != cap(engine.slots) {
+		t.Fatal("cancelled request changed slot count")
 	}
 }
