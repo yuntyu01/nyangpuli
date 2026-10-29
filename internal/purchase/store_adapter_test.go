@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -109,5 +110,132 @@ func TestStoreAdapterNeverConvertsRefundOrPendingToPurchase(t *testing.T) {
 		if err != nil || got.Status != status {
 			t.Fatalf("status %s: %#v %v", status, got, err)
 		}
+	}
+}
+
+// Exercise the full verifier -> service -> repository path; a signed store
+// result alone must not let another account or another reading claim a token.
+func TestStoreAdapterServiceOwnershipAndProductBinding(t *testing.T) {
+	ctx := context.Background()
+	snapshot := StoreSnapshot{TransactionID: "123", ProductID: "detail", ApplicationID: "app.example", Environment: "sandbox", StoreAccountToken: "bound-alice", Status: Purchased, Revision: 1}
+	lookup := lookupFunc(func(context.Context, StoreReference) (StoreSnapshot, error) { return snapshot, nil })
+	bindings := bindingsFunc(func(_ context.Context, store, token string) (string, error) {
+		if store == "apple" && token == "bound-alice" {
+			return "alice", nil
+		}
+		if store == "apple" && token == "bound-bob" {
+			return "bob", nil
+		}
+		return "", errors.New("unknown account binding")
+	})
+	adapter, err := NewStoreAdapter("apple", "app.example", "sandbox", lookup, bindings)
+	if err != nil {
+		t.Fatal(err)
+	}
+	repo := &mockRepo{owner: map[string]string{}, grants: map[string]bool{}}
+	service := New(adapter, repo, "detail")
+	proof := []byte(`{"transaction_id":"123"}`)
+	if err = service.VerifyAndApply(ctx, "alice", "reading-1", proof); err != nil {
+		t.Fatal(err)
+	}
+	if err = service.VerifyAndApply(ctx, "alice", "reading-1", proof); err != nil {
+		t.Fatalf("duplicate must be idempotent: %v", err)
+	}
+	if err = service.VerifyAndApply(ctx, "alice", "reading-2", proof); !errors.Is(err, ErrInvalid) {
+		t.Fatalf("same purchase applied to another reading: %v", err)
+	}
+	if err = service.VerifyAndApply(ctx, "bob", "reading-1", proof); !errors.Is(err, ErrInvalid) {
+		t.Fatalf("unbound account accepted: %v", err)
+	}
+
+	// Even if an authenticated store snapshot later points to another account,
+	// an already-owned transaction cannot be transferred to that account.
+	snapshot.StoreAccountToken = "bound-bob"
+	snapshot.Revision = 2
+	if err = service.VerifyAndApply(ctx, "bob", "reading-1", proof); !errors.Is(err, ErrOwnership) {
+		t.Fatalf("transaction owner changed: %v", err)
+	}
+	if repo.grants["bob:reading-1"] {
+		t.Fatal("other account received entitlement")
+	}
+
+	// A valid store record for an unrelated product is not a detail purchase.
+	snapshot.ProductID = "unrelated-product"
+	snapshot.StoreAccountToken = "bound-alice"
+	if err = service.VerifyAndApply(ctx, "alice", "reading-1", proof); !errors.Is(err, ErrInvalid) {
+		t.Fatalf("unrelated product accepted: %v", err)
+	}
+	// An unresolved external account token is not the server account ID.
+	snapshot.ProductID, snapshot.StoreAccountToken = "detail", "unknown-token"
+	if err = service.VerifyAndApply(ctx, "alice", "reading-1", proof); !errors.Is(err, ErrInvalid) {
+		t.Fatalf("unknown binding accepted: %v", err)
+	}
+}
+
+func TestStoreAdapterServiceRefundReconciliation(t *testing.T) {
+	ctx := context.Background()
+	snapshot := StoreSnapshot{TransactionID: "456", ProductID: "detail", ApplicationID: "app.example", Environment: "sandbox", StoreAccountToken: "bound", Status: Purchased, Revision: 1}
+	adapter, err := NewStoreAdapter("google", "app.example", "sandbox", lookupFunc(func(context.Context, StoreReference) (StoreSnapshot, error) { return snapshot, nil }), bindingsFunc(func(context.Context, string, string) (string, error) { return "alice", nil }))
+	if err != nil {
+		t.Fatal(err)
+	}
+	repo := &mockRepo{owner: map[string]string{}, grants: map[string]bool{}}
+	service := New(adapter, repo, "detail")
+	proof := []byte(`{"product_id":"detail","purchase_token":"token-456"}`)
+	if err = service.VerifyAndApply(ctx, "alice", "reading", proof); err != nil || !repo.grants["alice:reading"] {
+		t.Fatalf("purchase: %v", err)
+	}
+	snapshot.Status, snapshot.Revision = Refunded, 2
+	for i := 0; i < 2; i++ {
+		if err = service.VerifyAndApply(ctx, "alice", "reading", proof); err != nil {
+			t.Fatalf("refund replay: %v", err)
+		}
+	}
+	if repo.grants["alice:reading"] {
+		t.Fatal("refund did not revoke entitlement")
+	}
+	// Old purchase notification must not override a newer refund.
+	snapshot.Status, snapshot.Revision = Purchased, 1
+	if err = service.VerifyAndApply(ctx, "alice", "reading", proof); err != nil {
+		t.Fatalf("stale replay: %v", err)
+	}
+	if repo.grants["alice:reading"] {
+		t.Fatal("stale purchase restored a refunded entitlement")
+	}
+	// Conflicting statuses at an identical revision are not ordered safely.
+	snapshot.Revision = 2
+	if err = service.VerifyAndApply(ctx, "alice", "reading", proof); !errors.Is(err, ErrInvalid) {
+		t.Fatalf("conflicting same-revision status accepted: %v", err)
+	}
+}
+
+func TestStoreAdapterServiceConcurrentDuplicateTransaction(t *testing.T) {
+	adapter, err := NewStoreAdapter("apple", "app.example", "sandbox", lookupFunc(func(context.Context, StoreReference) (StoreSnapshot, error) {
+		return StoreSnapshot{TransactionID: "789", ProductID: "detail", ApplicationID: "app.example", Environment: "sandbox", StoreAccountToken: "bound", Status: Purchased, Revision: 1}, nil
+	}), bindingsFunc(func(context.Context, string, string) (string, error) { return "alice", nil }))
+	if err != nil {
+		t.Fatal(err)
+	}
+	repo := &mockRepo{owner: map[string]string{}, grants: map[string]bool{}}
+	service := New(adapter, repo, "detail")
+	const count = 24
+	results := make(chan error, count)
+	var wait sync.WaitGroup
+	for i := 0; i < count; i++ {
+		wait.Add(1)
+		go func() {
+			defer wait.Done()
+			results <- service.VerifyAndApply(context.Background(), "alice", "reading", []byte(`{"transaction_id":"789"}`))
+		}()
+	}
+	wait.Wait()
+	close(results)
+	for err := range results {
+		if err != nil {
+			t.Fatalf("duplicate transaction failed: %v", err)
+		}
+	}
+	if !repo.grants["alice:reading"] || len(repo.revisions) != 1 {
+		t.Fatal("duplicates did not yield one transaction entitlement")
 	}
 }
