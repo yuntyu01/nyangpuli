@@ -83,4 +83,12 @@ func TestPostgresAccountHTTPGuestLinkAndLogin(t *testing.T) {
 	if err != nil || recovered != id {
 		t.Fatalf("account recovery %v", err)
 	}
+	r := httptest.NewRequest(http.MethodGet, "/v1/auth/me", nil)
+	r.Header.Set("Authorization", "Bearer "+result.Token)
+	w = httptest.NewRecorder()
+	handler.ServeHTTP(w, r)
+	var identity map[string]string
+	if w.Code != http.StatusOK || json.Unmarshal(w.Body.Bytes(), &identity) != nil || len(identity) != 1 || identity["account_id"] != id {
+		t.Fatalf("recovered account identity: %d", w.Code)
+	}
 }
