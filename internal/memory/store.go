@@ -68,29 +68,42 @@ func Open(path string) (*Store, error) {
 	if err != nil {
 		return nil, fmt.Errorf("read memory store: %w", err)
 	}
+	if err := s.loadSnapshot(data); err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+
+// ValidateSnapshot validates the same byte sequence the JSON store would load,
+// without writing a private copy to disk.
+func ValidateSnapshot(data []byte) error {
+	return (&Store{}).loadSnapshot(data)
+}
+
+func (s *Store) loadSnapshot(data []byte) error {
 	if err := json.Unmarshal(data, &s.state); err != nil {
-		return nil, fmt.Errorf("decode memory store: %w", err)
+		return fmt.Errorf("decode memory store: %w", err)
 	}
 	if s.state.Version != 1 || s.state.Users == nil {
-		return nil, fmt.Errorf("unsupported memory store format")
+		return fmt.Errorf("unsupported memory store format")
 	}
 	ids := map[string]bool{}
 	for user, records := range s.state.Users {
 		if err := validateUser(user); err != nil {
-			return nil, err
+			return err
 		}
 		for _, r := range records {
 			if err := validateFact(r.Fact); err != nil {
-				return nil, err
+				return err
 			}
 			if r.ID == "" || ids[r.ID] || r.RecordedAt.IsZero() {
-				return nil, fmt.Errorf("invalid or duplicate stored record")
+				return fmt.Errorf("invalid or duplicate stored record")
 			}
 			ids[r.ID] = true
 		}
 		s.state.Users[user] = markCurrent(records)
 	}
-	return s, nil
+	return nil
 }
 
 func validateUser(user string) error {

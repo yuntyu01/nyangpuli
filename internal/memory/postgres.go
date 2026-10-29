@@ -105,7 +105,7 @@ type queryer interface {
 }
 
 func pgRecords(ctx context.Context, q queryer, user, key string) ([]Record, error) {
-	rows, err := q.QueryContext(ctx, `SELECT id,value,recorded_at,COALESCE(supersedes,'') FROM memories WHERE account_id=$1 AND valid AND confirmed AND ($2='' OR kind=$2) ORDER BY occurred_at,recorded_at,id`, user, key)
+	rows, err := q.QueryContext(ctx, `SELECT id,value,recorded_at,COALESCE(supersedes,''),legacy_recorded_at FROM memories WHERE account_id=$1 AND valid AND confirmed AND ($2='' OR kind=$2) ORDER BY occurred_at,recorded_at,id`, user, key)
 	if err != nil {
 		return nil, err
 	}
@@ -114,8 +114,15 @@ func pgRecords(ctx context.Context, q queryer, user, key string) ([]Record, erro
 	for rows.Next() {
 		var r Record
 		var data []byte
-		if err = rows.Scan(&r.ID, &data, &r.RecordedAt, &r.Supersedes); err != nil {
+		var legacyRecordedAt sql.NullString
+		if err = rows.Scan(&r.ID, &data, &r.RecordedAt, &r.Supersedes, &legacyRecordedAt); err != nil {
 			return nil, err
+		}
+		if legacyRecordedAt.Valid {
+			r.RecordedAt, err = time.Parse(time.RFC3339Nano, legacyRecordedAt.String)
+			if err != nil {
+				return nil, errors.New("invalid imported recording time")
+			}
 		}
 		if err = json.Unmarshal(data, &r.Fact); err != nil {
 			return nil, err

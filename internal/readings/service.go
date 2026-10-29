@@ -111,37 +111,50 @@ func New(builder Builder, generator Generator, path string) (*Service, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%w: cannot read file", ErrStorage)
 	}
+	if err := s.loadSnapshot(b); err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+
+// ValidateSnapshot checks the complete persisted state without creating any
+// additional on-disk copy of personal data.
+func ValidateSnapshot(data []byte) error {
+	return (&Service{}).loadSnapshot(data)
+}
+
+func (s *Service) loadSnapshot(b []byte) error {
 	if json.Unmarshal(b, &s.state) != nil || s.state.Version != 1 || s.state.Records == nil {
-		return nil, fmt.Errorf("%w: invalid or unsupported store", ErrStorage)
+		return fmt.Errorf("%w: invalid or unsupported store", ErrStorage)
 	}
 	seen := map[string]bool{}
 	for id, r := range s.state.Records {
 		identity := r.User + "\x00" + r.IdempotencyKey
 		if id == "" || id != r.ID || validateIdentity(r.User, r.IdempotencyKey) != nil || len(r.RequestHash) != 64 || seen[identity] || r.CreatedAt.IsZero() || r.UpdatedAt.IsZero() || validateFrozen(r.Frozen) != nil {
-			return nil, fmt.Errorf("%w: invalid stored reading", ErrStorage)
+			return fmt.Errorf("%w: invalid stored reading", ErrStorage)
 		}
 		seen[identity] = true
 		switch r.Status {
 		case "summary_pending", "summary_failed", "summary_unknown":
 			if r.Summary != "" || r.Detail != "" || r.Unlocked {
-				return nil, fmt.Errorf("%w: inconsistent summary state", ErrStorage)
+				return fmt.Errorf("%w: inconsistent summary state", ErrStorage)
 			}
 		case "summary_ready":
 			if strings.TrimSpace(r.Summary) == "" || r.Detail != "" {
-				return nil, fmt.Errorf("%w: inconsistent ready state", ErrStorage)
+				return fmt.Errorf("%w: inconsistent ready state", ErrStorage)
 			}
 		case "detail_pending", "detail_failed", "detail_unknown", "detail_ready":
 			if !r.Unlocked || strings.TrimSpace(r.Summary) == "" || (r.Status == "detail_ready" && strings.TrimSpace(r.Detail) == "") || (r.Status != "detail_ready" && r.Detail != "") {
-				return nil, fmt.Errorf("%w: inconsistent detail state", ErrStorage)
+				return fmt.Errorf("%w: inconsistent detail state", ErrStorage)
 			}
 		default:
-			return nil, fmt.Errorf("%w: unknown stage", ErrStorage)
+			return fmt.Errorf("%w: unknown stage", ErrStorage)
 		}
 		if r.Unlocked && r.UnlockKind != "test_only_not_payment" {
-			return nil, fmt.Errorf("%w: unsupported entitlement", ErrStorage)
+			return fmt.Errorf("%w: unsupported entitlement", ErrStorage)
 		}
 	}
-	return s, nil
+	return nil
 }
 
 // Create replays a successful summary for the same user/key/input. An explicit
