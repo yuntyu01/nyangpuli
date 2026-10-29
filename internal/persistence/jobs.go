@@ -11,6 +11,7 @@ import (
 var ErrJobConflict = errors.New("request key already belongs to different input")
 var ErrMemoryChanged = errors.New("memory changed while preparing job")
 var ErrJobNotPending = errors.New("job is no longer pending or account was deleted")
+var ErrDetailNotEntitled = errors.New("detail entitlement is not active")
 
 type Job struct {
 	ID, State, RequestHash string
@@ -27,6 +28,20 @@ func (s Store) ClaimJob(ctx context.Context, account, id, key, requestHash strin
 }
 
 func (s Store) ClaimJobWithMemory(ctx context.Context, account, id, key, requestHash string, evidence json.RawMessage, memoryGeneration *int64) (job Job, created bool, err error) {
+	return s.claimJob(ctx, account, id, key, requestHash, evidence, memoryGeneration, "", false)
+}
+
+// ClaimDetailJobWithMemory serializes the entitlement check with refunds and
+// account deletion before reserving a detail generation. Test entitlements
+// are honored only when the server explicitly enables them.
+func (s Store) ClaimDetailJobWithMemory(ctx context.Context, account, id, key, requestHash string, evidence json.RawMessage, memoryGeneration *int64, readingID string, allowTest bool) (Job, bool, error) {
+	if readingID == "" {
+		return Job{}, false, errors.New("reading id is required")
+	}
+	return s.claimJob(ctx, account, id, key, requestHash, evidence, memoryGeneration, readingID, allowTest)
+}
+
+func (s Store) claimJob(ctx context.Context, account, id, key, requestHash string, evidence json.RawMessage, memoryGeneration *int64, readingID string, allowTest bool) (job Job, created bool, err error) {
 	if account == "" || id == "" || key == "" || requestHash == "" || !json.Valid(evidence) {
 		return job, false, errors.New("invalid job")
 	}
@@ -46,6 +61,18 @@ func (s Store) ClaimJobWithMemory(ctx context.Context, account, id, key, request
 	if memoryGeneration != nil && *memoryGeneration != currentMemory {
 		return job, false, ErrMemoryChanged
 	}
+	if readingID != "" {
+		var entitled bool
+		if allowTest {
+			err = tx.QueryRowContext(ctx, `SELECT EXISTS(SELECT 1 FROM generation_jobs j WHERE j.id=$2 AND j.account_id=$1 AND j.state='ready' AND j.request_key LIKE 'summary:%') AND (EXISTS(SELECT 1 FROM dev_reading_unlocks WHERE account_id=$1 AND reading_job_id=$2) OR EXISTS(SELECT 1 FROM dev_purchase_transactions WHERE account_id=$1 AND reading_job_id=$2 AND status='purchased'))`, account, readingID).Scan(&entitled)
+			if err != nil {
+				return job, false, err
+			}
+		}
+		if !entitled {
+			return job, false, ErrDetailNotEntitled
+		}
+	}
 	res, err := tx.ExecContext(ctx, `INSERT INTO generation_jobs(id,account_id,request_key,state,request_hash,deletion_generation,evidence,memory_generation) VALUES($1,$2,$3,'pending',$4,$5,$6,$7) ON CONFLICT(account_id,request_key) DO NOTHING`, id, account, key, requestHash, generation, []byte(evidence), memoryGeneration)
 	if err != nil {
 		return job, false, err
@@ -64,6 +91,19 @@ func (s Store) ClaimJobWithMemory(ctx context.Context, account, id, key, request
 	if job.RequestHash != requestHash {
 		return job, false, ErrJobConflict
 	}
+	if readingID != "" && job.State == "not_started" {
+		// This state is written only when the worker proved it made no
+		// provider call. Re-arm under the same entitlement/account lock.
+		res, err = tx.ExecContext(ctx, `UPDATE generation_jobs SET state='pending',result=NULL,updated_at=now() WHERE id=$1 AND account_id=$2 AND state='not_started'`, job.ID, account)
+		if err != nil {
+			return job, false, err
+		}
+		n, err = res.RowsAffected()
+		if err != nil {
+			return job, false, err
+		}
+		job.State = "pending"
+	}
 	if err = tx.Commit(); err != nil {
 		return job, false, err
 	}
@@ -75,7 +115,7 @@ func (s Store) ClaimJobWithMemory(ctx context.Context, account, id, key, request
 // locking serializes completion with deletion and the generation guard blocks
 // stale workers from restoring deleted private data.
 func (s Store) FinishJob(ctx context.Context, account, id string, generation int64, state string, result json.RawMessage) error {
-	if state != "ready" && state != "unknown" && state != "failed" {
+	if state != "ready" && state != "unknown" && state != "failed" && state != "not_started" {
 		return errors.New("invalid completion state")
 	}
 	if len(result) > 0 && !json.Valid(result) {

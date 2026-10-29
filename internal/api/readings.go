@@ -23,6 +23,11 @@ type ReadingService interface {
 	Detail(context.Context, string, string) (readings.View, error)
 }
 
+type asyncDetailJobs interface {
+	StartDetail(context.Context, string, string) (readings.JobStatus, error)
+	DetailStatus(context.Context, string, string) (readings.JobStatus, error)
+}
+
 func NewPostgresReadingService(db *sql.DB, l *lab.Lab, m MemoryStore, client *generation.Client, allowTestUnlock bool) ReadingService {
 	var generator readings.Generator
 	if client != nil {
@@ -179,6 +184,32 @@ func (s *Server) handleReadings(w http.ResponseWriter, r *http.Request, user str
 			readingError(w, err)
 		} else {
 			write(w, 200, v)
+		}
+		return true
+	}
+	if len(parts) == 2 && parts[0] != "" && parts[1] == "detail-jobs" && !isDev {
+		jobs, ok := s.Readings.(asyncDetailJobs)
+		if !ok {
+			fail(w, 503, "durable detail jobs are not configured")
+			return true
+		}
+		var job readings.JobStatus
+		var err error
+		switch r.Method {
+		case http.MethodPost:
+			job, err = jobs.StartDetail(ctx, user, parts[0])
+		case http.MethodGet:
+			job, err = jobs.DetailStatus(ctx, user, parts[0])
+		default:
+			fail(w, 405, "method not allowed")
+			return true
+		}
+		if err != nil {
+			readingError(w, err)
+		} else if r.Method == http.MethodPost {
+			write(w, http.StatusAccepted, job)
+		} else {
+			write(w, http.StatusOK, job)
 		}
 		return true
 	}

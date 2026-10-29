@@ -153,13 +153,30 @@ func (s *PostgresService) Create(ctx context.Context, user, key, domain, variant
 	}
 	return s.Get(user, r.ID)
 }
+
+// getRecord serializes the complete authorization-and-result read with refund,
+// deletion and memory invalidation using the same account row lock as writers.
+// The transaction covers only database reads and never a provider call.
 func (s *PostgresService) getRecord(ctx context.Context, user, id string) (record, error) {
 	if err := validateUser(user); err != nil {
 		return record{}, err
 	}
+	tx, err := s.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return record{}, ErrStorage
+	}
+	defer tx.Rollback()
+	var account string
+	err = tx.QueryRowContext(ctx, `SELECT id FROM accounts WHERE id=$1 AND deleted_at IS NULL FOR UPDATE`, user).Scan(&account)
+	if errors.Is(err, sql.ErrNoRows) {
+		return record{}, ErrNotFound
+	}
+	if err != nil {
+		return record{}, ErrStorage
+	}
 	var ev, res []byte
 	var state string
-	err := s.DB.QueryRowContext(ctx, `SELECT j.state,j.evidence,j.result FROM generation_jobs j JOIN accounts a ON a.id=j.account_id WHERE j.id=$1 AND j.account_id=$2 AND j.request_key LIKE 'summary:%' AND a.deleted_at IS NULL`, id, user).Scan(&state, &ev, &res)
+	err = tx.QueryRowContext(ctx, `SELECT state,evidence,result FROM generation_jobs WHERE id=$1 AND account_id=$2 AND request_key LIKE 'summary:%'`, id, user).Scan(&state, &ev, &res)
 	if errors.Is(err, sql.ErrNoRows) {
 		return record{}, ErrNotFound
 	}
@@ -172,18 +189,20 @@ func (s *PostgresService) getRecord(ctx context.Context, user, id string) (recor
 	}
 	var unlocked bool
 	if s.AllowTestUnlock {
-		if err = s.DB.QueryRowContext(ctx, `SELECT EXISTS(SELECT 1 FROM dev_reading_unlocks WHERE account_id=$1 AND reading_job_id=$2) OR EXISTS(SELECT 1 FROM dev_purchase_transactions WHERE account_id=$1 AND reading_job_id=$2 AND status='purchased')`, user, id).Scan(&unlocked); err != nil {
+		if err = tx.QueryRowContext(ctx, `SELECT EXISTS(SELECT 1 FROM dev_reading_unlocks WHERE account_id=$1 AND reading_job_id=$2) OR EXISTS(SELECT 1 FROM dev_purchase_transactions WHERE account_id=$1 AND reading_job_id=$2 AND status='purchased')`, user, id).Scan(&unlocked); err != nil {
 			return record{}, ErrStorage
 		}
 	}
 	if unlocked {
 		r.Unlocked = true
 		r.UnlockKind = "test_only_not_payment"
-		d, e := s.jobByKey(ctx, user, "detail:"+id)
-		if e == nil && d.State == "ready" {
-			detail, e := decodeJob(d)
-			if e != nil {
-				return record{}, e
+		var dstate string
+		var dev, dres []byte
+		e := tx.QueryRowContext(ctx, `SELECT state,evidence,result FROM generation_jobs WHERE account_id=$1 AND request_key=$2`, user, "detail:"+id).Scan(&dstate, &dev, &dres)
+		if e == nil && dstate == "ready" {
+			detail, err := decodeJob(persistence.Job{State: dstate, Evidence: dev, Result: dres})
+			if err != nil {
+				return record{}, err
 			}
 			r = detail
 			r.Unlocked = true
@@ -191,6 +210,9 @@ func (s *PostgresService) getRecord(ctx context.Context, user, id string) (recor
 		} else if e != nil && !errors.Is(e, sql.ErrNoRows) {
 			return record{}, ErrStorage
 		}
+	}
+	if err = tx.Commit(); err != nil {
+		return record{}, ErrStorage
 	}
 	return r, nil
 }
@@ -274,13 +296,13 @@ func (s *PostgresService) Detail(ctx context.Context, user, id string) (View, er
 		return View{}, ErrNotConfigured
 	}
 	jobKey := "detail:" + id
-	if j, e := s.jobByKey(ctx, user, jobKey); e == nil {
+	if j, e := s.jobByKey(ctx, user, jobKey); e == nil && j.State != "not_started" {
 		_, e := decodeJob(j)
 		if e != nil {
 			return View{}, e
 		}
 		return s.currentDetail(ctx, user, id)
-	} else if !errors.Is(e, sql.ErrNoRows) {
+	} else if e != nil && !errors.Is(e, sql.ErrNoRows) {
 		return View{}, ErrStorage
 	}
 	jobID, err := randomID()
@@ -289,7 +311,16 @@ func (s *PostgresService) Detail(ctx context.Context, user, id string) (View, er
 	}
 	evidence, _ := json.Marshal(r)
 	store := persistence.Store{DB: s.DB}
-	j, created, err := store.ClaimJobWithMemory(ctx, user, jobID, jobKey, r.RequestHash, evidence, memoryVersion)
+	j, created, err := store.ClaimDetailJobWithMemory(ctx, user, jobID, jobKey, r.RequestHash, evidence, memoryVersion, id, s.AllowTestUnlock)
+	if errors.Is(err, persistence.ErrDetailNotEntitled) {
+		return View{}, ErrLocked
+	}
+	if errors.Is(err, persistence.ErrUnauthenticated) {
+		return View{}, ErrNotFound
+	}
+	if errors.Is(err, persistence.ErrMemoryChanged) {
+		return View{}, ErrInvalidated
+	}
 	if err != nil {
 		return View{}, ErrStorage
 	}
@@ -320,7 +351,7 @@ func (s *PostgresService) Detail(ctx context.Context, user, id string) (View, er
 	data, _ := json.Marshal(r)
 	saveCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	if err = store.FinishJob(saveCtx, user, jobID, j.DeletionGeneration, state, data); err != nil {
+	if err = store.FinishJob(saveCtx, user, j.ID, j.DeletionGeneration, state, data); err != nil {
 		return View{}, ErrStorage
 	}
 	if callErr != nil {
