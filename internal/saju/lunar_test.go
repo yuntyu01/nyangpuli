@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -78,5 +79,24 @@ func TestIntegrationLunarBirthUsesOriginalEngine(t *testing.T) {
 	bad.Year = 2024
 	if _, err := engine.Compare(context.Background(), Request{CaseID: "invalid-lunar", Question: "test", Birth: bad}); err == nil {
 		t.Fatal("nonexistent leap month accepted")
+	}
+}
+
+func TestAdapterFailureDoesNotExposeStderr(t *testing.T) {
+	root := t.TempDir()
+	dir := filepath.Join(root, "adapters", "ohmysaju")
+	if err := os.MkdirAll(dir, 0700); err != nil {
+		t.Fatal(err)
+	}
+	payload := []byte(`process.stderr.write(JSON.stringify({error:'UNEXPECTED',message:'PRIVATE_BIRTH_DETAILS'})); process.exitCode=1;`)
+	if err := os.WriteFile(filepath.Join(dir, "bridge.mjs"), payload, 0600); err != nil {
+		t.Fatal(err)
+	}
+	_, err := New(root).Compare(context.Background(), exampleRequest())
+	if err == nil {
+		t.Fatal("expected adapter failure")
+	}
+	if strings.Contains(err.Error(), "PRIVATE_BIRTH_DETAILS") || strings.Contains(err.Error(), "UNEXPECTED") {
+		t.Fatal("adapter stderr leaked")
 	}
 }

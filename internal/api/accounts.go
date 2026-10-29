@@ -65,6 +65,16 @@ func (s *Server) publicAccountRoutes(w http.ResponseWriter, r *http.Request) boo
 	return true
 }
 func (s *Server) authenticatedAccountRoutes(w http.ResponseWriter, r *http.Request, user, token string) bool {
+	if r.URL.Path == "/v1/auth/me" {
+		if r.Method != http.MethodGet {
+			fail(w, http.StatusMethodNotAllowed, "method not allowed")
+		} else {
+			// The ID is resolved exclusively from the authenticated session or the
+			// local server's token mapping, never from request headers or body.
+			write(w, http.StatusOK, map[string]string{"account_id": user})
+		}
+		return true
+	}
 	if r.URL.Path != "/v1/auth/link" && r.URL.Path != "/v1/auth/logout" {
 		return false
 	}

@@ -180,7 +180,6 @@ func (e *Engine) Compare(ctx context.Context, req Request) (Response, error) {
 		if ctx.Err() != nil {
 			return Response{}, fmt.Errorf("OhMySaju adapter: %w", ctx.Err())
 		}
-		detail := stderr.String()
 		var reported struct {
 			Code string `json:"error"`
 		}
@@ -190,10 +189,9 @@ func (e *Engine) Compare(ctx context.Context, req Request) (Response, error) {
 				return Response{}, fmt.Errorf("%w: %s", ErrEngineInput, reported.Code)
 			}
 		}
-		if len(detail) > 1500 {
-			detail = detail[:1500]
-		}
-		return Response{}, fmt.Errorf("OhMySaju adapter unavailable or rejected input; run bash scripts/setup-saju.sh: %w (%s)", err, detail)
+		// stderr is untrusted and may contain birth data or other private text.
+		// Do not reflect it to callers, logs, or command output.
+		return Response{}, fmt.Errorf("OhMySaju adapter unavailable or rejected input; run bash scripts/setup-saju.sh: %w", err)
 	}
 	var result struct {
 		Chart json.RawMessage `json:"chart"`

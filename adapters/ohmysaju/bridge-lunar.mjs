@@ -30,6 +30,8 @@ try {
   process.stdout.write(JSON.stringify({ chart, daily }));
 } catch (error) {
   // No request/birth details are written to stderr.
-  process.stderr.write(JSON.stringify({ error: String(error?.code || 'SAJU_ADAPTER_ERROR'), message: String(error?.message || error) }));
+  const allowed = new Set(['INVALID_LEAP_MONTH', 'INVALID_DATE', 'UNSUPPORTED_DATE_RANGE']);
+  const code = allowed.has(error?.code) ? error.code : 'SAJU_ADAPTER_ERROR';
+  process.stderr.write(JSON.stringify({ error: code }));
   process.exitCode = 1;
 }
