@@ -238,6 +238,7 @@ func serve(args []string) error {
 	if db != nil {
 		app.Auth = persistence.Store{DB: db}
 		app.AccountDeletion = persistence.Store{DB: db}
+		app.Accounts = persistence.Store{DB: db}
 		app.TarotStore = persistence.Store{DB: db}
 	}
 	var client *generation.Client

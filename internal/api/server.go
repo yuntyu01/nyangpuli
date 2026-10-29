@@ -29,6 +29,7 @@ type MemoryStore interface {
 }
 
 type Server struct {
+	Accounts             AccountService
 	TarotStore           TarotStore
 	Auth                 Authenticator
 	AccountDeletion      AccountDeleter
@@ -51,6 +52,9 @@ func (s *Server) Handler() http.Handler {
 			write(w, 200, map[string]string{"status": "ok", "purpose": "research_lab"})
 			return
 		}
+		if s.publicAccountRoutes(w, r) {
+			return
+		}
 		var user string
 		token := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 		if !strings.HasPrefix(r.Header.Get("Authorization"), "Bearer ") {
@@ -69,6 +73,9 @@ func (s *Server) Handler() http.Handler {
 		}
 		if user == "" {
 			fail(w, 401, "invalid token")
+			return
+		}
+		if s.authenticatedAccountRoutes(w, r, user, token) {
 			return
 		}
 		if s.handlePostgresDataDeletion(w, r, user) {
