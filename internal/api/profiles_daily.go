@@ -143,6 +143,9 @@ func (s *Server) handleProfileDaily(w http.ResponseWriter, r *http.Request, user
 		if !read(w, r, &req) {
 			return true
 		}
+		if !s.validateLunarBirth(w, r, req.Birth) {
+			return true
+		}
 		p, err := s.ProfileDaily.CreateProfile(r.Context(), user, req.Birth)
 		if err != nil {
 			profileError(w, err)
@@ -170,6 +173,9 @@ func (s *Server) handleProfileDaily(w http.ResponseWriter, r *http.Request, user
 			Birth   saju.Birth `json:"birth"`
 		}
 		if !read(w, r, &req) {
+			return true
+		}
+		if !s.validateLunarBirth(w, r, req.Birth) {
 			return true
 		}
 		p, err := s.ProfileDaily.UpdateProfile(r.Context(), user, id, req.Version, req.Birth)
@@ -200,4 +206,32 @@ func profileError(w http.ResponseWriter, err error) {
 // previously unlocked View nor stale cached JSON can leak a paid detail.
 func dailySummary(v readings.View) readings.View {
 	return readings.View{ID: v.ID, Domain: v.Domain, Variant: v.Variant, Status: "summary_ready", Summary: v.Summary, DetailLocked: true, EntitlementSource: "none", SourceIDs: append([]string(nil), v.SourceIDs...), SummaryUsage: v.SummaryUsage, SummaryModel: v.SummaryModel, SummaryPromptHash: v.SummaryPromptHash, CreatedAt: v.CreatedAt, UpdatedAt: v.UpdatedAt}
+}
+
+// Lunar dates and leap months cannot be validated from a numeric range alone.
+// Verify them using the pinned engine before persisting the profile. Never
+// silently accept an unchecked lunar date when the engine is unavailable.
+func (s *Server) validateLunarBirth(w http.ResponseWriter, r *http.Request, birth saju.Birth) bool {
+	if birth.Calendar != "korean-lunar" {
+		return true
+	}
+	req := saju.Request{CaseID: "validate-profile", Question: "validate", Birth: birth}
+	if req.Validate() != nil {
+		fail(w, 400, "invalid birth profile")
+		return false
+	}
+	if s.Lab == nil {
+		fail(w, 503, "birth calendar validation unavailable")
+		return false
+	}
+	_, err := saju.New(s.Lab.Root).Compare(r.Context(), req)
+	if err == nil {
+		return true
+	}
+	if errors.Is(err, saju.ErrEngineInput) {
+		fail(w, 400, "invalid birth profile")
+		return false
+	}
+	fail(w, 503, "birth calendar validation unavailable")
+	return false
 }
