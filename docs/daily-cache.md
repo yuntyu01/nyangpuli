@@ -1,6 +1,6 @@
 # 프로필과 일운
 
-PostgreSQL 사용 시 인증된 계정은 `POST /v1/profiles`로 양력 출생 정보 `{ "birth": { "year": 1990, "month": 1, "day": 1, "hour": 12, "minute": 0, "time_zone": "Asia/Seoul" } }`를 저장하고, `GET /v1/profiles`로 자신의 프로필 목록을, `GET /v1/profiles/{id}`로 단건을 조회한다. `PUT /v1/profiles/{id}`는 `{ "version": 1, "birth": { ... } }`를 받고 버전이 맞을 때만 수정한다. 다른 계정의 프로필에 접근할 수 없다. 시간 미상과 음력은 현재 엔진 어댑터에서 지원하지 않아 임의 시간이나 날짜로 치환하지 않고 거부한다.
+PostgreSQL 사용 시 인증된 계정은 `POST /v1/profiles`로 양력 출생 정보 `{ "birth": { "year": 1990, "month": 1, "day": 1, "hour": 12, "minute": 0, "time_zone": "Asia/Seoul" } }`를 저장하고, `GET /v1/profiles`로 자신의 프로필 목록을, `GET /v1/profiles/{id}`로 단건을 조회한다. `PUT /v1/profiles/{id}`는 `{ "version": 1, "birth": { ... } }`를 받고 버전이 맞을 때만 수정한다. 다른 계정의 프로필에 접근할 수 없다. 음력 출생은 `calendar: "korean-lunar"`과 `month_kind: "regular"` 또는 `"leap"`을 추가한다. 프로필 저장은 형식과 범위만 검사하며 실제 음력 날짜·윤달 존재 여부는 원본 엔진이 풀이 계산 시 검증한다. 시간 미상은 임의 시간으로 치환하지 않고 거부한다.
 
 `POST /v1/daily`는 `{ "profile_id": "...", "time_zone": "Asia/Seoul" }`을 받는다. `time_zone`은 현재 사용자의 IANA 시간대이며 필수다. 현지 날짜는 서버 시각이 아닌 이 시간대로 계산한다. 출생 계산에는 프로필의 출생 시간대를 사용한다. 고정 원본 엔진의 일운 대표 정오는 출생 시간대만 사용할 수 있으므로 현재 시간대와 출생 시간대가 다르면 422로 안전하게 거부한다. 독립적인 현재 시간대 일운 계산은 아직 지원하지 않는다. 별칭이 달라도 문자열이 다르면 거부한다.
 

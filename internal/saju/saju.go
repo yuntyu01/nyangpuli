@@ -15,6 +15,8 @@ import (
 	"time"
 )
 
+var ErrEngineInput = errors.New("OhMySaju rejected the birth input")
+
 const OhMySajuCommit = "a8c0cf64adfde8fb1ce253112529edd8e90cc94b"
 const YueYuanCommit = "723b73cb4f21eda2b8e75aeadba680c198c72dc6"
 
@@ -22,12 +24,14 @@ const YueYuanCommit = "723b73cb4f21eda2b8e75aeadba680c198c72dc6"
 var ruleJSON []byte
 
 type Birth struct {
-	Year     int    `json:"year"`
-	Month    int    `json:"month"`
-	Day      int    `json:"day"`
-	Hour     *int   `json:"hour"`
-	Minute   int    `json:"minute"`
-	TimeZone string `json:"time_zone"`
+	Calendar  string `json:"calendar,omitempty"`
+	MonthKind string `json:"month_kind,omitempty"`
+	Year      int    `json:"year"`
+	Month     int    `json:"month"`
+	Day       int    `json:"day"`
+	Hour      *int   `json:"hour"`
+	Minute    int    `json:"minute"`
+	TimeZone  string `json:"time_zone"`
 }
 type Date struct {
 	Year  int `json:"year"`
@@ -99,8 +103,17 @@ func (r Request) Validate() error {
 		return errors.New("question is required and must be at most 12000 bytes")
 	}
 	b := r.Birth
-	if !validDate(b.Year, b.Month, b.Day) {
-		return errors.New("birth must be a valid Gregorian date in 1801..2100")
+	switch b.Calendar {
+	case "", "gregorian":
+		if b.MonthKind != "" || !validDate(b.Year, b.Month, b.Day) {
+			return errors.New("birth must be a valid Gregorian date in 1801..2100, without month_kind")
+		}
+	case "korean-lunar":
+		if b.Year < 1801 || b.Year > 2100 || b.Month < 1 || b.Month > 12 || b.Day < 1 || b.Day > 30 || (b.MonthKind != "regular" && b.MonthKind != "leap") {
+			return errors.New("Korean lunar birth requires a valid year, month, day and regular or leap month_kind")
+		}
+	default:
+		return errors.New("unsupported birth calendar")
 	}
 	if b.Hour == nil {
 		return errors.New("exact birth hour is required; unknown time is not replaced with noon")
@@ -154,7 +167,11 @@ func (e *Engine) Compare(ctx context.Context, req Request) (Response, error) {
 	if err != nil {
 		return Response{}, err
 	}
-	cmd := exec.CommandContext(ctx, "node", filepath.Join(e.root, "adapters", "ohmysaju", "bridge.mjs"))
+	adapter := "bridge.mjs"
+	if req.Birth.Calendar == "korean-lunar" {
+		adapter = "bridge-lunar.mjs"
+	}
+	cmd := exec.CommandContext(ctx, "node", filepath.Join(e.root, "adapters", "ohmysaju", adapter))
 	cmd.Stdin = bytes.NewReader(input)
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
@@ -164,6 +181,15 @@ func (e *Engine) Compare(ctx context.Context, req Request) (Response, error) {
 			return Response{}, fmt.Errorf("OhMySaju adapter: %w", ctx.Err())
 		}
 		detail := stderr.String()
+		var reported struct {
+			Code string `json:"error"`
+		}
+		if json.Unmarshal(stderr.Bytes(), &reported) == nil {
+			switch reported.Code {
+			case "INVALID_LEAP_MONTH", "INVALID_DATE", "UNSUPPORTED_DATE_RANGE":
+				return Response{}, fmt.Errorf("%w: %s", ErrEngineInput, reported.Code)
+			}
+		}
 		if len(detail) > 1500 {
 			detail = detail[:1500]
 		}
@@ -222,5 +248,5 @@ func compareEvidence(req Request, chart, daily json.RawMessage) (Response, error
 		Baseline: Variant{ID: "ohmysaju_only", Prompt: prompt(base), Evidence: base},
 		Enhanced: Variant{ID: "ohmysaju_plus_yueyuan_tiaohou", Prompt: prompt(enhanced), Evidence: enhanced},
 		Sources:  []Source{{Name: "OhMySaju", Commit: OhMySajuCommit, License: "Apache-2.0", URL: "https://github.com/JaeSang1998/oh-my-saju"}, {Name: "YueYuan selected TIAO_HOU table", Commit: YueYuanCommit, License: "MIT", URL: "https://github.com/qianye-wuyu/yueyuan-bazi"}},
-		Warnings: []string{"계산 계층은 Node의 원본 엔진, API와 비교 조립은 Go. 완전한 Go 이식이 아님.", rule.Limit, "일운은 현지 정오 기준 일진/관계 자료. 연애·금전·건강 점수나 실제 사건 적중률을 제공하지 않음.", "양력·정확한 출생시각·민간시계·자정 일주 교체만 이 실험 어댑터에서 지원. 음력/시간미상/진태양시는 후속 확장 대상."}}, nil
+		Warnings: []string{"계산 계층은 Node의 원본 엔진, API와 비교 조립은 Go. 완전한 Go 이식이 아님.", rule.Limit, "일운은 현지 정오 기준 일진/관계 자료. 연애·금전·건강 점수나 실제 사건 적중률을 제공하지 않음.", "양력과 음력 평달·윤달 및 정확한 출생시각을 지원. 음력의 실제 존재 여부는 원본 엔진에서 검증하며 시간미상과 진태양시는 지원하지 않음."}}, nil
 }
