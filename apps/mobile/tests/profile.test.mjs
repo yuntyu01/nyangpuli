@@ -28,3 +28,8 @@ test('daily summary never exposes detail until the same reading is rechecked', a
  assert.equal(resolveDailyReading(summary,{...summary,id:'different'}).verified,false);
  assert.equal(resolveDailyReading(summary,{...summary,id:'r'}).verified,true);
 });
+test('lunar profile keeps its leap-month designation across a restore',()=>{
+ const lunar={...profile,birth:{...profile.birth,year:2023,month:2,day:30,calendar:'korean-lunar',month_kind:'leap'}};
+ assert.deepEqual(profileBirthForm(parseProfile(lunar)),{year:'2023',month:'2',day:'30',hour:'0',minute:'0',timeZone:'Asia/Seoul',calendar:'korean-lunar',monthKind:'leap'});
+ assert.throws(()=>parseProfile({...lunar,birth:{...lunar.birth,month_kind:'invalid'}}));
+});
