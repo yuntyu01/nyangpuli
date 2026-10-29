@@ -1,0 +1,10 @@
+# Optional managed-cloud build override. The certificate is never copied into the image.
+services:
+  api:
+    build:
+      context: .
+      secrets:
+        - proxy_ca
+secrets:
+  proxy_ca:
+    file: ${CODEX_PROXY_CERT:?Set CODEX_PROXY_CERT for the managed cloud build}

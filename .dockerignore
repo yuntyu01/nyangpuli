@@ -1,0 +1,11 @@
+.git
+.upstream
+node_modules
+**/node_modules
+.env
+.env.*
+!.env.example
+data/private
+outputs
+.cache
+apps/mobile/.expo
