@@ -299,7 +299,11 @@ func TestFailedAndTruncatedSummaryRetryUsesFrozenEvidence(t *testing.T) {
 				t.Fatal(err)
 			}
 			rows, _ := s.List("alice")
-			if len(rows) != 1 || rows[0].Status != "summary_failed" || rows[0].Summary != "" {
+			wantStatus := "summary_failed"
+			if kind == "error" {
+				wantStatus = "summary_unknown"
+			}
+			if len(rows) != 1 || rows[0].Status != wantStatus || rows[0].Summary != "" {
 				t.Fatal(rows)
 			}
 			if _, err := s.UnlockForTest("alice", rows[0].ID); !errors.Is(err, ErrConflict) {
@@ -307,6 +311,12 @@ func TestFailedAndTruncatedSummaryRetryUsesFrozenEvidence(t *testing.T) {
 			}
 			b.marker = "AFTER"
 			v, err := s.Create(context.Background(), "alice", "key", "counsel", "baseline", json.RawMessage(`{"q":"test"}`))
+			if kind == "error" {
+				if !errors.Is(err, ErrOutcomeUnknown) || len(g.calls) != 1 {
+					t.Fatal(err, len(g.calls))
+				}
+				return
+			}
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -328,12 +338,40 @@ func TestDetailFailureDoesNotEraseSummaryOrEntitlement(t *testing.T) {
 		t.Fatal(err)
 	}
 	failed, err := s.Get("alice", v.ID)
-	if err != nil || failed.Status != "detail_failed" || failed.Summary != v.Summary || failed.Detail != "" || failed.DetailLocked {
+	if err != nil || failed.Status != "detail_unknown" || failed.Summary != v.Summary || failed.Detail != "" || failed.DetailLocked {
 		t.Fatal(failed, err)
 	}
 	full, err := s.Detail(context.Background(), "alice", v.ID)
-	if err != nil || full.Detail == "" || len(g.calls) != 3 {
+	if !errors.Is(err, ErrOutcomeUnknown) || full.Detail != "" || len(g.calls) != 2 {
 		t.Fatal(full, err, len(g.calls))
+	}
+}
+
+func TestInterruptedPendingCallIsNeverRepeatedAfterRestart(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "readings.json")
+	s, _, g := newTestService(t, path)
+	g.errs = []error{errors.New("connection lost")}
+	input := json.RawMessage(`{"q":"test"}`)
+	if _, err := s.Create(context.Background(), "alice", "key", "counsel", "baseline", input); !errors.Is(err, ErrGeneration) {
+		t.Fatal(err)
+	}
+	// A pending state is what remains when a process dies after sending but
+	// before recording a response, including a successful provider response.
+	for _, r := range s.state.Records {
+		r.Status = "summary_pending"
+		if err := s.save(r); err != nil {
+			t.Fatal(err)
+		}
+	}
+	restarted, err := New(nil, g, path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err = restarted.Create(context.Background(), "alice", "key", "counsel", "baseline", input); !errors.Is(err, ErrOutcomeUnknown) {
+		t.Fatal(err)
+	}
+	if len(g.calls) != 1 {
+		t.Fatal("interrupted request was repeated")
 	}
 }
 

@@ -25,13 +25,14 @@ import (
 )
 
 var (
-	ErrNotConfigured = errors.New("reading generation is not configured")
-	ErrNotFound      = errors.New("reading not found")
-	ErrLocked        = errors.New("detail reading is locked")
-	ErrConflict      = errors.New("idempotency key already has different input")
-	ErrInvalidInput  = errors.New("invalid reading input")
-	ErrGeneration    = errors.New("reading generation failed")
-	ErrStorage       = errors.New("reading storage failed")
+	ErrNotConfigured  = errors.New("reading generation is not configured")
+	ErrNotFound       = errors.New("reading not found")
+	ErrLocked         = errors.New("detail reading is locked")
+	ErrConflict       = errors.New("idempotency key already has different input")
+	ErrInvalidInput   = errors.New("invalid reading input")
+	ErrGeneration     = errors.New("reading generation failed")
+	ErrOutcomeUnknown = errors.New("provider outcome is unknown; reconciliation required")
+	ErrStorage        = errors.New("reading storage failed")
 )
 
 // Builder selects one source variant. It must resolve user context before
@@ -59,6 +60,10 @@ type View struct {
 	SourceIDs         []string         `json:"source_ids"`
 	SummaryUsage      generation.Usage `json:"summary_usage"`
 	DetailUsage       generation.Usage `json:"detail_usage"`
+	SummaryModel      string           `json:"summary_model,omitempty"`
+	DetailModel       string           `json:"detail_model,omitempty"`
+	SummaryPromptHash string           `json:"summary_prompt_sha256,omitempty"`
+	DetailPromptHash  string           `json:"detail_prompt_sha256,omitempty"`
 	CreatedAt         time.Time        `json:"created_at"`
 	UpdatedAt         time.Time        `json:"updated_at"`
 }
@@ -116,7 +121,7 @@ func New(builder Builder, generator Generator, path string) (*Service, error) {
 		}
 		seen[identity] = true
 		switch r.Status {
-		case "summary_pending", "summary_failed":
+		case "summary_pending", "summary_failed", "summary_unknown":
 			if r.Summary != "" || r.Detail != "" || r.Unlocked {
 				return nil, fmt.Errorf("%w: inconsistent summary state", ErrStorage)
 			}
@@ -124,7 +129,7 @@ func New(builder Builder, generator Generator, path string) (*Service, error) {
 			if strings.TrimSpace(r.Summary) == "" || r.Detail != "" {
 				return nil, fmt.Errorf("%w: inconsistent ready state", ErrStorage)
 			}
-		case "detail_pending", "detail_failed", "detail_ready":
+		case "detail_pending", "detail_failed", "detail_unknown", "detail_ready":
 			if !r.Unlocked || strings.TrimSpace(r.Summary) == "" || (r.Status == "detail_ready" && strings.TrimSpace(r.Detail) == "") || (r.Status != "detail_ready" && r.Detail != "") {
 				return nil, fmt.Errorf("%w: inconsistent detail state", ErrStorage)
 			}
@@ -139,9 +144,8 @@ func New(builder Builder, generator Generator, path string) (*Service, error) {
 }
 
 // Create replays a successful summary for the same user/key/input. An explicit
-// retry after a failed or interrupted call uses the SAME frozen evidence. A
-// process crash after the provider responds but before saving can still require
-// another charged call; this prototype does not promise cross-system exactly-once.
+// retry after a known failed call uses the SAME frozen evidence. Interrupted or
+// ambiguous calls are never automatically repeated: their cost may be unknown.
 func (s *Service) Create(ctx context.Context, user, key, domain, variant string, input json.RawMessage) (View, error) {
 	if err := validateIdentity(user, key); err != nil {
 		return View{}, err
@@ -173,6 +177,9 @@ func (s *Service) Create(ctx context.Context, user, key, domain, variant string,
 			if candidate.Summary != "" {
 				return view(candidate), nil
 			}
+			if candidate.Status == "summary_pending" || candidate.Status == "summary_unknown" {
+				return View{}, ErrOutcomeUnknown
+			}
 			r = candidate
 			break
 		}
@@ -203,9 +210,13 @@ func (s *Service) Create(ctx context.Context, user, key, domain, variant string,
 	}
 	result, genErr := s.generator.Generate(ctx, stageInput(r, false))
 	r.SummaryUsage = addUsage(r.SummaryUsage, result.Usage)
+	r.SummaryModel, r.SummaryPromptHash = resultModel(result), result.PromptSHA256
 	r.UpdatedAt = time.Now().UTC()
 	if err := accepted(ctx, result, genErr); err != nil {
 		r.Status = "summary_failed"
+		if genErr != nil || ctx.Err() != nil {
+			r.Status = "summary_unknown"
+		}
 		if saveErr := s.save(r); saveErr != nil {
 			return View{}, saveErr
 		}
@@ -294,6 +305,9 @@ func (s *Service) Detail(ctx context.Context, user, id string) (View, error) {
 	if r.Detail != "" {
 		return view(r), nil
 	}
+	if r.Status == "detail_pending" || r.Status == "detail_unknown" {
+		return View{}, ErrOutcomeUnknown
+	}
 	if s.generator == nil {
 		return View{}, ErrNotConfigured
 	}
@@ -304,9 +318,13 @@ func (s *Service) Detail(ctx context.Context, user, id string) (View, error) {
 	}
 	result, genErr := s.generator.Generate(ctx, stageInput(r, true))
 	r.DetailUsage = addUsage(r.DetailUsage, result.Usage)
+	r.DetailModel, r.DetailPromptHash = resultModel(result), result.PromptSHA256
 	r.UpdatedAt = time.Now().UTC()
 	if err := accepted(ctx, result, genErr); err != nil {
 		r.Status = "detail_failed"
+		if genErr != nil || ctx.Err() != nil {
+			r.Status = "detail_unknown"
+		}
 		if saveErr := s.save(r); saveErr != nil {
 			return View{}, saveErr
 		}
@@ -318,6 +336,16 @@ func (s *Service) Detail(ctx context.Context, user, id string) (View, error) {
 		return View{}, err
 	}
 	return view(r), nil
+}
+
+func resultModel(r generation.Result) string {
+	if r.ReturnedModel != "" {
+		return r.ReturnedModel
+	}
+	if r.Config != nil {
+		return r.Config.Model
+	}
+	return ""
 }
 
 func validateUser(user string) error {

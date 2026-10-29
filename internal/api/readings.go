@@ -190,6 +190,8 @@ func readingError(w http.ResponseWriter, err error) {
 		fail(w, 404, "reading not found")
 	case errors.Is(err, readings.ErrLocked):
 		fail(w, 402, "detail is locked; production payment integration is not implemented")
+	case errors.Is(err, readings.ErrOutcomeUnknown):
+		fail(w, 409, "generation outcome is unknown; reconciliation required before retry")
 	case errors.Is(err, readings.ErrConflict):
 		fail(w, 409, "idempotency key already belongs to different input")
 	case errors.Is(err, readings.ErrGeneration):
