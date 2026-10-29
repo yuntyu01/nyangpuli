@@ -13,6 +13,12 @@ type devPurchaseSpy struct {
 	called bool
 }
 
+func (d *devPurchaseSpy) List(_ context.Context, user string) ([]purchase.DevelopmentRecord, error) {
+	d.user = user
+	d.called = true
+	return []purchase.DevelopmentRecord{{TransactionID: "test", ReadingID: "r", Status: purchase.Purchased}}, nil
+}
+
 func (d *devPurchaseSpy) Simulate(_ context.Context, user, reading, transaction string, status purchase.Status) error {
 	d.called = true
 	d.user = user
@@ -35,5 +41,11 @@ func TestDevelopmentPurchaseRequiresExplicitModeAndSession(t *testing.T) {
 	w := call(h, "POST", path, "valid", data)
 	if w.Code != 200 || p.user != "account-a" || !strings.Contains(w.Body.String(), "development_simulation_not_payment") {
 		t.Fatal(w.Code, w.Body.String(), p.user)
+	}
+	for _, tc := range []struct{ method, path string }{{"GET", path}, {"POST", path + "/restore"}} {
+		w = call(h, tc.method, tc.path, "valid", "")
+		if w.Code != 200 || p.user != "account-a" || !strings.Contains(w.Body.String(), "development_simulation_not_store_restore") {
+			t.Fatal(w.Code, w.Body.String())
+		}
 	}
 }

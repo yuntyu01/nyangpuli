@@ -10,6 +10,38 @@ import (
 // Development is a mock store, not receipt validation or a payment adapter.
 // Only expose it on explicitly enabled development servers.
 type Development struct{ DB *sql.DB }
+
+type DevelopmentRecord struct {
+	TransactionID string `json:"transaction_id"`
+	ReadingID     string `json:"reading_id"`
+	Status        Status `json:"status"`
+}
+
+// List returns only the authenticated user's saved mock transactions. Restore
+// simply reads these rows; it does not contact either app store.
+func (d Development) List(ctx context.Context, user string) ([]DevelopmentRecord, error) {
+	if d.DB == nil {
+		return nil, ErrUnavailable
+	}
+	if strings.TrimSpace(user) == "" {
+		return nil, ErrInvalid
+	}
+	rows, err := d.DB.QueryContext(ctx, `SELECT p.transaction_id,p.reading_job_id,p.status FROM dev_purchase_transactions p JOIN accounts a ON a.id=p.account_id WHERE p.account_id=$1 AND a.deleted_at IS NULL ORDER BY p.created_at DESC,p.transaction_id`, user)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := []DevelopmentRecord{}
+	for rows.Next() {
+		var r DevelopmentRecord
+		if err = rows.Scan(&r.TransactionID, &r.ReadingID, &r.Status); err != nil {
+			return nil, err
+		}
+		out = append(out, r)
+	}
+	return out, rows.Err()
+}
+
 type devProof struct {
 	TransactionID string `json:"transaction_id"`
 	AccountID     string `json:"account_id"`

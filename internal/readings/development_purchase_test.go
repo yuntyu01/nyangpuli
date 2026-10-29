@@ -61,6 +61,14 @@ func TestDevelopmentPurchasePostgresAndRefundDuringGeneration(t *testing.T) {
 	if err = dev.Simulate(ctx, b, second.ID, tx, purchase.Purchased); !errors.Is(err, purchase.ErrOwnership) {
 		t.Fatal("other user reused transaction", err)
 	}
+	rows, err := dev.List(ctx, a)
+	if err != nil || len(rows) != 1 || rows[0].TransactionID != tx || rows[0].Status != purchase.Purchased {
+		t.Fatal(rows, err)
+	}
+	rows, err = dev.List(ctx, b)
+	if err != nil || len(rows) != 0 {
+		t.Fatal("other user's purchases leaked", rows, err)
+	}
 	blocked := &PostgresService{DB: db, Builder: pgBuilder{}, Generator: g}
 	if _, err = blocked.Detail(ctx, a, first.ID); !errors.Is(err, ErrLocked) {
 		t.Fatal("test entitlement accepted while disabled", err)
@@ -86,5 +94,9 @@ func TestDevelopmentPurchasePostgresAndRefundDuringGeneration(t *testing.T) {
 	}
 	if _, err = s.Detail(ctx, a, first.ID); !errors.Is(err, ErrLocked) {
 		t.Fatal(err)
+	}
+	rows, err = dev.List(ctx, a)
+	if err != nil || len(rows) != 1 || rows[0].Status != purchase.Refunded {
+		t.Fatal(rows, err)
 	}
 }
