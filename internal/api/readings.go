@@ -141,6 +141,10 @@ func (s *Server) handleReadings(w http.ResponseWriter, r *http.Request, user str
 			if !read(w, r, &req) {
 				return true
 			}
+			if req.Domain == "daily" {
+				fail(w, 400, "daily readings require a saved profile; use /v1/daily")
+				return true
+			}
 			envelope, _ := json.Marshal(readingEnvelope{Input: req.Input, UseMemory: req.UseMemory})
 			v, err := s.Readings.Create(ctx, user, r.Header.Get("Idempotency-Key"), req.Domain, req.Variant, envelope)
 			if err != nil {

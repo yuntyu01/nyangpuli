@@ -29,6 +29,8 @@ type MemoryStore interface {
 }
 
 type Server struct {
+	ProfileDaily         ProfileDailyStore
+	DailyModelVersion    string
 	Accounts             AccountService
 	TarotStore           TarotStore
 	Auth                 Authenticator
@@ -82,6 +84,9 @@ func (s *Server) Handler() http.Handler {
 			return
 		}
 		if s.handleDevelopmentPurchase(w, r, user) {
+			return
+		}
+		if s.handleProfileDaily(w, r, user) {
 			return
 		}
 		if s.handleTarot(w, r, user) {

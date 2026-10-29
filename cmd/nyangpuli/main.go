@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"crypto/rand"
+	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
 	"encoding/json"
@@ -240,6 +241,7 @@ func serve(args []string) error {
 		app.AccountDeletion = persistence.Store{DB: db}
 		app.Accounts = persistence.Store{DB: db}
 		app.TarotStore = persistence.Store{DB: db}
+		app.ProfileDaily = persistence.Store{DB: db}
 	}
 	var client *generation.Client
 	if *enableGeneration {
@@ -247,6 +249,9 @@ func serve(args []string) error {
 		if e != nil {
 			return e
 		}
+		configBytes, _ := json.Marshal(config)
+		configHash := sha256.Sum256(configBytes)
+		app.DailyModelVersion = hex.EncodeToString(configHash[:])
 		client, e = generation.New(config, nil)
 		if e != nil {
 			return e
