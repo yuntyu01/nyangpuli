@@ -173,6 +173,9 @@ func TestDailyRealEngineWithMockProvider(t *testing.T) {
 	if dsn == "" {
 		t.Skip("NYANG_TEST_DATABASE_URL not set")
 	}
+	if os.Getenv("SAJU_INTEGRATION") != "1" {
+		t.Skip("set SAJU_INTEGRATION=1 after scripts/setup-saju.sh")
+	}
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {
 		t.Fatal(err)

@@ -1,6 +1,6 @@
 {
   "database_tests": true,
-  "executed_at": "2026-10-30T11:59:41.579453+00:00",
+  "executed_at": "2026-10-30T12:03:11.272197+00:00",
   "scope": "implementation_and_integration_not_prediction_or_counsel_quality",
   "compiler": "go version go1.26.5 (Red Hat 1.26.5-1.el9_8) linux/amd64",
   "node": "v22.21.0",
@@ -12,20 +12,21 @@
     {
       "command": "go test -race -count=1 -json ./...",
       "exit_code": 0,
-      "passed_test_events": 201,
+      "passed_test_events": 200,
       "skipped_tests": [
         "TestIntegrationDailyCurrentTimeZoneUsesOriginalEngine",
         "TestIntegrationLunarBirthUsesOriginalEngine",
         "TestProductPolicyExcludesExperimentalTiaohou",
         "TestIntegrationActualOhMySajuAndDaily",
         "TestIntegrationCompatibilityActualOhMySaju",
-        "TestLunarProfileChecksRealCalendarBeforeSaving"
+        "TestLunarProfileChecksRealCalendarBeforeSaving",
+        "TestDailyRealEngineWithMockProvider"
       ],
       "package_test_counts": {
         "github.com/yuntyu01/nyangpuli-lab/cmd/conversation-eval": 1,
         "github.com/yuntyu01/nyangpuli-lab/cmd/counsel-eval": 2,
         "github.com/yuntyu01/nyangpuli-lab/cmd/nyangpuli": 1,
-        "github.com/yuntyu01/nyangpuli-lab/internal/api": 29,
+        "github.com/yuntyu01/nyangpuli-lab/internal/api": 28,
         "github.com/yuntyu01/nyangpuli-lab/internal/conversation": 9,
         "github.com/yuntyu01/nyangpuli-lab/internal/counsel": 28,
         "github.com/yuntyu01/nyangpuli-lab/internal/daily": 1,

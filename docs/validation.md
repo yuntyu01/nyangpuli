@@ -8,7 +8,7 @@
 |---|---|
 | `go vet ./...` | 통과 |
 | `SAJU_INTEGRATION=1 NYANG_TEST_DATABASE_URL=… go test -race -count=1 ./...` | 통과. pass 이벤트 207개(최상위 154, 하위 53), skip 0, fail 0. 실제 PostgreSQL과 고정 OhMySaju 빌드를 사용 |
-| `python3 scripts/validate.py`(DB 설정, 사주 통합 없이 전체 + 사주 패키지 별도) | 통과. 전체 실행 pass 201개(사주 원본 통합 시험 6개 skip), 사주 통합 실행 27개 pass |
+| `python3 scripts/validate.py`(DB 설정, 사주 통합 없이 전체 + 사주 패키지 별도) | 통과. 전체 실행 pass 200개(원본 사주 엔진이 필요한 시험 7개 skip), 사주 통합 실행 27개 pass |
 | `node scripts/engine-regression.mjs` | 20/20 일치, 출처 검사 통과(원인 조사는 [엔진 이식 문서](engine-migration.md)) |
 | CLI 비교 5개 영역 | 각각 두 조건 생성, 모델 상태 `not_run` |
 | `conversation-eval` 모의 없는 준비 실행 | 가상 대화 12개 문맥 검사 12/12 통과, 입력 24개 준비, 모델 호출 0 |
@@ -48,6 +48,11 @@
 | Android/iOS 실기기·에뮬레이터 화면 | 이번 작업에서 기기 연결과 화면 확인을 하지 않음 |
 | 스토어 결제·샌드박스 | 스토어 계정 없음 |
 | KASI 공식 API 실호출 | 인증키 없음 |
-| 원격 GitHub Actions 결과 | 푸시 후 결과를 이 기록에 포함하지 않음 |
+| 원격 GitHub Actions 결과 | 이 표는 로컬 실행 기록이다. 원격 결과는 아래 절 참고 |
 
 가상 대화와 모의 모델 결과를 실제 사용자 효과, 상담 품질, 미래 적중률로 해석하지 않는다.
+
+## 원격 CI
+
+3단계 커밋부터 CI의 postgres 작업에 `./internal/conversation ./internal/readings ./internal/api`를 추가했다. 그 결과 원본 사주 엔진이 필요한 기존 시험 `TestDailyRealEngineWithMockProvider`가 엔진 설치 없이 DB 모드로 실행되어 실패했다(`9bbb617`, `0545671`, `b1e2de2`, `2c41dec`). 시험에 `SAJU_INTEGRATION` 조건을 붙이고, postgres 작업에서 고정 엔진을 설치해 `SAJU_INTEGRATION=1`로 실행하도록 고쳤다. 그 전의 `f3980d2`·`8c2edec` 실패는 원본 회귀 출처 해시 불일치였고 `50844a2`부터 통과한다.
+
