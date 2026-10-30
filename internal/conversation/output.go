@@ -22,11 +22,42 @@ type Candidate struct {
 	OccurredAt string `json:"occurred_at"`
 }
 
+type Tried struct {
+	What   string `json:"what"`
+	Result string `json:"result"`
+	Source string `json:"source"`
+}
+
+// Assessment is the model's short structured judgment before the reply. It is
+// an AI note, not a user fact, and is stored with the message for review.
+type Assessment struct {
+	Want              string   `json:"want"`
+	Topics            []string `json:"topics"`
+	TopicCertainty    string   `json:"topic_certainty"`
+	Tried             []Tried  `json:"tried"`
+	Avoid             []string `json:"avoid"`
+	Capacity          string   `json:"capacity"`
+	Unknowns          []string `json:"unknowns"`
+	UserFeelings      []string `json:"user_feelings"`
+	GuessesAboutOther []string `json:"guesses_about_other"`
+}
+
 type Output struct {
+	Assessment       Assessment  `json:"assessment"`
+	ResponseMode     string      `json:"response_mode"`
+	AskedQuestion    bool        `json:"asked_question"`
 	Reply            string      `json:"reply"`
 	EvidenceIDs      []string    `json:"evidence_ids"`
 	MemoryCandidates []Candidate `json:"memory_candidates"`
 }
+
+var (
+	wants      = map[string]bool{"vent": true, "solution": true, "mixed": true, "unclear": true}
+	capacities = map[string]bool{"listen_only": true, "one_small_step": true, "options": true}
+	modes      = map[string]bool{"brief_empathy": true, "reflect": true, "options": true, "one_step": true, "clarify": true, "safety": true}
+	topics     = map[string]bool{"contact": true, "conflict": true, "hurt": true, "some": true, "breakup": true, "reunion": true, "self_feelings": true, "partner_feelings": true, "vague_distress": true, "other": true}
+	certainty  = map[string]bool{"low": true, "medium": true, "high": true}
+)
 
 // Check records one code-verifiable property of the output. Passing these does
 // not show that the answer is helpful or free of invented content; those are
@@ -61,6 +92,10 @@ func Parse(text string, c Context) (Output, []Check, error) {
 	if d.More() {
 		return Output{}, nil, ErrOutputFormat
 	}
+	a := &out.Assessment
+	if !wants[a.Want] || !capacities[a.Capacity] || !modes[out.ResponseMode] {
+		return Output{}, nil, ErrOutputFormat
+	}
 	checks := []Check{{Name: "json_schema", Status: "pass"}}
 	out.Reply = strings.TrimSpace(out.Reply)
 	if out.Reply == "" || utf8.RuneCountInString(out.Reply) > maxReplyRunes {
@@ -68,6 +103,7 @@ func Parse(text string, c Context) (Output, []Check, error) {
 	}
 	checks = append(checks, Check{Name: "reply_length", Status: "pass"})
 	allowed := c.EvidenceIDs()
+	checks = append(checks, assessmentChecks(&out, allowed)...)
 	kept, unknown := []string{}, []string{}
 	seen := map[string]bool{}
 	for _, id := range out.EvidenceIDs {
@@ -120,6 +156,55 @@ func Parse(text string, c Context) (Output, []Check, error) {
 		checks = append(checks, Check{Name: "memory_candidates_sourced", Status: "pass"})
 	}
 	return out, checks, nil
+}
+
+// assessmentChecks normalizes enum lists and flags mismatches between the
+// stated judgment and the reply. Mismatches are warnings for review; they are
+// not proof that the reply suits the person.
+func assessmentChecks(out *Output, allowed map[string]bool) []Check {
+	a := &out.Assessment
+	fixed := []string{}
+	kept := []string{}
+	for _, t := range a.Topics {
+		if topics[t] {
+			kept = append(kept, t)
+		} else {
+			fixed = append(fixed, "unknown topic "+t)
+		}
+	}
+	a.Topics = kept
+	if !certainty[a.TopicCertainty] {
+		fixed = append(fixed, "topic_certainty set to low")
+		a.TopicCertainty = "low"
+	}
+	for i := range a.Tried {
+		if a.Tried[i].Source != "" && !allowed[a.Tried[i].Source] {
+			fixed = append(fixed, "unknown tried source "+a.Tried[i].Source)
+			a.Tried[i].Source = ""
+		}
+	}
+	checks := []Check{}
+	if len(fixed) > 0 {
+		checks = append(checks, Check{Name: "assessment_fields", Status: "fixed", Detail: strings.Join(fixed, "; ")})
+	} else {
+		checks = append(checks, Check{Name: "assessment_fields", Status: "pass"})
+	}
+	questions := strings.Count(out.Reply, "?") + strings.Count(out.Reply, "？")
+	if (questions > 0) != out.AskedQuestion {
+		checks = append(checks, Check{Name: "asked_question_flag", Status: "warn", Detail: "flag does not match question marks in reply"})
+	} else {
+		checks = append(checks, Check{Name: "asked_question_flag", Status: "pass"})
+	}
+	listening := a.Want == "vent" || a.Capacity == "listen_only"
+	switch {
+	case listening && (out.ResponseMode == "options" || out.ResponseMode == "one_step"):
+		checks = append(checks, Check{Name: "mode_matches_request", Status: "warn", Detail: "advice mode while the user wants to be heard"})
+	case listening && questions > 1:
+		checks = append(checks, Check{Name: "mode_matches_request", Status: "warn", Detail: "several questions while the user wants to be heard"})
+	default:
+		checks = append(checks, Check{Name: "mode_matches_request", Status: "pass"})
+	}
+	return checks
 }
 
 // quoted requires a non-trivial verbatim excerpt of the user's message.

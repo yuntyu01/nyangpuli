@@ -10,6 +10,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/yuntyu01/nyangpuli-lab/internal/counsel"
 	"github.com/yuntyu01/nyangpuli-lab/internal/memory"
 )
 
@@ -68,6 +69,11 @@ type Context struct {
 	SkippedMemory int
 	Links         []Link
 	Redacted      []string
+	// Set by the service after Assemble.
+	PreviousNotes  any
+	Cards          []counsel.Card
+	Research       []counsel.ResearchCard
+	ReferenceUsage counsel.ReferenceUsage
 }
 
 const redactedText = "[사용자가 이 메시지에서 나온 기억을 삭제해 내용을 생략함]"
@@ -198,6 +204,12 @@ func (c Context) EvidenceIDs() map[string]bool {
 	}
 	for _, l := range c.Links {
 		ids[LinkRef(l.ID)] = true
+	}
+	for _, card := range c.Cards {
+		ids["ref:"+card.ID] = true
+	}
+	for _, card := range c.Research {
+		ids["ref:"+card.ID] = true
 	}
 	return ids
 }

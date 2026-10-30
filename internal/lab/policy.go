@@ -28,7 +28,7 @@ func Policies() []Policy {
 	return []Policy{
 		{ID: tarot.ProductPolicyID, Domain: "tarot", Sources: tarotProductSources(), Excluded: []string{"tarotoo card meanings (baseline comparison only)", "arcanite card-pair relationships (enhanced comparison only)"}, Missing: "unwritten position text uses the same card's core meaning and is flagged; unwritten question context is omitted and flagged; nothing is generated to fill gaps"},
 		{ID: SajuPolicyID, Domain: "saju,daily,compatibility", Sources: sajuSources("ohmysaju_baseline"), Excluded: []string{"yueyuan tiaohou table (experimental comparison only; not a verified interpretation engine)"}, Missing: "unsupported inputs such as unknown birth time are rejected; no value is guessed"},
-		{ID: CounselPolicyID, Domain: "counsel", Sources: []string{"nyangpuli:common-counsel-instructions", "conditional reference cards recorded per answer"}, Excluded: []string{"reference cards whose topic or safety, consent and contact conditions are not confirmed"}, Missing: "references are omitted and the omission is recorded"},
+		{ID: CounselPolicyID, Domain: "counsel (single question)", Sources: []string{"nyangpuli:common-counsel-instructions", "conditional reference cards recorded per answer"}, Excluded: []string{"reference cards whose topic or safety, consent and contact conditions are not confirmed"}, Missing: "references are omitted and the omission is recorded; the app's counseling uses conversations (counsel-conversation-v2)"},
 	}
 }
 

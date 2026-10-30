@@ -42,7 +42,7 @@ func (g *scripted) Generate(_ context.Context, in generation.Input) (generation.
 		g.summaries = g.summaries[1:]
 		return generation.Result{Status: "generated", FinishReason: "stop", Text: text}, nil
 	}
-	text := `{"reply":"응, 듣고 있어.","evidence_ids":[],"memory_candidates":[]}`
+	text := `{"assessment":{"want":"vent","topics":["contact"],"topic_certainty":"medium","tried":[],"avoid":[],"capacity":"listen_only","unknowns":[],"user_feelings":[],"guesses_about_other":[]},"response_mode":"brief_empathy","asked_question":false,"reply":"응, 듣고 있어.","evidence_ids":[],"memory_candidates":[]}`
 	if len(g.replies) > 0 {
 		text = g.replies[0]
 		g.replies = g.replies[1:]
@@ -137,7 +137,7 @@ func TestConversationTurnsMemoryAndIsolation(t *testing.T) {
 	}
 
 	first := "어제 또 연락했는데 답이 없었어. 나는 다시 만나고 싶어."
-	gen.replies = []string{`{"reply":"답이 없어서 많이 허전했겠다.","evidence_ids":["msg:1","link:` + conv.Links[0].ID + `","mem:nope"],"memory_candidates":[
+	gen.replies = []string{`{"assessment":{"want":"vent","topics":["contact"],"topic_certainty":"medium","tried":[],"avoid":[],"capacity":"listen_only","unknowns":[],"user_feelings":[],"guesses_about_other":[]},"response_mode":"brief_empathy","asked_question":false,"reply":"답이 없어서 많이 허전했겠다.","evidence_ids":["msg:1","link:` + conv.Links[0].ID + `","mem:nope"],"memory_candidates":[
 	{"class":"episode","key":"attempt","value":"어제 연락했지만 답이 없었다","origin":"user_stated","quote":"어제 또 연락했는데 답이 없었어","subject":"partner","situation":"","occurred_at":""},
 	{"class":"episode","key":"wish","value":"다시 만나고 싶다","origin":"user_stated","quote":"나는 다시 만나고 싶어","subject":"self","situation":"답이 없던 다음 날","occurred_at":""},
 	{"class":"episode","key":"feeling","value":"상대도 아직 마음이 있다","origin":"ai_inference","quote":"","subject":"partner","situation":"","occurred_at":""}]}`}
@@ -185,7 +185,7 @@ func TestConversationTurnsMemoryAndIsolation(t *testing.T) {
 	}
 
 	// A contradictory feeling from another situation is kept beside the wish.
-	gen.replies = []string{`{"reply":"그럴 수 있어.","evidence_ids":["msg:3"],"memory_candidates":[{"class":"episode","key":"feeling","value":"연락은 부담스럽다","origin":"user_stated","quote":"연락은 좀 부담스러워","subject":"self","situation":"상대 SNS를 본 뒤","occurred_at":""}]}`}
+	gen.replies = []string{`{"assessment":{"want":"vent","topics":["contact"],"topic_certainty":"medium","tried":[],"avoid":[],"capacity":"listen_only","unknowns":[],"user_feelings":[],"guesses_about_other":[]},"response_mode":"brief_empathy","asked_question":false,"reply":"그럴 수 있어.","evidence_ids":["msg:3"],"memory_candidates":[{"class":"episode","key":"feeling","value":"연락은 부담스럽다","origin":"user_stated","quote":"연락은 좀 부담스러워","subject":"self","situation":"상대 SNS를 본 뒤","occurred_at":""}]}`}
 	assistant(t, mustSend(t, svc, alice, conv.ID, "k2", "근데 SNS 보니까 연락은 좀 부담스러워"))
 	current, _ = mem.Current(alice)
 	values := []string{}
@@ -201,6 +201,18 @@ func TestConversationTurnsMemoryAndIsolation(t *testing.T) {
 	recent := p["recent_messages"].([]any)
 	if len(recent) != 2 || p["current_user_message"].(map[string]any)["id"] != "msg:3" {
 		t.Fatalf("second turn context %v", p)
+	}
+	notes, _ := p["previous_turn_notes"].(map[string]any)
+	if notes["from"] != "msg:2" || notes["kind"] != "ai_note_not_user_fact" || notes["capacity"] != "listen_only" {
+		t.Fatalf("previous notes %v", p["previous_turn_notes"])
+	}
+	var second struct {
+		References map[string]any `json:"reference_usage"`
+		Assessment map[string]any `json:"assessment"`
+	}
+	got2, _ := svc.Get(ctx, alice, conv.ID)
+	if err = json.Unmarshal(got2.Messages[3].Meta, &second); err != nil || second.References["mode"] != "conditional" || second.References["topic"] != "negotiate_contact" || second.Assessment["want"] != "vent" {
+		t.Fatalf("reference usage or assessment not recorded: %s", got2.Messages[3].Meta)
 	}
 	if len(p["linked_results"].([]any)) != 1 || strings.Contains(inputs[len(inputs)-1].UserPrompt, "다시 만나고 싶다\",\"origin\":\"ai_inference") {
 		t.Fatal("links or inference handling wrong")
@@ -264,7 +276,7 @@ func TestSummaryLagCorrectionAndRebuild(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	gen.replies = []string{`{"reply":"알려줘서 고마워.","evidence_ids":["msg:1"],"memory_candidates":[{"class":"fact","key":"relationship_status","value":"헤어진 지 한 달","origin":"user_stated","quote":"헤어진 지 한 달 됐어","subject":"self","situation":"","occurred_at":""}]}`}
+	gen.replies = []string{`{"assessment":{"want":"vent","topics":["contact"],"topic_certainty":"medium","tried":[],"avoid":[],"capacity":"listen_only","unknowns":[],"user_feelings":[],"guesses_about_other":[]},"response_mode":"brief_empathy","asked_question":false,"reply":"알려줘서 고마워.","evidence_ids":["msg:1"],"memory_candidates":[{"class":"fact","key":"relationship_status","value":"헤어진 지 한 달","origin":"user_stated","quote":"헤어진 지 한 달 됐어","subject":"self","situation":"","occurred_at":""}]}`}
 	assistant(t, mustSend(t, svc, user, conv.ID, "k0", "헤어진 지 한 달 됐어"))
 	// Summary generation keeps failing: the newest messages are still sent raw
 	// and the unseen middle is reported instead of silently dropped.

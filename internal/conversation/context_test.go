@@ -102,7 +102,7 @@ func TestRedactedMessagesAndContradictoryEpisodes(t *testing.T) {
 func TestParseChecksEvidenceAndCandidateSources(t *testing.T) {
 	current := Message{ID: "m3", Seq: 3, Role: "user", Content: "어제 또 연락했는데 답이 없었어. 이제 연락은 안 하고 싶어.", State: "complete", CreatedAt: time.Date(2026, 10, 3, 0, 0, 0, 0, time.UTC)}
 	c := Assemble(current, msgs(2), nil, 0, nil, nil, nil, DefaultLimits)
-	text := "```json\n" + `{"reply":"그랬구나.","evidence_ids":["msg:3","mem:invented","msg:3"],"memory_candidates":[
+	text := "```json\n" + `{"assessment":{"want":"vent","topics":["contact"],"topic_certainty":"medium","tried":[],"avoid":[],"capacity":"listen_only","unknowns":[],"user_feelings":[],"guesses_about_other":[]},"response_mode":"brief_empathy","asked_question":false,"reply":"그랬구나.","evidence_ids":["msg:3","mem:invented","msg:3"],"memory_candidates":[
 	{"class":"episode","key":"attempt","value":"어제 연락했지만 답이 없었다","origin":"user_stated","quote":"어제 또 연락했는데 답이 없었어","subject":"partner","situation":"","occurred_at":"2026-10-02"},
 	{"class":"fact","key":"contact_boundary","value":"연락하지 않기로 함","origin":"user_stated","quote":"연락은 절대 안 해","subject":"self","situation":"","occurred_at":""},
 	{"class":"episode","key":"personality","value":"회피형","origin":"ai_inference","quote":"","subject":"partner","situation":"","occurred_at":""},
@@ -128,9 +128,54 @@ func TestParseChecksEvidenceAndCandidateSources(t *testing.T) {
 	if !fact.ObservedAt.Equal(time.Date(2026, 10, 2, 0, 0, 0, 0, time.UTC)) || meta.SourceMessageID != "m3" || fact.SourceEventID != "message:m3:0" {
 		t.Fatalf("memory fact %+v %+v", fact, meta)
 	}
-	for _, bad := range []string{"", "답변", `{"reply":""}`, `{"reply":"x","extra":1}`, `{"reply":"x"}{"reply":"y"}`} {
+	for _, bad := range []string{"", "답변", `{"reply":"x","evidence_ids":[],"memory_candidates":[]}`, `{"reply":""}`, `{"reply":"x","extra":1}`, `{"assessment":{"want":"vent","topics":["contact"],"topic_certainty":"medium","tried":[],"avoid":[],"capacity":"listen_only","unknowns":[],"user_feelings":[],"guesses_about_other":[]},"response_mode":"brief_empathy","asked_question":false,"reply":"x"}{"assessment":{"want":"vent","topics":["contact"],"topic_certainty":"medium","tried":[],"avoid":[],"capacity":"listen_only","unknowns":[],"user_feelings":[],"guesses_about_other":[]},"response_mode":"brief_empathy","asked_question":false,"reply":"y"}`} {
 		if _, _, err := Parse(bad, c); err == nil {
 			t.Fatalf("accepted %q", bad)
 		}
+	}
+}
+
+func TestStyleChangesWordingOnly(t *testing.T) {
+	current := Message{ID: "m3", Seq: 3, Role: "user", Content: "연락 문제로 속상해", State: "complete"}
+	c := Assemble(current, msgs(2), nil, 0, nil, nil, nil, DefaultLimits)
+	plain, err := TurnInput("conv", c, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cat, err := TurnInput("conv", c, DefaultStyle)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if plain.UserPrompt != cat.UserPrompt || strings.Join(plain.Sources, ",") != strings.Join(cat.Sources, ",") || cat.SystemPrompt != plain.SystemPrompt+"\n\n"+DefaultStyle {
+		t.Fatal("character style changed context, evidence or rules")
+	}
+	for _, banned := range []string{"MBTI", "애착"} {
+		if strings.Contains(plain.UserPrompt, banned) {
+			t.Fatalf("type-based input %s", banned)
+		}
+	}
+}
+
+func TestAssessmentChecksFlagMismatches(t *testing.T) {
+	current := Message{ID: "m1", Seq: 1, Role: "user", Content: "그냥 들어줘", State: "complete"}
+	c := Assemble(current, nil, nil, 0, nil, nil, nil, DefaultLimits)
+	out := `{"assessment":{"want":"vent","topics":["vague_distress","astrology"],"topic_certainty":"sure","tried":[{"what":"산책","result":"별로","source":"msg:99"}],"avoid":["연락하라는 말"],"capacity":"listen_only","unknowns":[],"user_feelings":["지침"],"guesses_about_other":[]},"response_mode":"options","asked_question":false,"reply":"세 가지를 해 보세요. 왜 그런가요? 언제부터요?","evidence_ids":["msg:1"],"memory_candidates":[]}`
+	got, checks, err := Parse(out, c)
+	if err != nil {
+		t.Fatal(err)
+	}
+	status := map[string]string{}
+	for _, ch := range checks {
+		status[ch.Name] = ch.Status
+	}
+	if status["assessment_fields"] != "fixed" || status["asked_question_flag"] != "warn" || status["mode_matches_request"] != "warn" {
+		t.Fatalf("checks %+v", checks)
+	}
+	if len(got.Assessment.Topics) != 1 || got.Assessment.TopicCertainty != "low" || got.Assessment.Tried[0].Source != "" {
+		t.Fatalf("normalized %+v", got.Assessment)
+	}
+	bad := strings.Replace(out, `"want":"vent"`, `"want":"advice"`, 1)
+	if _, _, err = Parse(bad, c); err == nil {
+		t.Fatal("invalid want accepted")
 	}
 }

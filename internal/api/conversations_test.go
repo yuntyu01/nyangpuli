@@ -60,7 +60,7 @@ func TestConversationHTTPWithLinkedReading(t *testing.T) {
 		_ = json.NewDecoder(r.Body).Decode(&req)
 		text := "카드 요약입니다."
 		if strings.Contains(req.Messages[len(req.Messages)-1].Content, "CONTEXT_JSON") {
-			text = `{"reply":"그 카드 이야기를 이어서 해 볼까요.","evidence_ids":["msg:1"],"memory_candidates":[{"class":"episode","key":"feeling","value":"상대가 날 피하는 것 같다","origin":"ai_inference","quote":"","subject":"partner","situation":"","occurred_at":""}]}`
+			text = `{"assessment":{"want":"vent","topics":["contact"],"topic_certainty":"medium","tried":[],"avoid":[],"capacity":"listen_only","unknowns":[],"user_feelings":[],"guesses_about_other":[]},"response_mode":"brief_empathy","asked_question":false,"reply":"그 카드 이야기를 이어서 해 볼까요.","evidence_ids":["msg:1"],"memory_candidates":[{"class":"episode","key":"feeling","value":"상대가 날 피하는 것 같다","origin":"ai_inference","quote":"","subject":"partner","situation":"","occurred_at":""}]}`
 		}
 		_ = json.NewEncoder(w).Encode(map[string]any{"model": "scripted-test", "choices": []any{map[string]any{"message": map[string]string{"content": text}, "finish_reason": "stop"}}})
 	}))

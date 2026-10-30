@@ -9,6 +9,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/yuntyu01/nyangpuli-lab/internal/counsel"
 	"github.com/yuntyu01/nyangpuli-lab/internal/generation"
 	"github.com/yuntyu01/nyangpuli-lab/internal/memory"
 	"github.com/yuntyu01/nyangpuli-lab/internal/readings"
@@ -35,6 +36,11 @@ type Service struct {
 	Generator Generator
 	Links     LinkSource
 	Limits    Limits
+	// Style is the character block; empty uses DefaultStyle and "none" sends
+	// no style, which evaluations use to show style changes wording only.
+	Style string
+	// References is "conditional" (default) or "off" for comparisons.
+	References string
 	// Inline runs the turn worker before Send returns. Tests use it; the server
 	// leaves it false so a reply survives a dropped HTTP connection.
 	Inline bool
@@ -184,6 +190,9 @@ func (s *Service) Wait() { s.wg.Wait() }
 // IDs and memory references, never memory values or the prompt.
 type turnMeta struct {
 	Policy       string            `json:"policy"`
+	Assessment   *Assessment       `json:"assessment,omitempty"`
+	ResponseMode string            `json:"response_mode,omitempty"`
+	References   any               `json:"reference_usage,omitempty"`
 	EvidenceIDs  []string          `json:"evidence_ids"`
 	Checks       []Check           `json:"checks"`
 	Context      map[string]any    `json:"context"`
@@ -240,8 +249,17 @@ func (s *Service) runTurn(user, id string, um, am Message) {
 		return
 	}
 	c := Assemble(um, in.History, in.Summary, in.Generation, records, in.Links, in.Suppressed, s.limits())
+	c.PreviousNotes = previousNotes(in.History, um.Seq)
+	c.Cards, c.Research, c.ReferenceUsage = counsel.ConversationReferences(referenceText(c), counselFacts(c.Facts), s.References)
 	meta.Context = contextManifest(c)
-	input, err := TurnInput(id, c)
+	meta.References = c.ReferenceUsage
+	style := s.Style
+	if style == "" {
+		style = DefaultStyle
+	} else if style == "none" {
+		style = ""
+	}
+	input, err := TurnInput(id, c, style)
 	if err != nil {
 		meta.Error = "context_encoding"
 		finish("failed", "")
@@ -271,6 +289,7 @@ func (s *Service) runTurn(user, id string, um, am Message) {
 		return
 	}
 	meta.Checks, meta.EvidenceIDs = checks, out.EvidenceIDs
+	meta.Assessment, meta.ResponseMode = &out.Assessment, out.ResponseMode
 	for i, cand := range out.MemoryCandidates {
 		fact, m := cand.MemoryFact(um, i)
 		update := map[string]any{"key": cand.Key, "class": cand.Class, "origin": cand.Origin}
@@ -350,4 +369,43 @@ func (s *Service) refreshSummary(ctx context.Context, user, id string) {
 	saveCtx, stop := context.WithTimeout(context.Background(), 10*time.Second)
 	defer stop()
 	_, _ = s.Store.saveSummary(saveCtx, user, id, text, pending[len(pending)-1].Seq, in.Generation, meta)
+}
+
+// previousNotes passes the last reply's assessment forward, labeled as an AI
+// note, so failed methods and refused actions are not suggested again.
+func previousNotes(history []Message, before int64) any {
+	for i := len(history) - 1; i >= 0; i-- {
+		m := history[i]
+		if m.Role != "assistant" || m.State != "complete" || m.Seq >= before {
+			continue
+		}
+		var meta struct {
+			Assessment *Assessment `json:"assessment"`
+		}
+		if json.Unmarshal(m.Meta, &meta) != nil || meta.Assessment == nil {
+			return nil
+		}
+		a := meta.Assessment
+		return map[string]any{"from": MessageRef(m.Seq), "kind": "ai_note_not_user_fact", "want": a.Want, "capacity": a.Capacity, "tried": a.Tried, "avoid": a.Avoid, "unknowns": a.Unknowns}
+	}
+	return nil
+}
+
+// referenceText uses the user's own recent words for the topic rules.
+func referenceText(c Context) string {
+	parts := []string{}
+	for _, m := range c.Recent {
+		if m.Role == "user" {
+			parts = append(parts, m.Content)
+		}
+	}
+	return strings.Join(append(parts, c.Current.Content), "\n")
+}
+
+func counselFacts(records []memory.Record) []counsel.Fact {
+	out := []counsel.Fact{}
+	for _, r := range records {
+		out = append(out, counsel.Fact{Key: r.Key, Value: r.Value, SourceID: MemoryRef(r.ID), ObservedAt: r.ObservedAt})
+	}
+	return out
 }
