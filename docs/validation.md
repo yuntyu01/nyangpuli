@@ -54,5 +54,5 @@
 
 ## 원격 CI
 
-3단계 커밋부터 CI의 postgres 작업에 `./internal/conversation ./internal/readings ./internal/api`를 추가했다. 그 결과 원본 사주 엔진이 필요한 기존 시험 `TestDailyRealEngineWithMockProvider`가 엔진 설치 없이 DB 모드로 실행되어 실패했다(`9bbb617`, `0545671`, `b1e2de2`, `2c41dec`). 시험에 `SAJU_INTEGRATION` 조건을 붙이고, postgres 작업에서 고정 엔진을 설치해 `SAJU_INTEGRATION=1`로 실행하도록 고쳤다. 그 전의 `f3980d2`·`8c2edec` 실패는 원본 회귀 출처 해시 불일치였고 `50844a2`부터 통과한다.
+3단계 커밋부터 CI의 postgres 작업에 `./internal/conversation ./internal/readings ./internal/api`를 추가했다. 그 결과 원본 사주 엔진이 필요한 기존 시험 `TestDailyRealEngineWithMockProvider`가 엔진 설치 없이 DB 모드로 실행되어 실패했다(`9bbb617`, `0545671`, `b1e2de2`, `2c41dec`). 시험에 `SAJU_INTEGRATION` 조건을 붙이고, postgres 작업에서 고정 엔진을 설치해 `SAJU_INTEGRATION=1`로 실행하도록 고쳤다. 그 전의 `f3980d2`·`8c2edec` 실패는 원본 회귀 출처 해시 불일치였고 `50844a2`부터 통과한다. 수정 커밋 `f492047`의 원격 실행(41052672269)에서 go, postgres, saju-integration, mobile 4개 작업이 모두 통과했다.
 
