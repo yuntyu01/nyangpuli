@@ -224,3 +224,123 @@ func TestTarotReadingPostgres(t *testing.T) {
 		t.Fatalf("provider calls %d", calls)
 	}
 }
+
+func TestTarotDescriptionsSummaryAndDetailShareProductEvidence(t *testing.T) {
+	var mu sync.Mutex
+	prompts := []string{}
+	provider := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Messages []struct {
+				Content string `json:"content"`
+			} `json:"messages"`
+		}
+		_ = json.NewDecoder(r.Body).Decode(&req)
+		mu.Lock()
+		prompts = append(prompts, req.Messages[len(req.Messages)-1].Content)
+		mu.Unlock()
+		_ = json.NewEncoder(w).Encode(map[string]any{"model": "scripted-test", "choices": []any{map[string]any{"message": map[string]string{"content": "시험 답변"}, "finish_reason": "stop"}}})
+	}))
+	defer provider.Close()
+	client, err := generation.New(generation.Config{APIBase: provider.URL, Model: "scripted-test", MaxCompletionTokens: 100}, provider.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+	l, err := lab.New("../..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	mem, _ := memory.Open("")
+	svc, err := NewReadingService(l, mem, client, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	session, err := l.Tarot.NewSession("관계를 어떻게 볼까요?", "love", "past-present-future")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, p := range []int{3, 40, 71} {
+		if err = l.Tarot.Select(&session, p); err != nil {
+			t.Fatal(err)
+		}
+	}
+	store := &readingTarotStore{session: session}
+	h := (&Server{Lab: l, Memory: mem, Readings: svc, TarotStore: store, Tokens: map[string]string{"alice-token": "alice"}, AllowTestUnlock: true}).Handler()
+	w := call(h, "GET", "/v1/tarot/sessions/session1", "alice-token", "")
+	var view struct {
+		Meanings []tarot.CardEvidence `json:"meanings"`
+		Policy   string               `json:"interpretation_policy"`
+	}
+	if err = json.Unmarshal(w.Body.Bytes(), &view); err != nil || w.Code != 200 || len(view.Meanings) != 3 || view.Policy != tarot.ProductPolicyID {
+		t.Fatalf("view %d %s", w.Code, w.Body.String())
+	}
+	for _, m := range view.Meanings {
+		if !strings.HasPrefix(m.Source, "arcanite:") {
+			t.Fatalf("description source %s", m.Source)
+		}
+	}
+	w = call(h, "POST", "/v1/tarot/sessions/session1/reading", "alice-token", "")
+	var reading readings.View
+	if err = json.Unmarshal(w.Body.Bytes(), &reading); err != nil || w.Code != 201 {
+		t.Fatalf("reading %d %s", w.Code, w.Body.String())
+	}
+	if reading.Variant != "arcanite_product_v1" || !strings.Contains(strings.Join(reading.SourceIDs, ","), "policy:"+tarot.ProductPolicyID) {
+		t.Fatalf("variant %s sources %v", reading.Variant, reading.SourceIDs)
+	}
+	call(h, "POST", "/v1/dev/readings/"+reading.ID+"/unlock", "alice-token", "")
+	if w = call(h, "POST", "/v1/readings/"+reading.ID+"/detail", "alice-token", ""); w.Code != 200 {
+		t.Fatalf("detail %d", w.Code)
+	}
+	mu.Lock()
+	defer mu.Unlock()
+	if len(prompts) != 2 {
+		t.Fatalf("calls %d", len(prompts))
+	}
+	for _, prompt := range prompts {
+		start := strings.Index(prompt, "INPUT_JSON:\n")
+		if start < 0 {
+			t.Fatal("prompt payload missing")
+		}
+		dec := json.NewDecoder(strings.NewReader(prompt[start+len("INPUT_JSON:\n"):]))
+		var payload struct {
+			Evidence tarot.Evidence `json:"evidence"`
+		}
+		if err = dec.Decode(&payload); err != nil {
+			t.Fatal(err)
+		}
+		a, _ := json.Marshal(payload.Evidence.Cards)
+		b, _ := json.Marshal(view.Meanings)
+		if string(a) != string(b) || len(payload.Evidence.Relationships) != 0 {
+			t.Fatalf("generation evidence differs from card descriptions\n%s\n%s", a, b)
+		}
+	}
+}
+
+func TestTarotLegacyEnhancedReadingIsReplayed(t *testing.T) {
+	calls := 0
+	provider := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls++
+		_ = json.NewEncoder(w).Encode(map[string]any{"model": "scripted-test", "choices": []any{map[string]any{"message": map[string]string{"content": "시험 답변"}, "finish_reason": "stop"}}})
+	}))
+	defer provider.Close()
+	client, _ := generation.New(generation.Config{APIBase: provider.URL, Model: "scripted-test", MaxCompletionTokens: 100}, provider.Client())
+	l, _ := lab.New("../..")
+	mem, _ := memory.Open("")
+	svc, _ := NewReadingService(l, mem, client, "")
+	session, _ := l.Tarot.NewSession("질문", "general", "single-focus")
+	_ = l.Tarot.Select(&session, 5)
+	req, _ := l.Tarot.SessionRequest(session)
+	input, _ := json.Marshal(req)
+	envelope, _ := json.Marshal(readingEnvelope{Input: input})
+	ctx := context.WithValue(context.Background(), readingUserKey{}, "alice")
+	legacy, err := svc.Create(ctx, "alice", "tarot-session:session1", "tarot", "enhanced", envelope)
+	if err != nil {
+		t.Fatal(err)
+	}
+	h := (&Server{Lab: l, Memory: mem, Readings: svc, TarotStore: &readingTarotStore{session: session}, Tokens: map[string]string{"t": "alice"}}).Handler()
+	w := call(h, "POST", "/v1/tarot/sessions/session1/reading", "t", "")
+	var got readings.View
+	_ = json.Unmarshal(w.Body.Bytes(), &got)
+	if w.Code != 201 || got.ID != legacy.ID || calls != 1 {
+		t.Fatalf("legacy replay %d id=%s calls=%d", w.Code, got.ID, calls)
+	}
+}

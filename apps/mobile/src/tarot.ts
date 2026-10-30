@@ -1,6 +1,6 @@
 export type Spread = 'single-focus' | 'past-present-future';
 export type TarotCard = {position:number;card_id:number;name:string;reversed:boolean};
-export type TarotMeaning = {card_id:number;name:string;orientation:string;position:string;meaning:string;source:string};
+export type TarotMeaning = {card_id:number;name:string;orientation:string;position:string;meaning:string;source:string;position_interpretation?:string;position_fallback?:boolean};
 export type TarotSession = {id:string;question:string;spread:Spread;selected:TarotCard[];complete:boolean;meanings?:TarotMeaning[]};
 export function requiredCards(spread: Spread) { return spread === 'single-focus' ? 1 : 3; }
 /** Reject malformed or contradictory session data before offering another selection. */

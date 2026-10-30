@@ -211,3 +211,32 @@ func TestDeterministicAndReadOnlyCatalog(t *testing.T) {
 		t.Fatal("catalog mutates internal state")
 	}
 }
+
+func TestProductEvidenceUsesOneSourceWithoutRelationships(t *testing.T) {
+	e, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	req := Request{Question: "관계를 볼까요?", QuestionType: "love", Spread: "past-present-future", Cards: []Draw{{CardID: 6}, {CardID: 13, Reversed: true}, {CardID: 21}}}
+	ev, _, err := e.Product(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	full, _ := e.Compare(req)
+	if len(ev.Relationships) != 0 || len(ev.Cards) != 3 {
+		t.Fatalf("product evidence %+v", ev)
+	}
+	for i, c := range ev.Cards {
+		if c != full.Enhanced.Cards[i] || !strings.HasPrefix(c.Source, "arcanite:") {
+			t.Fatalf("card %d differs from arcanite assembly", i)
+		}
+	}
+	for _, w := range ev.Warnings {
+		if strings.Contains(w, "relationship") {
+			t.Fatalf("relationship warning leaked: %s", w)
+		}
+	}
+	if !strings.Contains(ev.Prompt, `"relationships": []`) {
+		t.Fatal("prompt should state no relationships are supplied")
+	}
+}

@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/yuntyu01/nyangpuli-lab/internal/persistence"
+	"github.com/yuntyu01/nyangpuli-lab/internal/readings"
 	"github.com/yuntyu01/nyangpuli-lab/internal/tarot"
 )
 
@@ -35,12 +36,16 @@ func tarotView(id string, s tarot.Session, engine *tarot.Engine) (map[string]any
 	v := map[string]any{"id": id, "question": s.Question, "question_type": s.QuestionType, "spread": s.Spread, "selected": selected, "complete": false}
 	req, err := engine.SessionRequest(s)
 	if err == nil {
-		result, err := engine.Compare(req)
+		// Card descriptions use the same product evidence as the summary and
+		// detail generated for this session.
+		evidence, _, err := engine.Product(req)
 		if err != nil {
 			return nil, err
 		}
 		v["complete"] = true
-		v["meanings"] = result.Baseline.Cards
+		v["meanings"] = evidence.Cards
+		v["interpretation_policy"] = tarot.ProductPolicyID
+		v["interpretation_warnings"] = evidence.Warnings
 	}
 	return v, nil
 }
@@ -129,7 +134,13 @@ func (s *Server) handleTarot(w http.ResponseWriter, r *http.Request, user string
 		// A server-derived key makes retries and repeated taps on the same
 		// completed draw resolve to one reading, independently per account.
 		ctx := context.WithValue(r.Context(), readingUserKey{}, user)
-		v, err := s.Readings.Create(ctx, user, "tarot-session:"+id, "tarot", "enhanced", envelope)
+		v, err := s.Readings.Create(ctx, user, "tarot-session:"+id, "tarot", "product", envelope)
+		if errors.Is(err, readings.ErrConflict) {
+			// Sessions read before the product policy keep their original
+			// enhanced reading. The key is server-derived, so a conflict can only
+			// come from that stored reading, which this replays with the same cards.
+			v, err = s.Readings.Create(ctx, user, "tarot-session:"+id, "tarot", "enhanced", envelope)
+		}
 		if err != nil {
 			readingError(w, err)
 		} else {

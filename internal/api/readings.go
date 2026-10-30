@@ -57,11 +57,13 @@ func (b readingBuilder) Build(ctx context.Context, domain, variant string, data 
 	}
 	index := 0
 	switch variant {
+	case "product":
+		index = -1
 	case "baseline":
 	case "enhanced":
 		index = 1
 	default:
-		return generation.Input{}, fmt.Errorf("%w: variant must be baseline or enhanced (not a quality ranking)", readings.ErrInvalidInput)
+		return generation.Input{}, fmt.Errorf("%w: variant must be product, or baseline/enhanced for internal comparison", readings.ErrInvalidInput)
 	}
 	input := envelope.Input
 	if envelope.UseMemory {
@@ -89,6 +91,13 @@ func (b readingBuilder) Build(ctx context.Context, domain, variant string, data 
 		if err != nil {
 			return generation.Input{}, err
 		}
+	}
+	if index < 0 {
+		in, err := b.lab.Product(ctx, domain, "reading-snapshot", input)
+		if err != nil {
+			return generation.Input{}, fmt.Errorf("%w: %s", readings.ErrInvalidInput, err)
+		}
+		return in, nil
 	}
 	result, err := b.lab.Compare(ctx, domain, "reading-snapshot", input)
 	if err != nil {
