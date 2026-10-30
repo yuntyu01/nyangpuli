@@ -1,17 +1,77 @@
 {
   "schema_version": 1,
   "purpose": "original_engine_compatibility_only_not_independent_truth_or_future_accuracy",
-  "recorded_at": "2026-10-29T04:11:54.149Z",
+  "recorded_at": "2026-10-30T11:31:14.603Z",
   "inputs_sha256": "a5034fcc2dc508682557a8a91386676db0fa92d2bb9e43ce177a71f7d14df8c9",
   "provenance": {
     "source_revision": "a8c0cf64adfde8fb1ce253112529edd8e90cc94b",
-    "node_version": "v24.22.1",
+    "node_version": "v22.21.0",
     "package_manager": "pnpm@10.15.0",
     "pnpm_lock_sha256": "dceda8390a43b8f1753e9baa70b315e57ae06a39e4cce46b72a7b3f993685abb",
-    "build_tree_sha256": "3019d2c96d57ec577d153176023520d3e8b86c88dc3c059309a4ae496fe886fe",
+    "build_tree_sha256": "cba59b85f241781680b04ff0858ca6324bb6c260c2493eb44f5224e9a448efc8",
     "build_file_count": 38,
+    "build_files": {
+      "advanced.cjs": "bee90d1a45903d53670e7236a8556412ccb3774e32e0c23ff9087c5f60bc8e83",
+      "advanced.cjs.map": "e6289bb7cb8ecaa4690d7fcddc715bfbb4fe504d5d212194c4718665148fdd1d",
+      "advanced.d.cts": "9b4479835aac3a5b2e46d2c9bb488e5d3b54414203ae383210580f7d19598b21",
+      "advanced.d.ts": "68d9154b813294e9c1ac5f003c5865b4f96d136f68384e2e023b9665123658e7",
+      "advanced.js": "d8a3151d5f92cc74231a9d45eac0f3002bda6a5df15da9e33d31e4d0db7e174d",
+      "advanced.js.map": "cba81f7ad4d5b1b629bf43823f1082e73a10d0c3114c937515e7f8c1047629b3",
+      "calendar.cjs": "384f97f4e240dff4b774a092f64cf969c472be0840583d140291a8c4d046631a",
+      "calendar.cjs.map": "7cc241adbcde1fe0a21bbbdfb1f6b5dc9095b37b8d645afc4c522eb4ef42ac21",
+      "calendar.d.cts": "7f1073e622e3b9e4325eff3d1e14164684f6b0253610b26cc849527bd7922948",
+      "calendar.d.ts": "eae0b9af998978e73da9cb24462d8e4e04759f246148076d020585e491521bad",
+      "calendar.js": "8f4661f63ce1675cec13ecc8414545edb72bb2da204f0c7a3e5ff7a555c00762",
+      "calendar.js.map": "cba81f7ad4d5b1b629bf43823f1082e73a10d0c3114c937515e7f8c1047629b3",
+      "chunk-35I7KHUL.js": "542b8d6b8e42d0b1438a0ecff49c74af3524080a83c851d1ca015233eb20b6df",
+      "chunk-35I7KHUL.js.map": "30dd22961e9fbd3f78bfa023f4ba290558538f99701623ea0ec9b206cf41f1da",
+      "chunk-BCPJE3A5.js": "dc0e3e6d608f83cbb6e7134b45b276024c4b3dc8de606e8192c2a8d1442a7822",
+      "chunk-BCPJE3A5.js.map": "8b70ffc94d5d682ce5839f36c68004108bab5adfbc9d0af566672d84d4201378",
+      "chunk-VHSFLASF.js": "f33408c052ea1078e2951e7a601adf7f6a1af1721603b5ec9a965239fd53ae6b",
+      "chunk-VHSFLASF.js.map": "b8875b0f732aa6d199a001518b9878397ba72d8b220383f0983fc8adcc1eab5e",
+      "chunk-YHAEZMEG.js": "f5805cbbdf920461e47ebce4f3a92deb47419f4d6cad120076e7b08cafc8548b",
+      "chunk-YHAEZMEG.js.map": "8be53228346def5eb35fd15218e29547391ed16e73ea5f2bcabfdcf436be81f0",
+      "index.cjs": "93a1a3b77c82f360d9892711b68a3ea06d7d09835300e54781831a61b9b84c44",
+      "index.cjs.map": "d7640a0d1a332f4a03b4d1150faacfd6685b677bdd6d3cfff1e5290e51d4b0b1",
+      "index.d.cts": "54fc58adb6a01bbce753a39caf31cf30e12fa5fad1f9229ff27f300c59ad6120",
+      "index.d.ts": "8c9ef10b34567522599805d29ae138066ea0b8b8c421c422c2bdf9871951bf4f",
+      "index.js": "9fc15c79b276136a84ca1ee3b8f9358a3745b120725ed49992891fec61e5e9f0",
+      "index.js.map": "02f3a7289830817cd94c84df6b733ae454ea3fff92892a29ed1aa34b43084d69",
+      "resolve-birth-instant-CZuWSRXR.d.cts": "fec72c0d0ebebcc8ff5f1d31abf2a2b145a46e02e9930361b60e992a57b14105",
+      "resolve-birth-instant-CghpK3k9.d.ts": "f8fd78d2d1bd4b170ec3ef10630acb904f9ca1ee3f391c2ec9c68915d41eeb3d",
+      "timing.cjs": "076415768723b6e9a0186f3524768378130e97bd70c721c5b34c58796489938c",
+      "timing.cjs.map": "9317140ca14408de333f47c072b65b90d3b9df2156d33566591554c4ceb2ec89",
+      "timing.d.cts": "e0eebd120c0476f3e611341a5e02a0a1f913a89be8c8e172410d5d72e4e3773c",
+      "timing.d.ts": "260aaedd7b55537930dd60b07de7b26a2c0de7fcbf16cdf107fe7f8ea7304383",
+      "timing.js": "469abab2a1ff3cbce6bba0c41f2197c02803327000c5a6ce09fbb57f8b122e43",
+      "timing.js.map": "0845e4f797ee033c12414bfe652e4add6496a9f78a3f878e4cf99e62b9a1069e",
+      "types-C6GEj7Xr.d.ts": "428e0cb7819e804b38cf55dcad29c53c1d066991cac8b809348013ada9a770d6",
+      "types-PqizHVHi.d.cts": "41e4fd624a3208f9d111a13ddfe17f9f651d3cf2e1c1780fec281ce760cdca19",
+      "types-PqizHVHi.d.ts": "41e4fd624a3208f9d111a13ddfe17f9f651d3cf2e1c1780fec281ce760cdca19",
+      "types-d7c9RWyv.d.cts": "1cf1fd488e518ddb69a35033f90fc42824701f36e746b47fd16793db6b004e15"
+    },
+    "bundled_dependency_paths": [
+      "node_modules/.pnpm/astronomy-engine@2.1.19/node_modules/astronomy-engine/esm/astronomy.js"
+    ],
     "adapter_sha256": "69253088661c4eee3c84854e5903af2dbb56fdd0df52b6a1aa7cdb605f855baf"
   },
+  "provenance_history": [
+    {
+      "recorded_at": "2026-10-29T04:11:54.149Z",
+      "provenance": {
+        "source_revision": "a8c0cf64adfde8fb1ce253112529edd8e90cc94b",
+        "node_version": "v24.22.1",
+        "package_manager": "pnpm@10.15.0",
+        "pnpm_lock_sha256": "dceda8390a43b8f1753e9baa70b315e57ae06a39e4cce46b72a7b3f993685abb",
+        "build_tree_sha256": "3019d2c96d57ec577d153176023520d3e8b86c88dc3c059309a4ae496fe886fe",
+        "build_file_count": 38,
+        "adapter_sha256": "69253088661c4eee3c84854e5903af2dbb56fdd0df52b6a1aa7cdb605f855baf"
+      },
+      "replaced_at": "2026-10-30T11:31:14.603Z",
+      "replaced_reason": "build_tree_sha256 3019d2c9 was not reproducible from the pinned commit and lockfile: two independent builds (local Node 20/pnpm 10.20 and a clean node:24.22.1 container with pnpm 10.15.0) both produced cba59b85 and all 20 calculated results matched. The dist embeds dependency install paths, so the old reference came from an unrecorded install layout; per-file hashes were not kept, so its exact difference cannot be recovered. Install layout is now pinned in setup-saju.sh and per-file hashes are recorded.",
+      "changed_result_cases": []
+    }
+  ],
   "projection_version": 1,
   "results": {
     "ordinary-daily": {

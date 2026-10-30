@@ -13,11 +13,13 @@ node scripts/engine-regression.mjs
 
 입력은 `fixtures/engine-regression-inputs.json`, 관측 기준값은 `fixtures/engine-regression-golden.json`에 있다. 기본 모드는 기준값을 변경하지 않고 원본 어댑터를 실제로 실행하여 비교한다. 입력 파일 해시, 원본 커밋, 의존성 잠금 파일, 빌드 파일 트리, 어댑터 해시가 달라지면 조용히 통과시키지 않는다.
 
-새 기준값 기록은 다음과 같이 **명시적으로** 실행한다. 원본 계산 결과가 기준이 되므로, 불일치를 없애려고 이 명령부터 실행하면 안 된다. 원본 버전이나 계산 정책을 바꿀 때 변경 이유와 전후 결과를 검토하고, 이전 기준도 버전 관리에 남긴다.
+새 기준값 기록은 다음과 같이 **명시적으로** 실행한다. 원본 계산 결과가 기준이 되므로, 불일치를 없애려고 이 명령부터 실행하면 안 된다. 원본 버전이나 계산 정책을 바꿀 때 변경 이유와 전후 결과를 검토하고, 이전 기준도 버전 관리에 남긴다. `--record`는 이유 없이 실행되지 않으며, 교체된 출처 메타데이터와 이유, 계산 결과가 바뀐 사례 목록을 `provenance_history`에 남긴다.
 
 ```bash
-node scripts/engine-regression.mjs --record
+node scripts/engine-regression.mjs --record --reason "변경 이유"
 ```
+
+출처 검사가 실패해도 20개 계산 결과 비교는 계속 실행하고 보고서에 `provenance_failures`와 `failed`를 따로 표시한다. 둘 중 하나라도 있으면 종료 코드 1이다. 검사를 끄는 옵션은 없다.
 
 ## 고정한 20개 입력
 
@@ -65,6 +67,27 @@ node scripts/engine-regression.mjs --candidate node --arg adapters/ohmysaju/brid
 ```
 
 `--candidate`는 기준값만 읽고 덮어쓰지 않는다. `--record`와 동시에 사용할 수 없다. `spawnSync`의 별도 인수 배열과 `shell:false`를 사용하며 각 요청은 15초 이내로 제한한다.
+
+## build_tree_sha256 불일치 조사 (2026-10-30)
+
+이전 기록(f3980d2까지)은 `build_tree_sha256`가 golden `3019d2c9...`와 달라 실패했다. 원인을 항목별로 나눠 확인했다.
+
+| 구분 | 확인 결과 |
+|---|---|
+| 원본 커밋 | 고정 커밋 `a8c0cf6`의 깨끗한 checkout. 차이 없음 |
+| 의존성 잠금 | `pnpm_lock_sha256` 일치. `--frozen-lockfile` 설치 |
+| 어댑터 | `adapter_sha256` 일치 |
+| 빌드 환경(Node·pnpm·경로) | 로컬 Node 20.20.0·pnpm 10.20.0 빌드와, 새 `node:24.22.1-bookworm-slim` 컨테이너에서 golden과 같은 Node 24.22.1·pnpm 10.15.0으로 다른 경로(`/app`)에 빌드한 결과가 **같은 `cba59b85...`**. 같은 위치 재빌드도 바이트 동일. Node·pnpm 버전과 체크아웃 경로는 원인이 아님 |
+| 산출물 | 38개 파일 수는 같음. esbuild가 번들한 `astronomy-engine`의 설치 경로를 JS 주석과 소스맵에 기록함을 확인. pnpm `node-linker=hoisted`는 `25623efe...`, 전역 가상 저장소는 사용자 홈 경로가 들어간 `aedc91f9...`가 되어 **설치 레이아웃이 바뀌면 계산 코드가 같아도 해시가 달라짐** |
+| 계산 결과 | 출처 검사를 유지한 채 20개 사례를 비교하면 20/20 일치. 기존 golden의 `results`와 새 기록의 `results`는 완전히 같음 |
+
+결론: golden 해시는 고정 커밋·잠금파일·표준 레이아웃으로 재현되지 않는 빌드 상태(기록되지 않은 설치 레이아웃 또는 별도 빌드 과정)에서 기록되었다. 당시 파일별 해시를 남기지 않아 어느 파일이 어떻게 달랐는지는 복원할 수 없다. 이는 확인한 사실이 아니라 남은 가능성이며, 위 실험에서 재현한 레이아웃 중에는 `3019d2c9...`와 같은 값이 없었다.
+
+조치:
+
+- `scripts/setup-saju.sh`가 `node-linker=isolated`, 전역 가상 저장소 끄기, `node_modules/.pnpm` 경로를 명시한다. 사용자 환경변수로 hoisted·전역 저장소를 강제해도 정규 해시가 나오는 것을 확인했다.
+- 출처 메타데이터에 파일별 해시(`build_files`)와 번들된 의존성 경로(`bundled_dependency_paths`)를 추가했다. 다음 불일치 때 바뀐 파일을 바로 보고한다. 빌드 파일 하나를 변조하면 해당 파일 이름과 함께 실패하는 것을 확인했다.
+- 계산 결과가 같음을 확인한 뒤 이유를 붙여 출처 메타데이터만 재기록했다. 이전 값은 `provenance_history`에 남아 있다.
 
 ## 이번 실행 결과
 

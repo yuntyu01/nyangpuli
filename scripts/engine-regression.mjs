@@ -72,6 +72,12 @@ function provenance(engineDir) {
   }
   walk(dist);
   const packageInfo = JSON.parse(readFileSync(join(engineDir, 'package.json'), 'utf8'));
+  // esbuild writes the bundled dependency's install path into JS comments and
+  // source maps, so the dist bytes depend on the package manager's layout.
+  const bundledPaths = new Set();
+  for (const name of Object.keys(hashes).filter(n => /\.(c?js)$/.test(n))) {
+    for (const m of readFileSync(join(dist, name), 'utf8').matchAll(/^\/\/ (\S*node_modules\/\S+)$/gm)) bundledPaths.add(m[1]);
+  }
   return {
     source_revision: pinned,
     node_version: process.version,
@@ -79,8 +85,30 @@ function provenance(engineDir) {
     pnpm_lock_sha256: digest(readFileSync(join(engineDir, 'pnpm-lock.yaml'))),
     build_tree_sha256: digest(JSON.stringify(canonical(hashes))),
     build_file_count: Object.keys(hashes).length,
+    build_files: canonical(hashes),
+    bundled_dependency_paths: [...bundledPaths].sort(),
     adapter_sha256: digest(readFileSync(join(root, 'adapters/ohmysaju/bridge.mjs'))),
   };
+}
+// Report every provenance difference instead of stopping at the first one, so
+// a mismatch can be attributed to source, lockfile, adapter or build layout.
+function provenanceDifferences(actual, expected) {
+  const out = [];
+  for (const key of ['pnpm_lock_sha256', 'build_tree_sha256', 'adapter_sha256']) {
+    if (actual[key] !== expected[key]) out.push({ field: key, expected: expected[key], actual: actual[key] });
+  }
+  if (actual.build_tree_sha256 !== expected.build_tree_sha256) {
+    if (expected.build_files) {
+      const names = [...new Set([...Object.keys(actual.build_files), ...Object.keys(expected.build_files)])].sort();
+      out.push({ field: 'build_files', changed: names.filter(n => actual.build_files[n] !== expected.build_files[n]) });
+    } else {
+      out.push({ field: 'build_files', changed: null, note: 'reference has no per-file hashes; the differing files cannot be identified' });
+    }
+    if (expected.bundled_dependency_paths && JSON.stringify(expected.bundled_dependency_paths) !== JSON.stringify(actual.bundled_dependency_paths)) {
+      out.push({ field: 'bundled_dependency_paths', expected: expected.bundled_dependency_paths, actual: actual.bundled_dependency_paths });
+    }
+  }
+  return out;
 }
 function invoke(command, args, fixture, original) {
   const result = spawnSync(command, args, { cwd: root, input: JSON.stringify(fixture.input), encoding: 'utf8', timeout: 15000, maxBuffer: 4 * 1024 * 1024, shell: false });
@@ -101,16 +129,18 @@ function invoke(command, args, fixture, original) {
   return value;
 }
 function parseArgs(args) {
-  const options = { record: false, candidate: null, args: [] };
+  const options = { record: false, reason: null, candidate: null, args: [] };
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--record') options.record = true;
-    else if ((args[i] === '--candidate' || args[i] === '--arg') && i + 1 < args.length) {
+    else if ((args[i] === '--candidate' || args[i] === '--arg' || args[i] === '--reason') && i + 1 < args.length) {
       const option = args[i++];
       if (option === '--candidate') options.candidate = args[i];
+      else if (option === '--reason') options.reason = args[i];
       else options.args.push(args[i]);
-    } else throw new Error('usage: node scripts/engine-regression.mjs [--record | --candidate EXECUTABLE [--arg VALUE]...]');
+    } else throw new Error('usage: node scripts/engine-regression.mjs [--record --reason TEXT | --candidate EXECUTABLE [--arg VALUE]...]');
   }
   if (options.record && options.candidate) throw new Error('--record only records the original pinned adapter, never a candidate.');
+  if (options.record && !options.reason?.trim()) throw new Error('--record requires --reason explaining why the reference changes.');
   if (options.args.length && !options.candidate) throw new Error('--arg requires --candidate.');
   return options;
 }
@@ -140,16 +170,23 @@ try {
   for (const fixture of inputs.cases) observed[fixture.id] = invoke(command, args, fixture, isOriginal);
   const inputHash = digest(inputText);
   if (options.record) {
+    // Keep the replaced reference metadata and report whether any calculated
+    // result changed, so a re-record cannot silently hide a semantic change.
+    let previous = null;
+    try { previous = JSON.parse(readFileSync(goldenPath, 'utf8')); } catch { previous = null; }
+    const changedCases = previous ? Object.keys(observed).filter(id => firstDifference(canonical(previous.results?.[id]), canonical(observed[id]))) : null;
+    const history = previous ? [...(previous.provenance_history ?? []), { recorded_at: previous.recorded_at, provenance: previous.provenance, replaced_at: new Date().toISOString(), replaced_reason: options.reason.trim(), changed_result_cases: changedCases }] : [];
     writeFileSync(goldenPath, JSON.stringify({
       schema_version: 1,
       purpose: 'original_engine_compatibility_only_not_independent_truth_or_future_accuracy',
       recorded_at: new Date().toISOString(),
       inputs_sha256: inputHash,
       provenance: originalProvenance,
+      provenance_history: history,
       projection_version: 1,
       results: observed,
     }, null, 2) + '\n');
-    console.log(JSON.stringify({ status: 'recorded', cases: inputs.cases.length, independent_accuracy_claim: false }));
+    console.log(JSON.stringify({ status: 'recorded', cases: inputs.cases.length, changed_result_cases: changedCases, independent_accuracy_claim: false }));
   } else {
     const golden = JSON.parse(readFileSync(goldenPath, 'utf8'));
     assert.equal(golden.schema_version, 1);
@@ -157,17 +194,18 @@ try {
     assert.equal(golden.provenance.source_revision, pinned);
     assert.equal(golden.inputs_sha256, inputHash, 'Inputs changed: do not silently reuse or overwrite the reference.');
     assert.deepEqual(Object.keys(observed).sort(), Object.keys(golden.results).sort(), 'golden case set differs');
-    if (isOriginal) {
-      for (const key of ['pnpm_lock_sha256', 'build_tree_sha256', 'adapter_sha256']) assert.equal(originalProvenance[key], golden.provenance[key], `Original provenance changed: ${key}`);
-    }
+    // A provenance mismatch still fails the run. The calculated results are
+    // compared as well so the report separates artifact drift from result drift.
+    const provenanceFailures = isOriginal ? provenanceDifferences(originalProvenance, golden.provenance) : [];
     const failed = [];
     for (const [id, result] of Object.entries(observed)) {
       const difference = firstDifference(canonical(golden.results[id]), canonical(result));
       if (difference) failed.push({ id, first_difference: difference });
     }
-    const report = { status: failed.length ? 'failed' : 'passed', runner: isOriginal ? 'pinned_original' : 'candidate', cases: inputs.cases.length, passed: inputs.cases.length - failed.length, failed, reference_revision: pinned, independent_accuracy_claim: false };
+    const ok = failed.length === 0 && provenanceFailures.length === 0;
+    const report = { status: ok ? 'passed' : 'failed', runner: isOriginal ? 'pinned_original' : 'candidate', cases: inputs.cases.length, passed: inputs.cases.length - failed.length, failed, provenance_failures: provenanceFailures, reference_revision: pinned, independent_accuracy_claim: false };
     console.log(JSON.stringify(report, null, 2));
-    if (failed.length) process.exitCode = 1;
+    if (!ok) process.exitCode = 1;
   }
 } catch (error) {
   console.error(`Engine regression failed: ${error.message}`);

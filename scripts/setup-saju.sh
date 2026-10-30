@@ -21,6 +21,8 @@ fi
 git -C "$TARGET" checkout --detach "$PIN"
 [[ "$(git -C "$TARGET" rev-parse HEAD)" = "$PIN" ]]
 cd "$TARGET"
-pnpm install --frozen-lockfile
+# The bundled dist embeds dependency install paths in comments and source maps.
+# Pin the default isolated layout so user-level pnpm settings cannot change it.
+pnpm install --frozen-lockfile --config.node-linker=isolated --config.enable-global-virtual-store=false --config.virtual-store-dir=node_modules/.pnpm
 SAJU_ENGINE_SOURCE_REVISION="$PIN" node tools/build.mjs
 printf 'OhMySaju ready: %s\n' "$PIN"
