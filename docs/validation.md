@@ -1,26 +1,53 @@
 # 실제 실행한 검증
 
-2026-10-29 UTC에 아래 검사를 실행했습니다. 원시 요약은 [validation-results.json](validation-results.json)에 있습니다. Go 1.27.3, Node v24.22.1을 사용했습니다. Go 제품 API가 기존 TypeScript 계산 엔진을 호출하는 현재 구조를 검증했으며 Go 계산 엔진으로 이식한 결과가 아닙니다.
+2026-10-30 UTC 기록. 원시 요약은 [validation-results.json](validation-results.json)에 있다(`python3 scripts/validate.py`가 덮어쓴다). 환경: Rocky Linux 9(WSL2), Go 1.26.5, Node 22.21.0(모바일 단위 테스트와 회귀 기록), PostgreSQL 17.6 컨테이너, pnpm 10.20.0. CI는 Go 1.27.3·Node 24를 쓰며 이번 기록에는 원격 GitHub Actions 결과가 포함되지 않는다.
 
-| 검사 | 실제 결과 |
+## 자동 검사
+
+| 검사 | 결과 |
 |---|---|
-| `go test -race -count=1 -json ./...` | 통과. 부모·하위 시험을 포함한 94개 pass 이벤트. 사주·궁합 외부 통합 시험 2개는 기본 실행에서 건너뜀 |
 | `go vet ./...` | 통과 |
-| `SAJU_INTEGRATION=1 go test -count=1 -json ./internal/saju` | 실제 고정 OhMySaju 빌드를 사용해 통과. 19개 pass 이벤트, skip 0 |
-| CLI 사주·일운·궁합·타로·상담 | 다섯 경로 모두 실제 실행. 각각 두 비교 조건 생성, 모델 상태는 `not_run` |
-| 컴파일 바이너리 HTTP | 상태 확인·인증된 상담 요청·정상 종료 통과 |
-| `node scripts/engine-regression.mjs` | 고정 원본 회귀벡터 20/20 일치. 성공 13개·기대 오류 7개 |
+| `SAJU_INTEGRATION=1 NYANG_TEST_DATABASE_URL=… go test -race -count=1 ./...` | 통과. pass 이벤트 207개(최상위 154, 하위 53), skip 0, fail 0. 실제 PostgreSQL과 고정 OhMySaju 빌드를 사용 |
+| `python3 scripts/validate.py`(DB 설정, 사주 통합 없이 전체 + 사주 패키지 별도) | 통과. 전체 실행 pass 201개(사주 원본 통합 시험 6개 skip), 사주 통합 실행 27개 pass |
+| `node scripts/engine-regression.mjs` | 20/20 일치, 출처 검사 통과(원인 조사는 [엔진 이식 문서](engine-migration.md)) |
+| CLI 비교 5개 영역 | 각각 두 조건 생성, 모델 상태 `not_run` |
+| `conversation-eval` 모의 없는 준비 실행 | 가상 대화 12개 문맥 검사 12/12 통과, 입력 24개 준비, 모델 호출 0 |
+| 컴파일 바이너리 HTTP(JSON 랩 모드) | 상태 확인·인증된 상담 비교·정상 종료 |
+| 모바일 `npm test` | 53/53 통과(Node 22.21.0). Node 20에서는 `.ts` 직접 실행이 안 되어 12개 파일이 실패로 보고된다. 코드 문제가 아니라 실행 환경 조건 |
+| 모바일 `tsc --noEmit` | 통과 |
+| 모바일 `expo export --platform android` | JS 번들 생성 통과 |
 
-`94 + 19`를 독립적인 113개 사례라고 해석하면 안 됩니다. 부모·하위 시험이 함께 집계되고 사주 단위 시험은 두 명령에 중복됩니다. 타로 시험 안에서는 78장 × 2방향 × 11배치의 1,716개 조립 요청을 실행했습니다. 상세 코드·assertion은 `internal/*/*_test.go`에 있습니다.
+이벤트 수는 부모·하위 시험을 함께 센 값이며 서로 독립적인 사례 수가 아니다.
 
-사주는 원국 4주, 입춘 경계, 지정 날짜의 정오 일진, 잘못된 시간대, 같은 원국의 A/B 조건을 확인했습니다. 궁합은 실제 원본에서 두 명식을 각각 계산해 같은 질문에 묶어 제공하는 경로를 확인했습니다. 별도의 궁합 점수나 사건 예측 정확도를 검증한 것은 아닙니다. 타로는 자료 해시·역방향·위치·질문 맥락·한쪽 방향 관계·미작성 제외를 확인했습니다. 기억은 정정·늦은 과거 사건·재전송·사용자 격리·삭제·파일 재로딩을 확인했습니다. 상담은 합성 상황에서 자료 선택·경계 존중·출처 보존을 확인했습니다.
+## 수동 통합 확인 (모의 모델)
 
-제품 흐름은 모의 생성기 및 로컬 HTTP 모의 모델 공급자로 무료 요약→상세 잠금→테스트 해제→상세 생성→보관함 재열람을 확인했습니다. 같은 사용자·요청 키의 성공 결과 재사용, 다른 입력과 같은 키의 충돌, 사용자 간 접근 차단, 최초 기억·근거 스냅샷 유지, 생성 실패·잘린 답변의 처리, 저장소 재시작도 시험했습니다. 테스트용 상세 해제는 실제 결제 성공을 뜻하지 않습니다. 자세한 API와 남은 구현은 [제품 흐름](product-flow.md)을 참고하세요.
+컴파일한 서버를 새 PostgreSQL DB와 로컬 모의 모델 서버(파이썬 HTTP, 고정 JSON 응답)에 연결해 HTTP로 실행했다.
 
-원본 엔진 회귀시험은 자정·윤일·입춘·역사적 서울 시간대·뉴욕 DST·잘못된 날짜/시간대를 포함합니다. 원본과 같은 결과인지 확인하는 시험으로, 독립적인 만세력 정확성의 증명은 아닙니다. 미래 Go 후보를 같은 입력/출력 계약으로 연결하는 방식과 후보 변조 검출 결과는 [엔진 이식 문서](engine-migration.md)에 있습니다.
+- 게스트 계정 2개 생성, 타로 세션 생성·선택: 카드 설명이 `tarot-product-v1`, 출처가 Arcanite 파일.
+- 타로 무료 요약 생성: `arcanite_product_v1`, 출처에 `policy:tarot-product-v1`.
+- 다른 계정이 그 풀이를 대화에 연결하거나 대화를 읽으면 404.
+- 풀이를 연결한 대화 생성(`tarot`, `self`), 메시지 전송 202, 같은 요청 키 재전송은 `replayed:true`로 같은 차례 반환.
+- 답변 `complete`, 출력 검사 7개 모두 pass, 사용자 발화 인용이 있는 기억 1개가 `episode`·`user_stated`로 저장.
 
-Mem0와 모델 API는 로컬 HTTP 모의 서버로 요청·응답 계약과 오류 처리를 검증했습니다. **실제 Mem0 서버 호출 0, 실제 LLM 호출 0, 인간 평가자 0, 실제 미래 사건 결과 0**입니다. 실제 결제·영수증 검증도 구현하지 않았습니다. 현재 결과를 해석 우수성·공감도·적중률로 표시하지 않습니다. 원격 GitHub Actions 실행 결과는 이번 검증 기록에 포함하지 않습니다.
+모의 모델은 형식과 흐름만 확인한다. 답변 품질을 뜻하지 않는다.
 
-Arcanite 관계 1,379항목 중 미작성/빈 해석 676개, 존재하지 않는 대상 ID를 참조한 항목 23개를 확인했습니다. 두 집계는 겹칠 수 있습니다. 이 항목은 자동으로 새 해석을 만들어 채우지 않습니다.
+## 이번 변경으로 추가된 시험
 
-재실행은 Node/pnpm과 고정 사주 엔진을 설치한 뒤 `python3 scripts/validate.py`를 사용하세요. 결과 JSON은 새 실행 시각과 결과로 갱신됩니다. 공급자 키나 실제 개인정보를 넣지 않아도 이 검사는 실행됩니다.
+- 타로 카드 설명·요약·상세가 같은 Arcanite 근거를 쓰는지, 정책 이전 `enhanced` 풀이를 같은 카드로 재사용하는지(`internal/api/tarot_reading_test.go`).
+- 제품 정책이 Tarotoo와 YueYuan을 섞지 않는지(`internal/lab/policy_test.go`, 사주는 원본 엔진 통합 시험).
+- 대화 문맥 구성, 출력 검사, 실제 DB 대화 흐름(`internal/conversation`), HTTP 경로(`internal/api/conversations_test.go`), 참고 자료 조건(`internal/counsel/conversation_test.go`), 평가 준비와 검토지(`internal/evaluation/conversation_test.go`, `cmd/conversation-eval`).
+- 모바일 대화 상태 검증, 재전송 키 유지, 결과 연결 대상 선택, 기억 표시(`apps/mobile/tests/conversation.test.mjs`, `memory.test.mjs`).
+
+## 실행하지 못한 검증
+
+| 항목 | 이유 |
+|---|---|
+| 실제 LLM 답변 생성·비교 | 모델 API 키 없음. 실제 호출 0회 |
+| 가상 대화의 블라인드 사람 평가 | 실제 답변이 없어 진행 불가. 평가자 0명 |
+| 실제 Mem0 서버 | 계정·서버 없음. 0회 |
+| Android/iOS 실기기·에뮬레이터 화면 | 이번 작업에서 기기 연결과 화면 확인을 하지 않음 |
+| 스토어 결제·샌드박스 | 스토어 계정 없음 |
+| KASI 공식 API 실호출 | 인증키 없음 |
+| 원격 GitHub Actions 결과 | 푸시 후 결과를 이 기록에 포함하지 않음 |
+
+가상 대화와 모의 모델 결과를 실제 사용자 효과, 상담 품질, 미래 적중률로 해석하지 않는다.

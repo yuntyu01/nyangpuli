@@ -146,10 +146,28 @@ func canonicalContext(raw json.RawMessage) (json.RawMessage, error) {
 
 // Export creates a new private directory and refuses to overwrite an existing
 // run. The files are not encrypted; keep real personal data out of this lab.
+// Review customizes the reviewer sheet. Instructions are appended to the
+// default blinding instructions; Columns replaces the default CSV header.
+type Review struct {
+	Columns      []string
+	Instructions []string
+}
+
+var defaultColumns = []string{"case_id", "label", "invented_fact_count", "partner_mind_certainty_count", "boundary_violation_count", "stale_fact_count", "helpfulness_1_5", "empathy_1_5", "situation_fit_1_5", "specific_action_1_5", "exception_compliance_1_5", "repetition_observed", "problem_quote", "reviewer_id"}
+
 func Export(dir string, results []generation.Result, seed int64) error {
+	return ExportReview(dir, results, seed, Review{})
+}
+
+func ExportReview(dir string, results []generation.Result, seed int64, review Review) error {
 	set, key, err := Build(results, seed)
 	if err != nil {
 		return err
+	}
+	set.Instructions = append(set.Instructions, review.Instructions...)
+	columns := defaultColumns
+	if len(review.Columns) > 0 {
+		columns = review.Columns
 	}
 	if strings.TrimSpace(dir) == "" {
 		return errors.New("output directory is required")
@@ -164,10 +182,12 @@ func Export(dir string, results []generation.Result, seed int64) error {
 	}
 	var buffer bytes.Buffer
 	w := csv.NewWriter(&buffer)
-	_ = w.Write([]string{"case_id", "label", "invented_fact_count", "partner_mind_certainty_count", "boundary_violation_count", "stale_fact_count", "helpfulness_1_5", "empathy_1_5", "situation_fit_1_5", "specific_action_1_5", "exception_compliance_1_5", "repetition_observed", "problem_quote", "reviewer_id"})
+	_ = w.Write(columns)
 	for _, c := range set.Cases {
 		for _, a := range c.Answers {
-			_ = w.Write([]string{c.ID, a.Label, "", "", "", "", "", "", "", "", "", "", "", ""})
+			row := make([]string, len(columns))
+			row[0], row[1] = c.ID, a.Label
+			_ = w.Write(row)
 		}
 	}
 	w.Flush()

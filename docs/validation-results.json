@@ -1,8 +1,9 @@
 {
-  "executed_at": "2026-10-29T04:14:33.676753+00:00",
+  "database_tests": true,
+  "executed_at": "2026-10-30T11:59:41.579453+00:00",
   "scope": "implementation_and_integration_not_prediction_or_counsel_quality",
-  "compiler": "go version go1.27.3 linux/amd64",
-  "node": "v24.22.1",
+  "compiler": "go version go1.26.5 (Red Hat 1.26.5-1.el9_8) linux/amd64",
+  "node": "v22.21.0",
   "live_llm_calls": 0,
   "live_mem0_calls": 0,
   "human_evaluators": 0,
@@ -11,21 +12,34 @@
     {
       "command": "go test -race -count=1 -json ./...",
       "exit_code": 0,
-      "passed_test_events": 94,
+      "passed_test_events": 201,
       "skipped_tests": [
+        "TestIntegrationDailyCurrentTimeZoneUsesOriginalEngine",
+        "TestIntegrationLunarBirthUsesOriginalEngine",
+        "TestProductPolicyExcludesExperimentalTiaohou",
         "TestIntegrationActualOhMySajuAndDaily",
-        "TestIntegrationCompatibilityActualOhMySaju"
+        "TestIntegrationCompatibilityActualOhMySaju",
+        "TestLunarProfileChecksRealCalendarBeforeSaving"
       ],
       "package_test_counts": {
-        "github.com/yuntyu01/nyangpuli-lab/internal/api": 6,
-        "github.com/yuntyu01/nyangpuli-lab/internal/counsel": 15,
-        "github.com/yuntyu01/nyangpuli-lab/internal/evaluation": 12,
+        "github.com/yuntyu01/nyangpuli-lab/cmd/conversation-eval": 1,
+        "github.com/yuntyu01/nyangpuli-lab/cmd/counsel-eval": 2,
+        "github.com/yuntyu01/nyangpuli-lab/cmd/nyangpuli": 1,
+        "github.com/yuntyu01/nyangpuli-lab/internal/api": 29,
+        "github.com/yuntyu01/nyangpuli-lab/internal/conversation": 9,
+        "github.com/yuntyu01/nyangpuli-lab/internal/counsel": 28,
+        "github.com/yuntyu01/nyangpuli-lab/internal/daily": 1,
+        "github.com/yuntyu01/nyangpuli-lab/internal/evaluation": 15,
         "github.com/yuntyu01/nyangpuli-lab/internal/generation": 5,
-        "github.com/yuntyu01/nyangpuli-lab/internal/lab": 1,
-        "github.com/yuntyu01/nyangpuli-lab/internal/memory": 10,
-        "github.com/yuntyu01/nyangpuli-lab/internal/readings": 13,
-        "github.com/yuntyu01/nyangpuli-lab/internal/saju": 17,
-        "github.com/yuntyu01/nyangpuli-lab/internal/tarot": 15
+        "github.com/yuntyu01/nyangpuli-lab/internal/kasi": 2,
+        "github.com/yuntyu01/nyangpuli-lab/internal/lab": 4,
+        "github.com/yuntyu01/nyangpuli-lab/internal/legacyimport": 3,
+        "github.com/yuntyu01/nyangpuli-lab/internal/memory": 12,
+        "github.com/yuntyu01/nyangpuli-lab/internal/persistence": 10,
+        "github.com/yuntyu01/nyangpuli-lab/internal/purchase": 18,
+        "github.com/yuntyu01/nyangpuli-lab/internal/readings": 19,
+        "github.com/yuntyu01/nyangpuli-lab/internal/saju": 23,
+        "github.com/yuntyu01/nyangpuli-lab/internal/tarot": 19
       }
     },
     {
@@ -38,10 +52,10 @@
     {
       "command": "SAJU_INTEGRATION=1 go test -count=1 -json ./internal/saju",
       "exit_code": 0,
-      "passed_test_events": 19,
+      "passed_test_events": 27,
       "skipped_tests": [],
       "package_test_counts": {
-        "github.com/yuntyu01/nyangpuli-lab/internal/saju": 19
+        "github.com/yuntyu01/nyangpuli-lab/internal/saju": 27
       }
     },
     {
@@ -73,6 +87,15 @@
       "exit_code": 0,
       "variants": 2,
       "model_status": "not_run"
+    },
+    {
+      "command": "conversation-eval (dry run)",
+      "exit_code": 0,
+      "cases": 12,
+      "context_checks_passed": 12,
+      "prepared_inputs": 24,
+      "model_status": "not_run",
+      "scope": "synthetic_dialogues_not_user_outcomes"
     },
     {
       "command": "compiled binary HTTP health + authenticated counsel POST + graceful shutdown",

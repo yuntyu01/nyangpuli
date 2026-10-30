@@ -4,7 +4,7 @@ root=Path(__file__).resolve().parents[1];os.chdir(root)
 go=shutil.which('go')
 if not go: raise SystemExit('Install Go and add it to PATH first.')
 env=os.environ.copy();env['PATH']=str(Path(go).parent)+':'+env['PATH']
-report={'executed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'scope':'implementation_and_integration_not_prediction_or_counsel_quality','compiler':subprocess.check_output([go,'version'],text=True).strip(),'node':subprocess.check_output(['node','--version'],text=True).strip(),'live_llm_calls':0,'live_mem0_calls':0,'human_evaluators':0,'real_future_outcomes':0,'checks':[]}
+report={'database_tests':'NYANG_TEST_DATABASE_URL' in os.environ,'executed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'scope':'implementation_and_integration_not_prediction_or_counsel_quality','compiler':subprocess.check_output([go,'version'],text=True).strip(),'node':subprocess.check_output(['node','--version'],text=True).strip(),'live_llm_calls':0,'live_mem0_calls':0,'human_evaluators':0,'real_future_outcomes':0,'checks':[]}
 for args,extra in [(['test','-race','-count=1','-json','./...'],{}),(['vet','./...'],{}),(['test','-count=1','-json','./internal/saju'],{'SAJU_INTEGRATION':'1'})]:
  r=subprocess.run([go]+args,env={**env,**extra},capture_output=True,text=True)
  if r.returncode: print(r.stdout,r.stderr);raise SystemExit(r.returncode)
@@ -26,6 +26,12 @@ for domain in ['tarot','saju','daily','compatibility','counsel']:
  report['checks'].append({'command':f'nyangpuli compare -domain {domain} -input fixtures/{domain}.json','exit_code':0,'variants':2,'model_status':'not_run'})
  if domain=='tarot':report['tarot_source_coverage']=j['comparison']['evidence']['coverage']
  print('CLI passed:',domain,flush=True)
+subprocess.run([go,'build','-o','bin/conversation-eval','./cmd/conversation-eval'],check=True,env=env)
+r=subprocess.run(['bin/conversation-eval'],capture_output=True,text=True,check=True,env=env)
+j=json.loads(r.stdout)
+assert all(row['status']=='not_run' for row in j['results'])
+report['checks'].append({'command':'conversation-eval (dry run)','exit_code':0,'cases':len(j['context_checks']),'context_checks_passed':sum(c['passed'] for c in j['context_checks']),'prepared_inputs':len(j['results']),'model_status':'not_run','scope':j['scope']})
+print('Conversation evaluation inputs prepared:',len(j['results']),flush=True)
 with socket.socket() as s:
  s.bind(('127.0.0.1',0));port=s.getsockname()[1]
 with tempfile.TemporaryDirectory(prefix='nyang-smoke-') as tmp:

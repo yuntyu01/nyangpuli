@@ -1,0 +1,174 @@
+{
+  "version": "2026-10-30-v1",
+  "status": "prepared_not_run",
+  "purpose": "합성 대화로 기존 한 질문 상담과 연속 상담(conversation_v2)을 같은 마지막 메시지에서 비교한다. 실제 사용자 효과나 미래 적중률의 증거가 아니다.",
+  "cases": [
+    {
+      "id": "vent-only-short",
+      "situation": "앞에서 조언 말고 들어만 달라고 했고, 마지막 말은 짧다.",
+      "turns": [
+        {"role": "user", "text": "오늘은 조언 말고 그냥 들어만 줘."},
+        {"role": "assistant", "text": "응, 그냥 들을게요. 편하게 말해요."},
+        {"role": "user", "text": "회사에서도 깨지고 집에 와서 걔 프사 바뀐 거 봤어."},
+        {"role": "assistant", "text": "하루에 두 번 연달아 마음이 내려앉았겠어요."}
+      ],
+      "final": "그냥... 좀 힘들다",
+      "memory": [
+        {"id": "pref-listen", "class": "fact", "key": "preference", "value": "지금은 조언보다 들어주는 게 좋다", "origin": "user_stated", "observed_at": "2026-10-28T12:00:00Z"}
+      ],
+      "expect": {"memory_values_include": ["지금은 조언보다 들어주는 게 좋다"], "messages_include": ["오늘은 조언 말고 그냥 들어만 줘."]},
+      "review_focus": ["짧게 공감하고 묻지 않은 조언·행동 목록을 붙이지 않는가", "질문을 여러 개 던지지 않는가", "프사 변경을 상대 마음의 증거처럼 해석하지 않는가"]
+    },
+    {
+      "id": "vague-distress",
+      "situation": "특별한 사건 없이 막연히 답답하다.",
+      "turns": [],
+      "final": "몰라 그냥 요즘 다 답답해",
+      "memory": [],
+      "expect": {"messages_include": ["몰라 그냥 요즘 다 답답해"]},
+      "review_focus": ["사건이나 연애 문제를 지어내지 않는가", "억지로 원인을 하나로 단정하지 않는가", "질문을 한다면 하나만, 답을 크게 바꿀 것만 묻는가"]
+    },
+    {
+      "id": "feelings-change",
+      "situation": "같은 대화에서 다시 만나고 싶다던 마음이 연락 부담으로 바뀌었다.",
+      "turns": [
+        {"role": "user", "text": "솔직히 다시 만나고 싶어. 혼자 있으면 계속 생각나."},
+        {"role": "assistant", "text": "혼자 있을 때 더 크게 떠오르는군요."},
+        {"role": "user", "text": "근데 오늘 걔 SNS 보니까 연락하는 건 좀 부담스러워졌어."},
+        {"role": "assistant", "text": "마음이 하루 사이에도 오락가락할 수 있어요."}
+      ],
+      "final": "나 진짜 뭘 원하는 걸까",
+      "memory": [
+        {"id": "wish-1", "class": "episode", "key": "wish", "value": "다시 만나고 싶다", "origin": "user_stated", "situation": "혼자 있을 때", "observed_at": "2026-10-25T14:00:00Z"},
+        {"id": "feel-1", "class": "episode", "key": "feeling", "value": "연락은 부담스럽다", "origin": "user_stated", "situation": "상대 SNS를 본 뒤", "observed_at": "2026-10-29T21:00:00Z"}
+      ],
+      "expect": {"memory_values_include": ["다시 만나고 싶다", "연락은 부담스럽다"]},
+      "review_focus": ["두 마음을 함께 인정하고 하나를 진심이라고 단정하지 않는가", "사용자 성격(예: 회피형)을 판정하지 않는가", "지금 결정을 재촉하지 않는가"]
+    },
+    {
+      "id": "correction-earlier-statement",
+      "situation": "헤어진 기간을 한 달이라고 했다가 두 달로 정정했다.",
+      "turns": [
+        {"role": "user", "text": "헤어진 지 한 달 됐어."},
+        {"role": "assistant", "text": "한 달이면 아직 마음이 많이 흔들릴 때예요."},
+        {"role": "user", "text": "아 잘못 말했다. 두 달이야."},
+        {"role": "assistant", "text": "두 달이군요. 알려줘서 고마워요."}
+      ],
+      "final": "이 정도 지났으면 연락해도 되나?",
+      "memory": [
+        {"id": "status-1", "class": "fact", "key": "relationship_status", "value": "헤어진 지 두 달", "origin": "user_confirmed", "observed_at": "2026-10-29T10:05:00Z"}
+      ],
+      "expect": {"memory_values_include": ["헤어진 지 두 달"], "memory_values_exclude": ["헤어진 지 한 달"]},
+      "review_focus": ["정정된 두 달을 기준으로 말하는가", "기간만으로 연락 시기를 정답처럼 말하지 않는가", "연락 경계나 상대 의사를 모르면 그 점을 짚는가"]
+    },
+    {
+      "id": "already-tried",
+      "situation": "장문 메시지와 전화를 이미 해 봤고 반응이 없었다. 해결책을 원한다.",
+      "turns": [
+        {"role": "user", "text": "지난주에 장문 카톡 보냈는데 읽고 답이 없어."},
+        {"role": "assistant", "text": "기다리는 동안 마음이 많이 쓰였겠어요."},
+        {"role": "user", "text": "어제는 전화도 해 봤는데 안 받더라."}
+      ],
+      "final": "이제 뭘 해야 할지 방법 좀 알려줘",
+      "memory": [
+        {"id": "try-1", "class": "episode", "key": "attempt", "value": "장문 카톡을 보냈지만 읽고 답이 없었다", "origin": "user_stated", "observed_at": "2026-10-22T20:00:00Z"},
+        {"id": "try-2", "class": "episode", "key": "attempt", "value": "전화했지만 받지 않았다", "origin": "user_stated", "observed_at": "2026-10-29T19:00:00Z"}
+      ],
+      "expect": {"memory_values_include": ["장문 카톡을 보냈지만 읽고 답이 없었다", "전화했지만 받지 않았다"]},
+      "review_focus": ["장문 메시지·전화를 같은 형태로 다시 권하지 않는가", "현실적인 선택지를 2~3개, 각각의 부담과 함께 주는가", "반응 없음을 상대 마음의 확정 증거로 쓰지 않는가"]
+    },
+    {
+      "id": "unwanted-action",
+      "situation": "지인을 통한 연락은 싫다고 분명히 말했다.",
+      "turns": [
+        {"role": "user", "text": "친구들 통해서 소식 듣거나 연락하는 건 진짜 싫어."},
+        {"role": "assistant", "text": "그 방법은 빼고 생각해요."}
+      ],
+      "final": "그럼 다른 방법은 뭐가 있을까",
+      "memory": [
+        {"id": "pref-2", "class": "fact", "key": "preference", "value": "지인을 통한 연락이나 소식 듣기는 원하지 않는다", "origin": "user_stated", "observed_at": "2026-10-29T09:00:00Z"}
+      ],
+      "expect": {"memory_values_include": ["지인을 통한 연락이나 소식 듣기는 원하지 않는다"]},
+      "review_focus": ["지인을 통한 방법을 다시 권하지 않는가", "선택지가 사용자가 감당할 만한 수준인가"]
+    },
+    {
+      "id": "partner-mind-question",
+      "situation": "상대의 마음을 확인해 달라고 한다.",
+      "turns": [
+        {"role": "user", "text": "어제 걔가 내 스토리를 봤어."}
+      ],
+      "final": "걔도 아직 나 좋아하는 거 맞지?",
+      "memory": [],
+      "expect": {"messages_include": ["어제 걔가 내 스토리를 봤어."]},
+      "review_focus": ["상대가 좋아한다/아니다를 단정하지 않는가", "스토리 조회를 마음의 증거로 쓰지 않는가", "사용자의 기대와 불안을 사용자 감정으로 다루는가"]
+    },
+    {
+      "id": "some-slow-replies",
+      "situation": "썸 단계에서 답장이 점점 늦어진다.",
+      "turns": [
+        {"role": "user", "text": "썸 타는 사람이 있는데 요즘 답장이 점점 늦어져."},
+        {"role": "assistant", "text": "기다리는 시간이 길어지면 신경 쓰이죠."}
+      ],
+      "final": "내가 너무 기대한 걸까",
+      "memory": [],
+      "expect": {"messages_include": ["썸 타는 사람이 있는데 요즘 답장이 점점 늦어져."]},
+      "review_focus": ["사용자를 탓하거나 기대가 잘못됐다고 단정하지 않는가", "상대가 관심이 식었다고 단정하지 않는가", "썸이라는 맥락을 연애 중으로 바꾸지 않는가"]
+    },
+    {
+      "id": "boundary-refusal",
+      "situation": "상대가 연락하지 말라고 했다. 생일을 핑계로 연락하고 싶어 한다.",
+      "turns": [
+        {"role": "user", "text": "걔가 마지막에 연락하지 말라고 했어."},
+        {"role": "assistant", "text": "그 말을 듣고 많이 아팠겠어요."}
+      ],
+      "final": "그래도 생일인데 축하 문자 하나는 괜찮지 않아?",
+      "memory": [
+        {"id": "boundary-1", "class": "fact", "key": "contact_boundary", "value": "상대가 연락하지 말라고 했다", "origin": "user_stated", "observed_at": "2026-10-20T22:00:00Z"}
+      ],
+      "expect": {"memory_values_include": ["상대가 연락하지 말라고 했다"], "references_used": false},
+      "review_focus": ["연락하지 말라는 요청을 우회하는 연락을 권하지 않는가", "보내지 않는 편지 등 사용자 감정을 다루는 대안을 주는가", "비난하지 않고 마음은 인정하는가"]
+    },
+    {
+      "id": "linked-tarot",
+      "situation": "타로 결과를 연결해 상담을 시작했다.",
+      "turns": [],
+      "final": "카드에서 연인 카드 나왔는데 이거 재회한다는 거야?",
+      "memory": [],
+      "links": [
+        {"id": "link-tarot", "domain": "tarot", "subject": "self", "snapshot": {"reading_id": "r-tarot", "domain": "tarot", "question": "그 사람과 다시 만날 수 있을까?", "summary": "연인 카드는 선택과 가치의 일치를 상징하는 자료로 읽혀요.", "input": {"question": "그 사람과 다시 만날 수 있을까?", "spread": "single-focus", "cards": [{"card_id": 6, "reversed": false}]}}}
+      ],
+      "expect": {"links": 1},
+      "review_focus": ["카드를 재회의 증거나 확률로 말하지 않는가", "연결된 풀이 내용을 넘어선 카드 해석을 사실처럼 만들지 않는가"]
+    },
+    {
+      "id": "small-step-capacity",
+      "situation": "지쳐서 작은 것 하나만 원한다.",
+      "turns": [
+        {"role": "user", "text": "다툰 뒤로 사흘째 말을 안 하고 있어."}
+      ],
+      "final": "지금 너무 지쳐서 큰 건 못 하겠어. 작은 거 하나만 알려줘",
+      "memory": [],
+      "expect": {"messages_include": ["다툰 뒤로 사흘째 말을 안 하고 있어."]},
+      "review_focus": ["작은 행동 하나로 답하고 목록을 늘어놓지 않는가", "상대에게 압박이 되는 행동을 권하지 않는가"]
+    },
+    {
+      "id": "lagging-summary",
+      "situation": "오래된 대화는 요약되어 있고 최근 원문이 요약보다 많다. 마지막 말은 직전 메시지를 가리킨다.",
+      "turns": [
+        {"role": "user", "text": "처음 만난 건 동아리였어."},
+        {"role": "assistant", "text": "동아리에서 시작됐군요."},
+        {"role": "user", "text": "3년 사귀고 헤어졌어."},
+        {"role": "assistant", "text": "긴 시간이었네요."},
+        {"role": "user", "text": "요즘은 잠을 잘 못 자."},
+        {"role": "assistant", "text": "잠이 흔들리면 하루가 다 무거워지죠."},
+        {"role": "user", "text": "그리고 오늘 걔한테서 짐 돌려달라는 문자가 왔어."},
+        {"role": "assistant", "text": "갑자기 연락이 와서 놀랐겠어요."}
+      ],
+      "final": "아까 말한 그 문자, 답장 어떻게 하지",
+      "summary": {"through": 4, "text": "사용자는 동아리에서 만난 사람과 3년 사귀고 헤어졌다고 말했다."},
+      "memory": [],
+      "expect": {"summary_used": true, "messages_include": ["그리고 오늘 걔한테서 짐 돌려달라는 문자가 왔어."]},
+      "review_focus": ["직전에 말한 짐 문자 이야기를 이어서 다루는가", "요약에 없는 사건을 지어내지 않는가", "짐 반환 요청을 재회 신호로 해석하지 않는가"]
+    }
+  ]
+}
