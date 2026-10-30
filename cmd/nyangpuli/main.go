@@ -267,6 +267,7 @@ func serve(args []string) error {
 			return statErr
 		}
 		app.Readings = api.NewPostgresReadingService(db, l, store, client, *testUnlocks)
+		app.Conversations = api.NewConversationService(db, store, client, app.Readings)
 		if *testUnlocks {
 			app.DevelopmentPurchaser = purchase.Development{DB: db}
 		}

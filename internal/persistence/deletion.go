@@ -42,6 +42,7 @@ func (s Store) DeleteAccount(ctx context.Context, accountID string) error {
 		`DELETE FROM password_credentials WHERE account_id=$1`,
 		`DELETE FROM memories WHERE account_id=$1`,
 		`DELETE FROM memory_deletion_watermarks WHERE account_id=$1`,
+		`DELETE FROM memory_suppressions WHERE account_id=$1`,
 		`DELETE FROM conversations WHERE account_id=$1`,
 		`DELETE FROM profiles WHERE account_id=$1`,
 		`DELETE FROM generation_jobs WHERE account_id=$1`,

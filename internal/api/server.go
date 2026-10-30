@@ -42,6 +42,7 @@ type Server struct {
 	Mem0                 *memory.Mem0
 	Tokens               map[string]string
 	Readings             ReadingService
+	Conversations        ConversationService
 	AllowTestUnlock      bool
 }
 
@@ -94,6 +95,9 @@ func (s *Server) Handler() http.Handler {
 			return
 		}
 		if s.handleReadingJobs(w, r, user) {
+			return
+		}
+		if s.handleConversations(w, r, user) {
 			return
 		}
 		if s.handleMemoryItem(w, r, user) {

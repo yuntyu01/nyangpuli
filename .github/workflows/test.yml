@@ -52,7 +52,7 @@ jobs:
         with:
           go-version: '1.27.3'
           cache: false
-      - run: go test -v ./internal/memory ./internal/persistence
+      - run: go test -v ./internal/memory ./internal/persistence ./internal/conversation ./internal/readings ./internal/api
         env:
           NYANG_TEST_DATABASE_URL: postgres://postgres:test-only-password@127.0.0.1:5432/nyang_test?sslmode=disable
   mobile:

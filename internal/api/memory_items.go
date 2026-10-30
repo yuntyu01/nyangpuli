@@ -12,6 +12,8 @@ type memoryItemStore interface {
 	Correct(string, string, memory.Fact) (memory.Record, error)
 	Revisions(string, string) ([]memory.Revision, error)
 	Delete(string, string) error
+	Inferences(string) ([]memory.Record, error)
+	Confirm(string, string) (memory.Record, error)
 }
 
 func (s *Server) handleMemoryItem(w http.ResponseWriter, r *http.Request, user string) bool {
@@ -35,6 +37,20 @@ func (s *Server) handleMemoryItem(w http.ResponseWriter, r *http.Request, user s
 	}
 	var err error
 	switch {
+	case len(parts) == 1 && parts[0] == "inferences" && r.Method == http.MethodGet:
+		var result []memory.Record
+		result, err = store.Inferences(user)
+		if err == nil {
+			write(w, 200, result)
+			return true
+		}
+	case len(parts) == 2 && parts[1] == "confirm" && r.Method == http.MethodPost:
+		var result memory.Record
+		result, err = store.Confirm(user, parts[0])
+		if err == nil {
+			write(w, 200, result)
+			return true
+		}
 	case len(parts) == 1 && r.Method == http.MethodPut:
 		var fact memory.Fact
 		if !read(w, r, &fact) {

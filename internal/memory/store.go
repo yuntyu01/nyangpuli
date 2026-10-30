@@ -39,7 +39,28 @@ type Record struct {
 	RecordedAt time.Time `json:"recorded_at"`
 	Supersedes string    `json:"supersedes,omitempty"`
 	Current    bool      `json:"current"`
+	Meta
 }
+
+// Meta classifies a PostgreSQL memory. An empty class is a fact. Facts keep one
+// current value per key; episodes are all kept by time, subject and situation.
+// Origin separates values the user entered or confirmed, statements quoted from
+// a user message, and AI inferences, which are stored unconfirmed.
+type Meta struct {
+	Class           string `json:"class,omitempty"`
+	Origin          string `json:"origin,omitempty"`
+	Subject         string `json:"subject,omitempty"`
+	Situation       string `json:"situation,omitempty"`
+	SourceMessageID string `json:"source_message_id,omitempty"`
+}
+
+const (
+	ClassFact         = "fact"
+	ClassEpisode      = "episode"
+	OriginConfirmed   = "user_confirmed"
+	OriginStated      = "user_stated"
+	OriginAIInference = "ai_inference"
+)
 
 type diskState struct {
 	Version int                 `json:"version"`
@@ -230,6 +251,12 @@ func markCurrent(records []Record) []Record {
 	latest := map[string]int{}
 	for i := range records {
 		records[i].Current = false
+		if records[i].Class == ClassEpisode {
+			// Episodes never replace each other; contradictory feelings from
+			// different times or situations remain side by side.
+			records[i].Current = true
+			continue
+		}
 		j, ok := latest[records[i].Key]
 		if !ok || records[i].ObservedAt.After(records[j].ObservedAt) {
 			latest[records[i].Key] = i

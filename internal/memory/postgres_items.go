@@ -49,7 +49,8 @@ func (s *PostgresStore) Correct(user, id string, fact Fact) (Record, error) {
 		return Record{}, err
 	}
 	var oldBytes []byte
-	err = tx.QueryRowContext(ctx, `SELECT value FROM memories WHERE id=$1 AND account_id=$2 AND valid AND confirmed FOR UPDATE`, id, user).Scan(&oldBytes)
+	var class string
+	err = tx.QueryRowContext(ctx, `SELECT value,memory_class FROM memories WHERE id=$1 AND account_id=$2 AND valid AND confirmed FOR UPDATE`, id, user).Scan(&oldBytes, &class)
 	if errors.Is(err, sql.ErrNoRows) {
 		return Record{}, ErrNotFound
 	}
@@ -64,7 +65,7 @@ func (s *PostgresStore) Correct(user, id string, fact Fact) (Record, error) {
 		return Record{}, fmt.Errorf("%w: key and event identity cannot change", ErrInvalid)
 	}
 	var conflicts bool
-	err = tx.QueryRowContext(ctx, `SELECT EXISTS(SELECT 1 FROM memories WHERE account_id=$1 AND kind=$2 AND id<>$3 AND valid AND confirmed AND occurred_at=$4 AND value->>'value'<>$5)`, user, fact.Key, id, fact.ObservedAt, fact.Value).Scan(&conflicts)
+	err = tx.QueryRowContext(ctx, `SELECT $6<>'episode' AND EXISTS(SELECT 1 FROM memories WHERE account_id=$1 AND kind=$2 AND id<>$3 AND valid AND confirmed AND memory_class='fact' AND occurred_at=$4 AND value->>'value'<>$5)`, user, fact.Key, id, fact.ObservedAt, fact.Value, class).Scan(&conflicts)
 	if err != nil {
 		return Record{}, err
 	}
@@ -82,7 +83,8 @@ func (s *PostgresStore) Correct(user, id string, fact Fact) (Record, error) {
 		if e != nil {
 			return Record{}, e
 		}
-		if _, err = tx.ExecContext(ctx, `UPDATE memories SET value=$1,occurred_at=$2 WHERE id=$3 AND account_id=$4`, b, fact.ObservedAt, id, user); err != nil {
+		// A user correction becomes the user's own confirmed statement.
+		if _, err = tx.ExecContext(ctx, `UPDATE memories SET value=$1,occurred_at=$2,origin='user_confirmed' WHERE id=$3 AND account_id=$4`, b, fact.ObservedAt, id, user); err != nil {
 			return Record{}, err
 		}
 	}
@@ -157,13 +159,19 @@ func (s *PostgresStore) Delete(user, id string) error {
 	if err = activeMemoryAccount(ctx, tx, user); err != nil {
 		return err
 	}
-	var key string
-	err = tx.QueryRowContext(ctx, `SELECT kind FROM memories WHERE id=$1 AND account_id=$2 FOR UPDATE`, id, user).Scan(&key)
+	var key, class string
+	var sourceMessage sql.NullString
+	err = tx.QueryRowContext(ctx, `SELECT kind,memory_class,source_message_id FROM memories WHERE id=$1 AND account_id=$2 FOR UPDATE`, id, user).Scan(&key, &class, &sourceMessage)
 	if errors.Is(err, sql.ErrNoRows) {
 		return ErrNotFound
 	}
 	if err != nil {
 		return err
+	}
+	if sourceMessage.Valid {
+		if _, err = tx.ExecContext(ctx, `INSERT INTO memory_suppressions(account_id,source_message_id,kind) VALUES($1,$2,$3) ON CONFLICT DO NOTHING`, user, sourceMessage.String, key); err != nil {
+			return err
+		}
 	}
 	records, err := pgRecords(ctx, tx, user, key)
 	if err != nil {
@@ -171,7 +179,7 @@ func (s *PostgresStore) Delete(user, id string) error {
 	}
 	current := false
 	for _, r := range records {
-		if r.ID == id && r.Current {
+		if r.ID == id && r.Current && class == ClassFact {
 			current = true
 		}
 	}
@@ -200,4 +208,74 @@ func invalidateMemorySnapshots(ctx context.Context, tx *sql.Tx, user string) err
 	}
 	_, err := tx.ExecContext(ctx, `UPDATE generation_jobs SET state='invalidated',evidence=NULL,result=NULL,updated_at=now() WHERE account_id=$1 AND memory_generation IS NOT NULL AND state<>'invalidated'`, user)
 	return err
+}
+
+// Inferences lists unconfirmed AI inferences so the user can review them. They
+// are never part of Current and never used as facts in generation.
+func (s *PostgresStore) Inferences(user string) ([]Record, error) {
+	if err := validateUser(user); err != nil {
+		return nil, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	rows, err := s.DB.QueryContext(ctx, `SELECT m.id,m.value,m.recorded_at,m.memory_class,m.origin,COALESCE(m.subject,''),COALESCE(m.situation,''),COALESCE(m.source_message_id,'') FROM memories m JOIN accounts a ON a.id=m.account_id WHERE m.account_id=$1 AND a.deleted_at IS NULL AND m.valid AND NOT m.confirmed AND m.origin='ai_inference' ORDER BY m.recorded_at,m.id`, user)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := []Record{}
+	for rows.Next() {
+		var r Record
+		var data []byte
+		if err = rows.Scan(&r.ID, &data, &r.RecordedAt, &r.Class, &r.Origin, &r.Subject, &r.Situation, &r.SourceMessageID); err != nil {
+			return nil, err
+		}
+		if err = json.Unmarshal(data, &r.Fact); err != nil {
+			return nil, err
+		}
+		out = append(out, r)
+	}
+	return out, rows.Err()
+}
+
+// Confirm turns an AI inference the user agrees with into a user-confirmed
+// memory. Rejected inferences are removed with Delete.
+func (s *PostgresStore) Confirm(user, id string) (Record, error) {
+	if err := validateUser(user); err != nil {
+		return Record{}, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	tx, err := s.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return Record{}, err
+	}
+	defer tx.Rollback()
+	if err = activeMemoryAccount(ctx, tx, user); err != nil {
+		return Record{}, err
+	}
+	var key string
+	err = tx.QueryRowContext(ctx, `UPDATE memories SET confirmed=true,origin='user_confirmed' WHERE id=$1 AND account_id=$2 AND valid AND NOT confirmed AND origin='ai_inference' RETURNING kind`, id, user).Scan(&key)
+	if errors.Is(err, sql.ErrNoRows) {
+		return Record{}, ErrNotFound
+	}
+	if err != nil {
+		return Record{}, err
+	}
+	if err = invalidateMemorySnapshots(ctx, tx, user); err != nil {
+		return Record{}, err
+	}
+	records, err := pgRecords(ctx, tx, user, key)
+	if err != nil {
+		return Record{}, err
+	}
+	if err = tx.Commit(); err != nil {
+		return Record{}, err
+	}
+	for _, r := range records {
+		if r.ID == id {
+			return r, nil
+		}
+	}
+	return Record{}, ErrNotFound
 }
